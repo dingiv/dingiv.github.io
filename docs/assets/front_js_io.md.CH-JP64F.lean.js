@@ -1,0 +1,1 @@
+import{_ as i,c as l,o,a1 as e}from"./chunks/framework.CceCxLSN.js";const f=JSON.parse('{"title":"io","description":"","frontmatter":{},"headers":[],"relativePath":"front/js/io.md","filePath":"front/js/io.md"}'),t={name:"front/js/io.md"},a=e("",3),r=[a];function s(_,n,c,d,p,I){return o(),l("div",null,r)}const h=i(t,[["render",s]]);export{f as __pageData,h as default};

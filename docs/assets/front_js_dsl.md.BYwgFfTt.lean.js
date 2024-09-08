@@ -1,0 +1,1 @@
+import{_ as a,c as e,o as l,a1 as i}from"./chunks/framework.CceCxLSN.js";const _=JSON.parse('{"title":"dsl","description":"","frontmatter":{},"headers":[],"relativePath":"front/js/dsl.md","filePath":"front/js/dsl.md"}'),t={name:"front/js/dsl.md"},s=i("",3),n=[s];function r(o,S,c,p,u,d){return l(),e("div",null,n)}const M=a(t,[["render",r]]);export{_ as __pageData,M as default};

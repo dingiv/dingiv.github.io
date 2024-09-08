@@ -1,0 +1,1 @@
+import{_ as i,c as t,o as e,a1 as l}from"./chunks/framework.CceCxLSN.js";const p=JSON.parse('{"title":"git","description":"","frontmatter":{},"headers":[],"relativePath":"devops/git.md","filePath":"devops/git.md"}'),a={name:"devops/git.md"},o=l("",3),r=[o];function s(c,_,d,n,m,h){return e(),t("div",null,r)}const u=i(a,[["render",s]]);export{p as __pageData,u as default};
