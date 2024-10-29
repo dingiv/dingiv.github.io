@@ -1,8 +1,8 @@
 ---
-title: 设计模式
+title: 软件设计
 order: 20
 ---
-# 设计模式
+# 软件设计
 
 ![alt text](model.png)
 
