@@ -18,12 +18,12 @@ hero:
       link: /examples
 
 features:
-  - title: VitePress驱动
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: 前端视角
+    details: 从前端视角出发，探讨前端技术、工具和最佳实践。
     theme: brand
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: 不只前端
+    details: 涵盖前端、后端、运维、算法等多个领域，广泛的涉猎。
+  - title: 持续更新
+    details: 持续更新，不断学习，分享最新的技术动态和心得体会。
 ---
 
