@@ -1,1 +1,0 @@
-import{_ as e,c as o,o as c,a1 as d}from"./chunks/framework.CceCxLSN.js";const u=JSON.parse('{"title":"glob","description":"","frontmatter":{},"headers":[],"relativePath":"other/glob.md","filePath":"other/glob.md"}'),a={name:"other/glob.md"},t=d("",36),s=[t];function l(r,i,n,h,p,g){return c(),o("div",null,s)}const j=e(a,[["render",l]]);export{u as __pageData,j as default};

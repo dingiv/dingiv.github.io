@@ -1,1 +1,0 @@
-import{_ as e,c as t,o,a1 as l}from"./chunks/framework.CceCxLSN.js";const b=JSON.parse('{"title":"块级格式上下文","description":"","frontmatter":{},"headers":[],"relativePath":"front/css/bfc.md","filePath":"front/css/bfc.md"}'),a={name:"front/css/bfc.md"},i=l("",5),r=[i];function n(c,s,_,f,d,p){return o(),t("div",null,r)}const m=e(a,[["render",n]]);export{b as __pageData,m as default};
