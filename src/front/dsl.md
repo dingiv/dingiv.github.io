@@ -1,4 +1,4 @@
-# dsl
+# DSL
 DSL（Domain-Specific Language，领域专用语言）是一种专门为特定应用领域设计的计算机语言。与通用编程语言（如 Python、Java、C++等）不同，DSL 主要用于解决某一特定领域中的问题，因此在该领域中更高效、更易于使用。DSL 可以是编程语言、标记语言或配置语言，常见的 DSL 包括：
 
 - 前端 UI 描述语言。HTML可以集成其他语言，包括CSS、JavaScript，还有SVG、MathML，通过JS间接集成的有MD、JSON、Web Component、XML、WebGL、WebAssembly。
