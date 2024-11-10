@@ -1,4 +1,4 @@
-# nginx
+# Nginx
 
 ## 使用Ubuntu安装nginx
 + apt安装
@@ -11,11 +11,11 @@
 ```shell
 apt install <packagename>=<version>
 apt --purge remove <name>
-add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable" 
+add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 # 添加阿里云的Ubuntu docker镜像
 ```
 
-* 配置apt的镜像源 
+* 配置apt的镜像源
 ```shell
 vim /etc/apt/sources.list
 
@@ -37,7 +37,7 @@ deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted unive
 apt install nginx //版本太老了
 apt --purge autoremove nginx
 ```
- 
+
 
 + 安装包安装
 
@@ -87,7 +87,7 @@ cd /sbin
 ufw status
 ufw enable
 ufw disable
-ufw default allow 
+ufw default allow
 ufw default deny
 ufw allow 80
 ufw deny 80  #允许/禁止外部访问80端口
@@ -105,7 +105,7 @@ kill <进程id>
 
 ```
 
-# Docker 
+# Docker
 
 docker常用命令
 
@@ -119,7 +119,7 @@ docker run <images>
 ```
 apt update
 apt install ca-certificates curl gnupg lsb-release
-    
+
 #添加阿里云镜像
 add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 
