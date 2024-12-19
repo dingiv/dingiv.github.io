@@ -39,3 +39,5 @@ packages/gui/custom
 local
 .vitepress/dist
 .vitepress/cache
+
+docs
