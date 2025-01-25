@@ -1,0 +1,1 @@
+import{_ as e,c as l,ae as i,o}from"./chunks/framework.BzDBnRMZ.js";const p=JSON.parse('{"title":"登录授权","description":"","frontmatter":{},"headers":[],"relativePath":"other/auth.md","filePath":"other/auth.md"}'),t={name:"other/auth.md"};function r(h,a,s,n,d,c){return o(),l("div",null,a[0]||(a[0]=[i("",18)]))}const _=e(t,[["render",r]]);export{p as __pageData,_ as default};

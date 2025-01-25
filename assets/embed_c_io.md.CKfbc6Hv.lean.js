@@ -1,0 +1,1 @@
+import{_ as i,c as a,ae as h,o as k}from"./chunks/framework.BzDBnRMZ.js";const g=JSON.parse('{"title":"io 操作","description":"","frontmatter":{},"headers":[],"relativePath":"embed/c/io.md","filePath":"embed/c/io.md"}'),n={name:"embed/c/io.md"};function t(l,s,p,e,r,E){return k(),a("div",null,s[0]||(s[0]=[h("",5)]))}const y=i(n,[["render",t]]);export{g as __pageData,y as default};
