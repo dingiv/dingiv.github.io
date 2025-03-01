@@ -1,0 +1,557 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" style="background: transparent; background-color: transparent;" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="762px" height="1201px" viewBox="-0.5 -0.5 762 1201" content="&lt;mxfile&gt;&lt;diagram id=&quot;MKBf3lgtGZ6x9fUBjJUs&quot; name=&quot;Page-1&quot;&gt;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&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <g>
+            <rect x="50" y="0" width="670" height="30" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="620" y="0" width="50" height="30" fill="#f8cecc" stroke="#b85450" pointer-events="all" style="fill: light-dark(rgb(248, 206, 204), rgb(81, 45, 43)); stroke: light-dark(rgb(184, 84, 80), rgb(215, 129, 126));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 48px; height: 1px; padding-top: 15px; margin-left: 621px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: center; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    虚拟页
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="645" y="19" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+                        虚拟页
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 100 255 L 144.78 223.65" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 149.08 220.64 L 145.36 227.52 L 144.78 223.65 L 141.34 221.79 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="0" y="240" width="100" height="30" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 98px; height: 1px; padding-top: 255px; margin-left: 1px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: center; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    页表基地址寄存器
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="50" y="259" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+                        页表基地址寄存器
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 228.48 264.59 L 275.23 242.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 279.99 240.47 L 275.13 246.61 L 275.23 242.7 L 272.16 240.27 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="150" y="220" width="80" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 78px; height: 1px; padding-top: 227px; margin-left: 152px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    0 级页表，
+                                    <div>
+                                        <font color="#000000" style="color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));">
+                                            最多1张
+                                            <br/>
+                                        </font>
+                                        <div>
+                                            <br/>
+                                        </div>
+                                        <div>
+                                            存放下一级页表的首地址，共 2 ^ 9 = 512 个，每个 8 字节
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="152" y="239" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        0 级页表，...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <rect x="80" y="120" width="540" height="30" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 538px; height: 1px; padding-top: 135px; margin-left: 81px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: center; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    0b 0000000000000000  000000000  000000000  000000000  0000000000000000000000000
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="350" y="139" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+                        0b 0000000000000000  000000000  000000000  000000000  0000000000000000000000000
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 361 305 L 394.06 292.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 398.96 290.4 L 393.68 296.18 L 394.06 292.29 L 391.17 289.65 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="281" y="240" width="80" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 78px; height: 1px; padding-top: 247px; margin-left: 283px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    1 级页表，
+                                    <div>
+                                        <font color="#000000" style="color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));">
+                                            最多 512 张
+                                            <br/>
+                                        </font>
+                                        <div>
+                                            <br/>
+                                        </div>
+                                        <div>
+                                            <span style="color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                                存放下一级页表的首地址，共 2 ^ 9 = 512 个，每个 8 字节
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="283" y="259" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        1 级页表，...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 361 465 L 403.66 469.35" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 408.89 469.89 L 401.57 472.66 L 403.66 469.35 L 402.28 465.69 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="281" y="400" width="80" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 78px; height: 1px; padding-top: 407px; margin-left: 283px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    1 级页表
+                                    <div>
+                                        <br/>
+                                    </div>
+                                    <div>
+                                        <span style="color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                            存放下一级页表的首地址，共 2 ^ 9 = 512 个，每个 8 字节
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="283" y="419" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        1 级页表...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 228.32 301.38 L 278 394.38" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 280.47 399.01 L 274.09 394.49 L 278 394.38 L 280.26 391.19 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <path d="M 190 220 L 258 155" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2 6" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="227" y="115" width="62" height="40" rx="6" ry="6" fill="none" stroke="#ff1c2e" stroke-width="2" pointer-events="all" style="stroke: light-dark(rgb(255, 28, 46), rgb(255, 128, 143));"/>
+        </g>
+        <g>
+            <rect x="294" y="115" width="62" height="40" rx="6" ry="6" fill="none" stroke="#ff1c2e" stroke-width="2" pointer-events="all" style="stroke: light-dark(rgb(255, 28, 46), rgb(255, 128, 143));"/>
+        </g>
+        <g>
+            <rect x="361" y="115" width="62" height="40" rx="6" ry="6" fill="none" stroke="#ff1c2e" stroke-width="2" pointer-events="all" style="stroke: light-dark(rgb(255, 28, 46), rgb(255, 128, 143));"/>
+        </g>
+        <g>
+            <path d="M 321 240 L 325 155" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2 6" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="400" y="290" width="90" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 88px; height: 1px; padding-top: 297px; margin-left: 402px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    2 级页表，
+                                    <div>
+                                        <font color="#000000" style="color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));">
+                                            最多 512 ^ 2 张
+                                            <br/>
+                                        </font>
+                                        <div>
+                                            <br/>
+                                        </div>
+                                        <div>
+                                            <span style="color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                                存放真实物理大页的首地址，
+                                            </span>
+                                            <span style="background-color: transparent; color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                                共 2 ^ 9 = 512 个，每个 8 字节
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="402" y="309" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        2 级页表，...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <rect x="410" y="470" width="80" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 78px; height: 1px; padding-top: 477px; margin-left: 412px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    2 级页表
+                                    <div>
+                                        <font color="#000000" style="color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));">
+                                            <br/>
+                                        </font>
+                                        <div>
+                                            <span style="color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                                存放真实物理大页的首地址，
+                                            </span>
+                                            <span style="background-color: transparent; color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                                共 2 ^ 9 = 512 个，每个 8 字节
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="412" y="489" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        2 级页表...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 490.54 312.88 L 574.02 282.2" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 578.95 280.39 L 573.59 286.09 L 574.02 282.2 L 571.17 279.52 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <path d="M 445 290 L 392 155" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2 6" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="580" y="280" width="110" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 108px; height: 1px; padding-top: 287px; margin-left: 582px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    物理页
+                                    <div>
+                                        大小为 2 ^ (12 + 9) = 2M
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="582" y="299" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        物理页
+大小为 2 ^ (12 + 9) = 2M
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 580 280 L 620 30" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <path d="M 690 280 L 670 30" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <path d="M 620 30 L 86.28 118.95" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 81.1 119.82 L 87.43 115.21 L 86.28 118.95 L 88.58 122.12 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="50" y="670" width="670" height="30" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="620" y="670" width="50" height="30" fill="#f8cecc" stroke="#b85450" pointer-events="all" style="fill: light-dark(rgb(248, 206, 204), rgb(81, 45, 43)); stroke: light-dark(rgb(184, 84, 80), rgb(215, 129, 126));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 48px; height: 1px; padding-top: 685px; margin-left: 621px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: center; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    虚拟页
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="645" y="689" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+                        虚拟页
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 100 925 L 144.78 893.65" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 149.08 890.64 L 145.36 897.52 L 144.78 893.65 L 141.34 891.79 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="0" y="910" width="100" height="30" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 98px; height: 1px; padding-top: 925px; margin-left: 1px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: center; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    页表基地址寄存器
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="50" y="929" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+                        页表基地址寄存器
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 228.48 934.59 L 275.23 912.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 279.99 910.47 L 275.13 916.61 L 275.23 912.7 L 272.16 910.27 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="150" y="890" width="80" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 78px; height: 1px; padding-top: 897px; margin-left: 152px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    0 级页表，
+                                    <div>
+                                        <font color="#000000" style="color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));">
+                                            最多1张
+                                            <br/>
+                                        </font>
+                                        <div>
+                                            <br/>
+                                        </div>
+                                        <div>
+                                            存放下一级页表的首地址，共 2 ^ 9 = 512 个，每个 8 字节
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="152" y="909" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        0 级页表，...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <rect x="80" y="790" width="540" height="30" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 538px; height: 1px; padding-top: 805px; margin-left: 81px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: center; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    0b 0000000000000000  000000000  000000000  0000000000000000000000000000000000
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="350" y="809" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+                        0b 0000000000000000  000000000  000000000  0000000000000000000000000000000000
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 361 975 L 573.67 950.72" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 578.89 950.13 L 572.33 954.4 L 573.67 950.72 L 571.54 947.44 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="281" y="910" width="80" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 78px; height: 1px; padding-top: 917px; margin-left: 283px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    1 级页表，
+                                    <div>
+                                        <font color="#000000" style="color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));">
+                                            最多 512 张
+                                            <br/>
+                                        </font>
+                                        <div>
+                                            <br/>
+                                        </div>
+                                        <div>
+                                            <span style="color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                                存放真实物理大页的首地址，
+                                            </span>
+                                            <span style="background-color: transparent; color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                                共 2 ^ 9 = 512 个，每个 8 字节
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="283" y="929" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        1 级页表，...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <rect x="281" y="1070" width="80" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 78px; height: 1px; padding-top: 1077px; margin-left: 283px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    1 级页表
+                                    <div>
+                                        <br/>
+                                    </div>
+                                    <div>
+                                        <span style="color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                            存放真实物理大页的首地址，
+                                        </span>
+                                        <span style="background-color: transparent; color: light-dark(rgb(63, 63, 63), rgb(183, 183, 183));">
+                                            共 2 ^ 9 = 512 个，每个 8 字节
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="283" y="1089" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        1 级页表...
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 228.32 971.38 L 278 1064.38" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 280.47 1069.01 L 274.09 1064.49 L 278 1064.38 L 280.26 1061.19 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <path d="M 190 890 L 263 825" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2 6" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="232" y="785" width="62" height="40" rx="6" ry="6" fill="none" stroke="#ff1c2e" stroke-width="2" pointer-events="all" style="stroke: light-dark(rgb(255, 28, 46), rgb(255, 128, 143));"/>
+        </g>
+        <g>
+            <rect x="299" y="785" width="62" height="40" rx="6" ry="6" fill="none" stroke="#ff1c2e" stroke-width="2" pointer-events="all" style="stroke: light-dark(rgb(255, 28, 46), rgb(255, 128, 143));"/>
+        </g>
+        <g>
+            <path d="M 321 910 L 330 825" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2 6" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <rect x="580" y="950" width="180" height="130" fill="#ffffff" stroke="#000000" pointer-events="all" style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <g transform="translate(-0.5 -0.5)">
+                <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 178px; height: 1px; padding-top: 957px; margin-left: 582px;">
+                            <div style="box-sizing: border-box; font-size: 0; text-align: left; color: #000000; ">
+                                <div style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;; color: light-dark(#000000, #ffffff); line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
+                                    物理页
+                                    <div>
+                                        大小为 2 ^ (12 + 9 + 9) = 1G
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreignObject>
+                    <text x="582" y="969" fill="light-dark(#000000, #ffffff)" font-family="&quot;Helvetica&quot;" font-size="12px">
+                        物理页
+大小为 2 ^ (12 + 9 + 9) = 1G
+                    </text>
+                </switch>
+            </g>
+        </g>
+        <g>
+            <path d="M 580 950 L 620 700" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <path d="M 760 950 L 670 700" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+        <g>
+            <path d="M 620 700 L 86.28 788.95" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke" style="stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+            <path d="M 81.1 789.82 L 87.43 785.21 L 86.28 788.95 L 88.58 792.12 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all" style="fill: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"/>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.drawio.com/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Text is not SVG - cannot display
+            </text>
+        </a>
+    </switch>
+</svg>

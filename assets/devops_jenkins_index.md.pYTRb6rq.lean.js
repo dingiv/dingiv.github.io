@@ -1,1 +1,0 @@
-import{_ as e,c as n,o as t}from"./chunks/framework.BzDBnRMZ.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"devops/jenkins/index.md","filePath":"devops/jenkins/index.md"}'),s={name:"devops/jenkins/index.md"};function a(o,r,d,i,c,p){return t(),n("div")}const f=e(s,[["render",a]]);export{m as __pageData,f as default};

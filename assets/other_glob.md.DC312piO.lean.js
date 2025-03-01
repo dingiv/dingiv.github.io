@@ -1,1 +1,0 @@
-import{_ as o,c,ae as d,o as a}from"./chunks/framework.BzDBnRMZ.js";const g=JSON.parse('{"title":"glob","description":"","frontmatter":{},"headers":[],"relativePath":"other/glob.md","filePath":"other/glob.md"}'),t={name:"other/glob.md"};function s(l,e,r,i,n,h){return a(),c("div",null,e[0]||(e[0]=[d("",36)]))}const b=o(t,[["render",s]]);export{g as __pageData,b as default};

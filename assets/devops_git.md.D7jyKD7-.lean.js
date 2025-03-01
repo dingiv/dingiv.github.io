@@ -1,1 +1,0 @@
-import{_ as t,c as e,ae as l,o as a}from"./chunks/framework.BzDBnRMZ.js";const f=JSON.parse('{"title":"git","description":"","frontmatter":{},"headers":[],"relativePath":"devops/git.md","filePath":"devops/git.md"}'),o={name:"devops/git.md"};function r(s,i,c,d,n,_){return a(),e("div",null,i[0]||(i[0]=[l("",3)]))}const p=t(o,[["render",r]]);export{f as __pageData,p as default};
