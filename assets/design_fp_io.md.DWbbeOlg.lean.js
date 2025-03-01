@@ -1,1 +1,0 @@
-import{_ as i,c as e,ae as l,o}from"./chunks/framework.BzDBnRMZ.js";const d=JSON.parse('{"title":"IO","description":"","frontmatter":{},"headers":[],"relativePath":"design/fp/io.md","filePath":"design/fp/io.md"}'),t={name:"design/fp/io.md"};function r(n,a,p,I,s,O){return o(),e("div",null,a[0]||(a[0]=[l("",15)]))}const h=i(t,[["render",r]]);export{d as __pageData,h as default};

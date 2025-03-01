@@ -1,1 +1,0 @@
-import{_ as e,c as l,ae as i,o as t}from"./chunks/framework.BzDBnRMZ.js";const L=JSON.parse('{"title":"DSL","description":"","frontmatter":{},"headers":[],"relativePath":"front/dsl.md","filePath":"front/dsl.md"}'),r={name:"front/dsl.md"};function S(n,a,s,o,p,c){return t(),l("div",null,a[0]||(a[0]=[i("",3)]))}const M=e(r,[["render",S]]);export{L as __pageData,M as default};
