@@ -1,1 +1,0 @@
-import{_ as l,c as o,o as e,ae as t}from"./chunks/framework.BHrE6nLq.js";const I=JSON.parse('{"title":"io","description":"","frontmatter":{},"headers":[],"relativePath":"front/js/io.md","filePath":"front/js/io.md"}'),a={name:"front/js/io.md"};function r(s,i,n,_,c,d){return e(),o("div",null,i[0]||(i[0]=[t("",3)]))}const P=l(a,[["render",r]]);export{I as __pageData,P as default};
