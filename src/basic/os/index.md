@@ -4,9 +4,10 @@ order: 21
 ---
 
 # 操作系统
-![os platform](os-platform.png)
+![os platform](./platform.dio.svg)
 
 系统层：linux、RTOS
+
 应用层：
 + hypervisor/模拟器
 + 浏览器
