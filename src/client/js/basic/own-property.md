@@ -1,26 +1,48 @@
 # 属性的可枚举性和所有者
 ![alt text](own-p.png)
 
-## Own
+## 自有属性——Own properties
 hasOwnProperty、Object.getOwnPropertyNames……
 凡是强调 **Own** 指的是在对象本身上定义的属性，而不是从原型链上继承而来的。
 
-## name、symbol、#
-对象有三种属性，key 类型为字符串的属性，key 类型为 symbol 类型的，而完全私有的 `#` 开头的属性，只有谷歌浏览器的控制台能够访问，其他的方法访问不了 :dog:
+### ... 展开操作符——浅拷贝语义
+该操作符的目的是浅拷贝。
+
+它主要分成两个场景，一个是在方括号 `[]` 里面展开，一个是在花括号 `{}` 里面展开；前者遵从可迭代协议，使用对象的迭代器展开一个可迭代对象。但是，它还实现了一些扩展能力，它可以展开一个普通对象，其展开逻辑是可以认为是浅拷贝
+```js
+const arr = [1, 2]
+const arr2 = [2, 4]
+
+//
+const newArr = [...arr, ...arr2]
+
+const obj = {
+  name: 'zs'
+}
+
+const zs = {
+  ...obj,
+  age: 18
+}
+```
+
+## key 类型——name、symbol、#
+对象的 key 可以有三种属性，key 类型为字符串的属性，key 类型为 symbol 类型的，而完全私有的 `#` 开头的属性，只有谷歌浏览器的控制台能够访问，其他的方法访问不了 :dog:
 ```js
 Object.getOwnPropertyNames
 Object.getOwnPropertySymbols
 Object.getOwnPropertyDescriptors
 ```
 
-## Enumerable 和 for...in
-**对象的可枚举属性且不是 Symbol 类型的 key，可以通过 for...in 循环进行遍历，该遍历包括对象自身的和继承的可枚举属性。**
-
+## 可枚举属性——Enumerable
 可枚举属性是指那些内部“可枚举”标志设置为 true 的属性，而平常我们在使用一些内置方法的时候，会默认将对象设置一些初始值
 + 对于通过直接的赋值和属性初始化的属性，该标识值默认为即为 true；
-+ 对于通过 Object.defineProperty 等定义的属性，该标识值默认为 false；
++ 对于通过 `Object.defineProperty` 等定义的属性，该标识值默认为 false；
 + 对于原型链上的方法默认为 false，而访问器默认为 true；这是由于使用 class 语法定义的类，其原型链上的方法默认是不可枚举的，该行为是根据 ES 规范决定的；
 + Symbol 类型的 key 值的属性，默认为 false；
+
+### for..in 循环
+对象的可枚举属性且为 string key，可以通过 for...in 循环进行遍历，该遍历包括对象自身的和继承的可枚举属性。
 
 ## Descriptor
 用于描述一个对象的某个 key 值所代表的属性的配置对象。
