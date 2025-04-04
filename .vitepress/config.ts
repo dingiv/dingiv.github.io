@@ -10,7 +10,7 @@ const srcDir = resolve('src')
 // https://vitepress.dev/reference/site-config
 export const createConfig = () => defineConfig({
   title: "漫话随笔",
-  description: "漫话前端——我的前端学习随笔",
+  description: "我的计科学习随笔",
   srcDir: srcDir,
   outDir: 'docs',
   lang: 'zh-CN',
