@@ -1,1 +1,0 @@
-import{_ as i,c as a,o as h,ae as k}from"./chunks/framework.Dh1jimFm.js";const g=JSON.parse('{"title":"io 操作","description":"","frontmatter":{},"headers":[],"relativePath":"embed/c/io.md","filePath":"embed/c/io.md"}'),n={name:"embed/c/io.md"};function t(l,s,p,e,r,E){return h(),a("div",null,s[0]||(s[0]=[k("",5)]))}const y=i(n,[["render",t]]);export{g as __pageData,y as default};
