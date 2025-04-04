@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "漫话前端"
-  text: "我的前端学习随笔"
-  tagline: 动手写下可能
+  name: 漫话随笔
+  text: 随手写的计科笔记
+  tagline: 记下火花点点，汇成思维明灯
   actions:
     - theme: brand
       text: 概要
