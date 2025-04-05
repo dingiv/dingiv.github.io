@@ -49,7 +49,7 @@ order: 40
 
 | Capacitor               | Neutralino                 | Webview                 |
 | ----------------------- | -------------------------- | ----------------------- |
-| ![capacitor](image.png) | ![neutralino](image-1.png) | ![webview](image-2.png) |
+| ![capacitor](capacitor.png) | ![neutralino](neutralino.png) | ![webview](webwiew.png) |
 
 ## Web 框架
 
