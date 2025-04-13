@@ -1,0 +1,1 @@
+import{_ as t,c as e,o as r}from"./chunks/framework.Dh1jimFm.js";const d=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"client/rust/macro.md","filePath":"client/rust/macro.md"}'),a={name:"client/rust/macro.md"};function c(o,s,n,i,m,p){return r(),e("div")}const l=t(a,[["render",c]]);export{d as __pageData,l as default};
