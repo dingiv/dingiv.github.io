@@ -30,7 +30,7 @@ export const createConfig = () => defineConfig({
     socialLinks: [
       {
         icon: 'github',
-        link: 'https://github.com/JG-Ding/JG-Ding.github.io'
+        link: 'https://github.com/dingiv/dingiv.github.io'
       }
     ],
     docFooter: {
