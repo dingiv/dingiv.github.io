@@ -63,7 +63,7 @@ linux 的视图系统是应用进程通过显示器形成可视化的图形用�
   i915（Intel）、amdgpu（AMD）、nvidia（NVIDIA）；
 
 
-## Windows 视图系统结构对比
+### Windows 视图系统结构对比
 Windows 是闭源系统，其窗口系统被封装在系统内部，运行在内核态。上层应用程序通过 win32 API 创建和管理窗口。在 GPU 加速方面，使用 Windows 自有的 Direct2D API 进行加速。在没有 GPU 的机器上使用 GDI 渲染模式，对标 Linux 上的软件渲染。
 
 
