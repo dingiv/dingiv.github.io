@@ -1,9 +1,7 @@
-# 浏览器渲染生命周期
-
+# 渲染周期
 本文详细介绍网页从用户输入URL到页面完全加载、交互、最终关闭的整个生命周期过程，深入剖析浏览器是如何工作的。
 
 ## 页面生命周期概览
-
 一个网页的完整生命周期包括以下几个阶段：
 
 ```
@@ -11,7 +9,6 @@
 ```
 
 ## 导航阶段
-
 ### 1. 用户输入处理
 
 当用户在地址栏输入URL时：
@@ -31,7 +28,6 @@
    - 检查和应用同源策略
 
 ### 2. 导航决策
-
 一旦确定了目标URL：
 
 1. **检查缓存**
@@ -487,8 +483,8 @@ window.addEventListener('load', () => {
   const perfData = window.performance.timing;
   const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
   console.log(`页面加载时间: ${pageLoadTime}ms`);
-  
+
   const domReadyTime = perfData.domComplete - perfData.domLoading;
   console.log(`DOM处理时间: ${domReadyTime}ms`);
 });
-``` 
+```

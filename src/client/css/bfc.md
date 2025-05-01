@@ -1,8 +1,7 @@
 # 块级格式上下文
-区块格式化上下文（Block Formatting Context，BFC）是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。其定义洋洋洒洒在[mdn](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_display/Block_formatting_context)写了一堆。
+区块格式化上下文（Block Formatting Context，BFC）是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。其定义洋洋洒洒在[mdn](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_display/Block_formatting_context)写了一堆。但是总结起来，可以将其作用认为是识别浮动边界、隔离影响。BFC 是一个独立的区域，在这个容器中按照一定规则进行物品摆放，并且不会影响其它环境中的物品。
 
-但是总结起来，可以将其作用认为是识别浮动边界、隔离影响。BFC 是一个独立的区域，在这个容器中按照一定规则进行物品摆放，并且不会影响其它环境中的物品。
-如何创建：总结起来就是，普通的 display 为 block 的元素不是，其他大部分都是 bfc。例如：
+如何创建？总结起来就是，普通的 display 为 block 的元素不是，其他大部分都是 bfc。例如：
 
 1. 根元素或包含根元素的元素
 2. 浮动元素 float ＝ left | right 或 inherit（≠ none）

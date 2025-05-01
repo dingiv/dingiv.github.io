@@ -12,7 +12,6 @@
 ![image](./z-index.png)
 
 ## 层叠上下文的产生
-
 层叠上下文的创建有两种情况，一种是强制创建，一种是可选创建。
 
 - 强制创建：
@@ -22,6 +21,7 @@
   4. mix-blend-mode 不为 normal；
   5. isolation=isolate；
   6. 使用了 CSS3 的动画特性，例如：filter、transform、will-change、clip-path……
-- 可选创建：指定 z-index 不为 auto；在此基础上，z-index 的
+- 可选创建：指定 z-index 不为 auto，那么可以进一步执行一下的操作，使其创建一个层叠上下文
   1. position 设置为 relative、absolute；
-  2. flexbox 和 grid 的子元素；另外，position 不为 none 的时候同时会创建一个偏移上下文。
+  2. flexbox 和 grid 的子元素；
+  > ps：position 不为 none 的时候同时会创建一个**偏移上下文**。
