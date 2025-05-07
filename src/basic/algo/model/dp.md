@@ -48,6 +48,18 @@ function getResult(dp) {
 }
 ```
 
+## 自底向上和自顶向下
+动态规划有两种表现方法，一种是 dp 数组法，一种是记忆化搜索 dfs 函数，以递归的形式出现；两者在一定程度上是等价的。
+
+使用 `dp` 数组意味着自底向上的生成顺序，使用 `dfs` 递归函数是使用自顶向下的生成顺序，这两种方式的方向不同。但是，他们的**维度**相同（即 dp 数组的维度 index 等价于 dfs 函数的参数），转移方程也类似，二者几乎是等价的。对于 dp 的维度 index 或者是 dfs 的参数，必须是纯数字或者是字符串，字符串的情况下，dp 数组需要使用 hash 表，dfs 函数正常使用 string 类型的参数。
+
+一般地，dfs 函数可以实现的情况，用 dp 数组也可以实现；dfs 函数胜在，如果题目中的生成顺序是自顶向下的，那么使用 dfs 会显得代码简单。
+```
+// 斐波那契
+dp[i] = dp[i-1] + dp[i-2];
+dfs(i) = dfs(i-1) + dfs(i-2);
+```
+
 ## 经典问题示例
 
 ### 1. 斐波那契数列
@@ -85,7 +97,7 @@ function longestCommonSubsequence(text1, text2) {
     const m = text1.length;
     const n = text2.length;
     const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-    
+
     for (let i = 1; i <= m; i++) {
         for (let j = 1; j <= n; j++) {
             if (text1[i-1] === text2[j-1]) {
@@ -105,7 +117,7 @@ function longestCommonSubsequence(text1, text2) {
 function knapsack(weights, values, W) {
     const n = weights.length;
     const dp = Array.from({ length: n + 1 }, () => Array(W + 1).fill(0));
-    
+
     for (let i = 1; i <= n; i++) {
         for (let w = 1; w <= W; w++) {
             if (weights[i-1] <= w) {
@@ -125,7 +137,7 @@ function knapsack(weights, values, W) {
 function completeKnapsack(weights, values, W) {
     const n = weights.length;
     const dp = Array(W + 1).fill(0);
-    
+
     for (let i = 0; i < n; i++) {
         for (let w = weights[i]; w <= W; w++) {
             dp[w] = Math.max(dp[w], dp[w-weights[i]] + values[i]);
@@ -141,7 +153,7 @@ function completeKnapsack(weights, values, W) {
 function maxProfit(prices) {
     let minPrice = Infinity;
     let maxProfit = 0;
-    
+
     for (let price of prices) {
         minPrice = Math.min(minPrice, price);
         maxProfit = Math.max(maxProfit, price - minPrice);
@@ -182,7 +194,7 @@ function fibonacciCompressed(n) {
 function knapsackRolling(weights, values, W) {
     const n = weights.length;
     const dp = Array(W + 1).fill(0);
-    
+
     for (let i = 0; i < n; i++) {
         for (let w = W; w >= weights[i]; w--) {
             dp[w] = Math.max(dp[w], dp[w-weights[i]] + values[i]);
@@ -209,45 +221,7 @@ function fibonacciMemo(n) {
 ```
 
 ## 常见问题类型
-
-1. **线性DP**
-   - 最长递增子序列
-   - 最大子数组和
-   - 编辑距离
-
-2. **区间DP**
-   - 矩阵链乘法
-   - 石子合并
-   - 回文子串
-
-3. **树形DP**
-   - 二叉树最大路径和
-   - 树的最大独立集
-   - 树的最小支配集
-
-4. **状态压缩DP**
-   - 旅行商问题
-   - 数位DP
-   - 轮廓线DP
-
-## 解题技巧
-
-1. **确定状态**
-   - 明确状态表示
-   - 选择合适的状态维度
-   - 考虑状态转移的可行性
-
-2. **状态转移**
-   - 分析状态之间的关系
-   - 考虑所有可能的情况
-   - 注意边界条件
-
-3. **优化空间**
-   - 使用滚动数组
-   - 状态压缩
-   - 降维处理
-
-4. **代码实现**
-   - 注意数组边界
-   - 处理特殊情况
-   - 优化空间复杂度
+1. 线性DP，最长递增子序列，最大子数组和，编辑距离
+2. 区间DP，矩阵链乘法，石子合并，回文子串
+3. 树形DP，二叉树最大路径和，树的最大独立集，树的最小支配集
+4. 状态压缩DP，旅行商问题，数位DP，轮廓线DP
