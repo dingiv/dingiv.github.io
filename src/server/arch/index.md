@@ -1,4 +1,9 @@
-# web集群
+---
+title: 集群
+order: 40
+---
+
+# Web 集群架构
 
 ![alt text](web集群架构.png)
 

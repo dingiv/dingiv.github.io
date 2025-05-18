@@ -1,56 +1,7 @@
 # 图形学
-计算机图形学是研究如何在计算机上生成、处理和显示图形的学科。它涵盖了从 2D 图像处理到 3D 场景渲染的广泛领域。本章将从理论知识的角度介绍图形学的内容，后续章节将从工程的角度介绍[视图系统](/kernel/linux/video)
-
-## 基本概念
-
-### 坐标系统
-1. **世界坐标系**：描述物体在3D空间中的位置
-2. **相机坐标系**：以相机为原点的坐标系
-3. **屏幕坐标系**：2D显示设备的坐标系
-4. **纹理坐标系**：用于纹理映射的UV坐标系
-
-### 基本变换
-1. **平移变换**：改变物体的位置
-2. **旋转变换**：改变物体的方向
-3. **缩放变换**：改变物体的大小
-4. **投影变换**：将3D场景投影到2D平面
-
-```js
-// 4x4变换矩阵示例
-class Matrix4x4 {
-  constructor() {
-    this.elements = new Float32Array(16);
-    this.identity();
-  }
-
-  identity() {
-    this.elements.fill(0);
-    this.elements[0] = 1;
-    this.elements[5] = 1;
-    this.elements[10] = 1;
-    this.elements[15] = 1;
-  }
-
-  translate(x, y, z) {
-    this.elements[12] = x;
-    this.elements[13] = y;
-    this.elements[14] = z;
-  }
-
-  rotate(angle, axis) {
-    // 旋转矩阵实现
-  }
-
-  scale(x, y, z) {
-    this.elements[0] = x;
-    this.elements[5] = y;
-    this.elements[10] = z;
-  }
-}
-```
+计算机图形学是研究如何在计算机上生成、处理和显示图形的学科。它涵盖了从 2D 图像处理到 3D 场景渲染的广泛领域。
 
 ## 渲染管线
-
 现代图形渲染管线包含以下主要阶段：
 
 1. **顶点处理**
