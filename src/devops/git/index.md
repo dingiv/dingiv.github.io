@@ -1,4 +1,9 @@
-# git
+---
+title: Git
+order: 20
+---
+
+# Git
 
 ## commit。约定式提交
 + feat: 新功能、新特性

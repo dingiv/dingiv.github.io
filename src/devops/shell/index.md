@@ -1,3 +1,8 @@
+---
+title: Shell
+order: 10
+---
+
 # Shell
 shell 是 linux 系统提供内置脚本系统，用户可以通过 shell 命令来与系统进行交互。
 
