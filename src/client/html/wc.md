@@ -1,4 +1,4 @@
-# web component
+# Web Component
 原生的 web 元素组件化能力，使用全局 API `customElements.define()` 来进行注册，单个元素的声明使用 class 语法，继承 HTMLElement 进行书写，该类实例化之后，成为 DOM 元素实例，需要在元素的身上定义几个关键的 hooks 函数，然后来对元素的逻辑进行管理。
 
 ## hooks
