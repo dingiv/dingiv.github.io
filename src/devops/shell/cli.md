@@ -17,6 +17,14 @@
 - dd：数据复制
 - lsblk/df/du：块设备/磁盘空间管理
 
+## 内存管理
+- free：查看系统内存使用概况
+- top / htop：查看实时内存使用
+- vmstat：查看内存、CPU 和 IO 状态
+- smem：查看进程实际使用的内存
+- /proc/meminfo：系统内存状态详细信息
+- /proc/[pid]/maps、smaps：查看进程内存映射
+
 ## 包管理
 - apt：Debian/Ubuntu 包管理
 - yum/dnf：RHEL/CentOS 包管理
