@@ -1,1 +1,0 @@
-import{_ as l,c as e,o,ae as t}from"./chunks/framework.Cthp9TdA.js";const I=JSON.parse('{"title":"io","description":"","frontmatter":{},"headers":[],"relativePath":"client/js/io.md","filePath":"client/js/io.md"}'),a={name:"client/js/io.md"};function r(s,i,n,c,_,d){return o(),e("div",null,i[0]||(i[0]=[t("",3)]))}const P=l(a,[["render",r]]);export{I as __pageData,P as default};
