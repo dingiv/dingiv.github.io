@@ -82,47 +82,11 @@ Windows 是闭源系统，其窗口系统被封装在系统内部，运行在内
 在 GPU 渲染场景下，渲染引擎依然需要申请一个窗口作为绘制图形的画布，但是这个画布是为 GPU 申请的，渲染引擎通过图形 API 指挥 GPU 完成绘制工作。二者在系统层中有着显著的差异。
 
 ### 图形 API
-图形 API 是渲染引擎与 GPU 交互的桥梁。
+GPU 提供给上层应用的调用的接口，往往由渲染引擎进行调用。
 - OpenGL 就是一个开放的图形 API 接口，用于调用 GPU 和 GPU 驱动层进行交互，它是跨平台的标准。
 - DirectX 是一个 windows 平台专属的图形 API，用于在 Windows 平台上操作 GPU。
 - Metal 是一个苹果系统的专属 API，使用在 IOS 和 MAC 系统上。
 - Vulkan 是安卓系统的专属 API。
-
-### 常见的渲染引擎
-渲染引擎分为，2D 和 3D，实时和非实时。
-
-2D 图形和 3D 场景的渲染有着显著的差异，2D 图形的绘制可以直接基于一个平面进行绘制，但是 3D 场景的渲染就要引入复杂计算机图形学理论，使用场景、灯光、相机等概念，将一个 3D 场景变成一张二维的图形。而且 2D 渲染一般使用简单的指令，3D 渲染往往需要使用 3D 模型作为输入，其数据量陡然提升。
-
-实时渲染引擎强调可交互，要求快速在短时间内进行连续渲染，最低要求每帧 < 16.7ms（60 FPS），优点是，速度快：毫秒级帧率，适合交互；动态性：支持用户输入（如 WASD 移动）；跨平台：Unity/Unreal 支持 Linux、移动端。缺点：质量有限：光照近似，细节不如离线；硬件需求：需高性能 GPU（如 RTX 3080）；优化复杂：需手动调整 LOD、阴影质量。
-
-非实时渲染强调高质量渲染。优点：高质量：接近真实光影，适合电影；灵活性：支持复杂材质、场景；Linux 友好：渲染农场（Cycles、Arnold）效率高。缺点：速度慢：单帧可能数分钟；无交互：无法实时调整视角；资源密集：大场景需高内存（128GB+）。
-
-2D
-+ Skia  
-  Google 开发的开源 2D 图形库，性能优异，跨平台。  支持多种后端：OpenGL、Vulkan、Metal（macOS）、Direct2D（Windows）、软件渲染。  高性能光栅化，擅长路径、文本、图像绘制。模块化，易于集成。Google Chrome（Blink 渲染引擎的底层）、Flutter（跨平台 UI 框架）、Qt 6（可选）、Android 系统（UI 渲染）。
-+ Direct2D  
-  软微的 Windows 平台原生引擎，封装程度较高，直接包含了图形 API 和引擎。Windows 应用（UWP、Win32）、Edge 浏览器（部分 UI 渲染）、Office 套件（图形绘制）。
-+ Core Graphics (Quartz 2D)
-  苹果的原生引擎，封装程度较高，直接包含了图形 API 和 引擎。AppKit/UIKit（macOS/iOS 应用）、Safari（部分 UI）、Xcode（图形编辑）。
-+ Blend2D  
-  新兴的开源 2D 渲染引擎，专注于高性能矢量图形。小众项目，图形编辑器、游戏原型、嵌入式设备（低资源需求）。
-+ AGG (Anti-Grain Geometry)  
-  开源 2D 渲染库，专注于高质量矢量图形。软件渲染，强调抗锯齿和精度、轻量，C++ 实现、支持 OpenGL（需扩展）。
-+ Pixman  
-  低级像素操作库，Cairo 后端。软件渲染，专注像素混合，Cairo、X11、Wayland，Linux 环境嵌入式常见。
-
-3D
-+ Cycles  
-  Blender 的路径追踪引擎，可通过插件间接用于 Maya。开源，CPU 和 GPU（CUDA、OptiX）。非实时，高质量。低预算项目。通过 Blender Linux 版桥接，完美支持。
-+ Arnold  
-  Autodesk 收购的路径追踪（Path Tracing）渲染器，2016 年起成为 3ds Max 默认引擎。光线追踪，擅长物理真实感（PBR）。支持 CPU 和 GPU（最多 8 张 GPU）渲染。跨平台，但是 Windows（3ds Max 主平台），Linux 有限支持。优化复杂场景，内存效率高。游戏预渲染。建筑可视化。
-+ Unity Engine  
-  渲染管线：URP（通用管线）：光栅化渲染方案。HDRP（高保真管线）：光线追踪渲染方案。  
-  实时渲染，依赖 Vulkan/OpenGL。可导入 3ds Max/Maya 资产（FBX）。用途：游戏、AR/VR。Unity Editor 支持 Linux，Vulkan 优化好。
-+ Unreal Engine  
-  渲染管线：Nanite（虚拟几何）。Lumen（动态光照）。  
-  实时光线追踪，Vulkan/DirectX。高保真，接近 Arnold 品质。用途：游戏（《堡垒之夜》）、虚拟制作。Unreal 可导入 Maya 模型，配合 Datasmith 插件优化流程。支持 Linux 构建，Wayland 改进中。
-+ Godot Engine
 
 ## 窗口系统
 linux 窗口系统，利用系统调用操作和管理包括屏幕、键盘、鼠标、GPU等用户图形交互设备，抽象和管理桌面窗口的数据结构，向其它应用程序提供窗口 API，应用程序只需调用其 API，便可获得一个窗口，并能够在上面绘制自己的图形。

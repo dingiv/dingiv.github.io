@@ -18,10 +18,16 @@ order: 40
 
 除此之外，还有一些其他的模块需要处理：例如：实现 Webgl/WebGPU 图形 API 标准、Web 媒体资源编码和压缩、HTML 的 SVG 语法扩展等等
 
-> 主流浏览器及其内核
-> - Chrome, Edge: Blink (基于WebKit分支) + V8
-> - Firefox: Gecko + SpiderMonkey
-> - Safari: WebKit + JavaScriptCore
+### 主流浏览器及其内核
+| 特性    | Gecko           | Blink (Chrome) | WebKit (Safari) |
+| ----- | --------------- | -------------- | --------------- |
+| 所属项目  | Mozilla Firefox | Chromium 项目    | Apple Safari    |
+| JS 引擎 | SpiderMonkey    | V8             | JavaScriptCore  |
+| 样式计算  | Stylo（Rust）     | Blink（C++）     | WebCore         |
+| 多进程支持 | 支持              | 支持             | Safari 支持       |
+| 渲染架构  | WebRender + GPU | Skia           | CoreGraphics    |
+| 开源许可  | MPL             | BSD-like       | LGPL/MPL 兼容     |
+
 
 ### 事件循环（Event Loop）
 
