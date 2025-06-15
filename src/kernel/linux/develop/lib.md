@@ -3,7 +3,6 @@
 ## 开发库
 
 ### Glib
-
 Glib 是由 GNU 书写的 C 语言通用跨平台库，广泛应用于 C 语言程序中。它提供 C 标准库所没有的很多上层 API 封装，简化了 C 语言的开发和使用，包括：
 - 内存管理
 - 字符串处理
@@ -116,22 +115,3 @@ Scatter/Gather I/O（分散-聚集 I/O）是一种高效的数据传输技术：
 - 通过 `sys/syscall.h` 扩展系统调用接口
 - 使用 `syscall` 函数，参数为系统调用号（`SYS_xxx`）
 
-## 日志管理
-
-### 内核日志
-- 使用 `printk` 函数打印日志
-- 驱动可使用 `dev_printk`（自动携带设备信息）
-
-### 用户态日志
-- 需要自行实现日志系统
-- 可使用 systemd-journald 服务
-
-### Systemd 日志管理这是一个常常伴随系统安装的用户态进程，用于管理机器上服务，同时也自带了一个日志模块-systemd-journald，它会定期读取
-内核日志，并将内核日志输出到位置ソvar／log／syslog｀文件中；同时它也向用户态的程序提供了一个＇syslog 函数接口，用户态程序可以选择使用这个函数来使用提供的日志打印系统和服务。syslog 函数会将日志消息发送给 systemd-journald 守护进程，具体的日志管理由它完成。
-- systemd-journald 定期读取内核日志
-- 输出到 `/var/log/syslog`
-- 提供 `syslog` 函数接口
-- 使用 `journalctl` 查看日志：
-  ```bash
-  journalctl -n 100  # 查看最近 100 条日志
-  ```
