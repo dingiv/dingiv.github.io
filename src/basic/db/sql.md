@@ -1,5 +1,4 @@
 # SQL
-
 SQL（Structured Query Language）是用于管理关系型数据库的标准语言。本文介绍SQL的基础语法和常用操作。
 
 ## 数据定义语言（DDL）

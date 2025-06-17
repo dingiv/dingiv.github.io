@@ -1,7 +1,7 @@
 # 内存管理
-操作系统为进程提供虚拟内存，每个应用程序进程都认为自己独占全部、连续的内存。在64位系统上：
+操作系统为进程提供虚拟内存，每个应用程序进程都认为自己独占全部、连续的内存。在 64 位系统上：
 - 虚拟内存大小为256TB
-- 地址范围：0x0000000000000000 到 0x0000FFFFFFFFFFFF
+- 地址范围：0x0000_0000_00000000 到 0x0000_FFFF_FFFFFFFF，64 为数可以使用 16 个 16 进制数来表示，而由于 linux 中的虚拟内存范围其实最大不超过 0x0000_7fff_ffffffff，因此地址范围可以使用 12 位 16 禁止数来简述：0x0000_00000000 0x7fff_ffffffff
 
 ![](arch.png)
 
@@ -57,12 +57,8 @@ linux 系统的虚拟内存管理采用的是分页方式。不使用分段方�
 
 
 ## 进阶主题
-内核页缓存（Page Cache）与缓冲区（Buffer Cache）
-
-NUMA 架构
-
-内存回收机制（kswapd、OOM Killer）
-
-Cgroup 限制内存使用
-
-Transparent HugePages（THP）
++ 内核页缓存（Page Cache）与缓冲区（Buffer Cache）
++ NUMA 架构
++ 内存回收机制（kswapd、OOM Killer）
++ Cgroup 限制内存使用
++ Transparent HugePages（THP）
