@@ -1,4 +1,4 @@
-# typescript
+# Typescript
 
 一个type的名字代表一个在typescript编译时期存在的编译器使用的值，在运行的时候是不存在的。
 

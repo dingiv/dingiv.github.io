@@ -7,51 +7,59 @@
 ### 专业开发者路径
 `C -> HTML/CSS/JavaScript -> Java`
 
-- C语言：作为"计算机语言的基石"，接近底层硬件，有助于深入理解计算机工作原理
-- H+C+J：构建现代 GUI 应用的快捷工具，上手快速，简单而强大；后期深入学习，理解函数式编程的概念
-- Java：老牌 Web 服务器开发语言，
+- C 语言：作为**当代计算机基石语言**，接近底层硬件，有助于深入理解计算机工作原理
+- Web：构建现代 GUI 应用的快捷工具，上手快速，简单而强大；后期深入学习，理解函数式编程的概念
+- Java：老牌 Web 服务器开发语言，深入学习以理解面向对象编程
 
 ### 业余/非专业路径
-**Python → HTML/CSS/JavaScript**
 
-- **Python**：以简洁易学、功能强大著称的高级语言，适合快速实现想法与自动化工作
+`Python -> HTML/CSS/JavaScript`
+
+- Python：以简洁易学、功能强大著称的高级语言，适合快速实现想法与自动化工作
   - 数据分析与可视化
   - 人工智能与机器学习
   - 自动化脚本与工具开发
+- Web：构建现代 GUI 应用的快捷工具，上手快速，简单而强大，非专业人员也能快速上手
 
 ## 主流编程语言及应用领域
+
 ### C
 汇编语言语法糖，为汇编提供跨硬件平台的能力，使用裸指针，做内存皇帝
+
 - 嵌入式系统：RTOS、STM32
 - 操作系统：Linux、Windows、XNU
 - 系统服务软件：GNU、GTK
 
 ### Python
 易读易写、通用灵活、生态丰富的高级解释型语言
+
 - 数据科学与分析：Pandas, NumPy, Matplotlib
 - 人工智能：TensorFlow, PyTorch, scikit-learn
-- Web开发：Django, Flask
+- Web 开发：Django, Flask
 - 自动化运维：Ansible, SaltStack
 - 网络爬虫：Scrapy, Beautiful Soup
 
 ### JavaScript
-Web前端的核心语言，并以之构建跨平台的 GUI 应用
+Web 前端的核心语言，并以之构建跨平台的 GUI 应用
+
 - 前端开发：React, Vue, Angular
-- 后端开发：Node.js, Express, NestJS
+- 后端开发：Nodejs, Express, Nestjs
 - 跨平台桌面应用：Electron
 - 跨平台移动应用：React Native, Ionic
 - 游戏开发：Three.js, Phaser
 
 ### Java
 强类型、跨平台、企业级应用的首选语言
-- 企业级Web应用：Spring, Jakarta EE
+
+- 企业级 Web 应用：Spring, Jakarta EE
 - 安卓应用开发：Android SDK
 - 大数据处理：Hadoop, Spark
 - 微服务架构：Spring Boot, Spring Cloud
 - 金融系统与大型交易平台
 
 ### C++
-C语言的面向对象扩展，兼具底层操作能力与高级抽象
+C 语言的面向对象扩展，兼具底层操作能力与高级抽象
+
 - 游戏开发：Unreal Engine
 - 高性能计算：CUDA, OpenCL
 - 系统软件：操作系统、数据库引擎
@@ -60,54 +68,51 @@ C语言的面向对象扩展，兼具底层操作能力与高级抽象
 
 ### C#
 微软开发的现代化、安全、高效的面向对象语言
+
 - 游戏开发：Unity
-- Windows桌面应用：WPF, WinUI
+- Windows 桌面应用：WPF, WinUI
 - 跨平台开发：.NET MAUI, Xamarin
-- Web应用：ASP.NET Core
+- Web 应用：ASP.NET Core
 - 企业级应用与云服务：Azure Functions
 
 ## 新兴编程语言
-
 新一代编程语言汲取了前人经验，避开了传统语言的痛点，在性能、安全性、开发体验等方面均有显著提升。了解这些语言有助于把握技术发展趋势。
 
-### Go (Golang)
+### Go
 并发优先、编译快速、部署简单的后端语言
 
-**优势**：
 - 极佳的并发处理能力，适合云原生应用
 - 简洁的语法与丰富的标准库
 - 快速的编译速度与高效的执行效率
 - 优秀的跨平台支持
 
-> 对标Java：如果你追求轻量高效的微服务开发体验，可考虑从Java迁移至Go
+> 对标 Java：如果你追求轻量高效的微服务开发体验，可考虑从 Java 迁移至 Go
 
 ### Rust
 安全、高性能、现代化的系统级编程语言
 
-**优势**：
 - 内存安全保证与零成本抽象
 - 现代化的包管理与工具链
 - 强大的类型系统与模式匹配
-- 出色的跨平台能力与WebAssembly支持
+- 出色的跨平台能力与 WebAssembly 支持
 
-> 对标C++：如果你追求内存安全与高性能并重的开发体验，可考虑从C++迁移至Rust
+> 对标 C++：如果你追求内存安全与高性能并重的开发体验，可考虑从 C++迁移至 Rust
 
 ### Dart
 专为构建用户界面优化的客户端语言
 
-**优势**：
-- Flutter框架提供的流畅跨平台UI体验
-- 声明式UI编程模型
-- 高性能的预编译与JIT编译
-- 与JavaScript生态系统的兼容性
+- Flutter 框架提供的流畅跨平台 UI 体验
+- 声明式 UI 编程模型
+- 高性能的预编译与 JIT 编译
+- 与 JavaScript 生态系统的兼容性
 
-> 对标JavaScript：如果你追求原生性能体验的跨平台移动应用开发，可考虑从JavaScript迁移至Dart
+> 对标 JavaScript：如果你追求原生性能体验的跨平台移动应用开发，可考虑从 JavaScript 迁移至 Dart
 
 ## 语言发展趋势
 新兴语言在特定领域已显示出强大的竞争力，并推动传统语言不断革新：
 
-- Go在云原生和微服务领域的崛起正促使Java社区更加重视轻量化和性能优化
-- Rust的内存安全机制和零成本抽象理念正影响C++的未来发展方向
-- Dart/Flutter在移动端的成功正迫使JavaScript生态系统不断改进其移动性能
+- Go 在云原生和微服务领域的崛起正促使 Java 社区更加重视轻量化和性能优化
+- Rust 的内存安全机制和零成本抽象理念正影响 C++的未来发展方向
+- Dart/Flutter 在移动端的成功正迫使 JavaScript 生态系统不断改进其移动性能
 
 随着技术的发展和行业需求的变化，编程语言会不断进化，但核心编程思想与解决问题的方法将始终适用。选择适合自己的语言，并深入理解其背后的原理，才能在技术变革中保持竞争力。
