@@ -1,5 +1,5 @@
 ---
-title: vite
+title: Vite
 order: 20
 ---
 

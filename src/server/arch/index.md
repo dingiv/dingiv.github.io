@@ -1,5 +1,5 @@
 ---
-title: 集群
+title: 集群架构
 order: 40
 ---
 

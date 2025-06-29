@@ -8,10 +8,7 @@ hero:
   actions:
     - theme: brand
       text: 概要
-      link: /abstrat
-    - theme: alt
-      text: 目录
-      link: /content
+      link: /abstract
     - theme: alt
       text: 随便看看
       link: /examples
