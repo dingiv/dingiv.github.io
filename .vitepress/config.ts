@@ -19,7 +19,8 @@ export const createConfig = () => defineConfig({
     ['link', { rel: 'icon', href: '/favicon.svg' }]
   ],
   vite: {
-    plugins: [vitePluginRestart()]
+    plugins: [vitePluginRestart()],
+    publicDir: 'public'
   },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
