@@ -6,7 +6,7 @@
 - 实时性，对于一些时间敏感的任务，需要能够在要求的时间内完成
 - 公平性，不同的任务都能够获得调度，并且得到应有的执行时间
 
-在不同的使用场景下，调度的目标优先级会有所不同，但是主要矛盾是**实时性**和**公平性**之间的矛盾，因为重要的进程它需要特权和优先，但是公平要求的是每个进程都能够得到充分的执行，我们只能同时满足**高效和实时**或者**高效和公平**。
+在不同的使用场景下，调度的目标优先级会有所不同，但是主要矛盾是**实时性**和**公平性**之间的矛盾，因为重要的进程它需要特权和优先，但是公平要求的是每个进程都能够得到充分的执行。linux 中采用多级优先级处理器来缓解实时性和公平性之间的矛盾。
 
 ## 任务
 任务是调度的基本单位，本质上是进程或线程（在 Linux 内核中，线程和进程本质相同，都是 `task_struct`。线程在 linux 中本质上是共享同一组资源的进程，从内核层面上，线程和进程的并没有什么太大的不同。这一点和其他系统例如 Windows 有显著的不同。这是一种巧妙的实现思路，使得进程的系统调用 API 相较于 Windows 等系统显得非常的简洁，同时在性能角度考虑也更加的轻量。
@@ -113,7 +113,7 @@ Linux 使用调度类（Scheduling Class）来组织不同的调度器，每个�
 + 主动调度/进程主动让出 CPU
   - 进程调用 `sched_yield()` 主动让出 CPU
   - 进程进入阻塞状态（等待 I/O、信号量、事件等）
-  - 进程退出（正常、异常、信号终止）
+- 进程退出（正常、异常、信号终止）
   ```c
   // 主动让出 CPU
   #include <sched.h>
@@ -148,28 +148,28 @@ Linux 使用调度类（Scheduling Class）来组织不同的调度器，每个�
 总体先选调度器，然后让调度器选进程，然后分时间片大小。
 
 1. 调度器选择  
-  Linux 使用调度类优先级来选择调度器：
+   Linux 使用调度类优先级来选择调度器：
 
-  ```c
-  // 调度类优先级（数字越小优先级越高）
-  #define SCHED_CLASS_DEADLINE    0   // 截止时间调度器
-  #define SCHED_CLASS_RT          1   // 实时调度器
-  #define SCHED_CLASS_FAIR        2   // CFS调度器
-  #define SCHED_CLASS_IDLE        3   // 空闲调度器
-  ```
+   ```c
+   // 调度类优先级（数字越小优先级越高）
+   #define SCHED_CLASS_DEADLINE    0   // 截止时间调度器
+   #define SCHED_CLASS_RT          1   // 实时调度器
+   #define SCHED_CLASS_FAIR        2   // CFS调度器
+   #define SCHED_CLASS_IDLE        3   // 空闲调度器
+   ```
 
-  1. 从最高优先级的调度类开始检查
-  2. 如果该调度类有可运行任务，选择该调度类的任务
-  3. 否则检查下一个优先级的调度类
-  4. 重复直到找到可运行任务
+   1. 从最高优先级的调度类开始检查
+   2. 如果该调度类有可运行任务，选择该调度类的任务
+   3. 否则检查下一个优先级的调度类
+   4. 重复直到找到可运行任务
 
 2. 进程选择  
-  进入不同的调度器之后，不同的调度器使用自身的策略来选择要运行的进程
-  - CFS 进程选择
-  ```c
-  // CFS 选择虚拟运行时间最小的进程
-  struct task_struct *pick_next_task_fair(struct rq *rq)
-  {
+   进入不同的调度器之后，不同的调度器使用自身的策略来选择要运行的进程
+   - CFS 进程选择
+   ```c
+   // CFS 选择虚拟运行时间最小的进程
+   struct task_struct *pick_next_task_fair(struct rq *rq)
+   {
       struct sched_entity *se;
       struct rb_node *left;
       
@@ -178,29 +178,31 @@ Linux 使用调度类（Scheduling Class）来组织不同的调度器，每个�
       se = rb_entry(left, struct sched_entity, run_node);
       
       return task_of(se);
-  }
-  ```
+   }
+   ```
 
-  - 实时进程选择
-  ```c
-  // 实时调度器选择最高优先级进程
-  struct task_struct *pick_next_task_rt(struct rq *rq)
-  {
+   - 实时进程选择
+   ```c
+   // 实时调度器选择最高优先级进程
+   struct task_struct *pick_next_task_rt(struct rq *rq)
+   {
       struct rt_rq *rt_rq = &rq->rt;
       struct rt_prio_array *array;
       
       // 从活跃数组中查找最高优先级进程
       array = &rt_rq->active;
       return array->queue[array->highest_prio];
-  }
-  ```
+   }
+   ```
 
 3. 时间片分配   
-  CFS 时间片计算：
-  ```c
-  // 更新当前进程的运行时间
-  void update_curr_fair(struct rq *rq)
-  {
+   不同的调度器使用各自的时间片分配规则。
+   
+   CFS 时间片计算：
+   ```c
+   // 更新当前进程的运行时间
+   void update_curr_fair(struct rq *rq)
+   {
       struct sched_entity *curr = &rq->curr->se;
       u64 now = rq_clock_task(rq);
       u64 delta_exec = now - curr->exec_start;
@@ -212,18 +214,18 @@ Linux 使用调度类（Scheduling Class）来组织不同的调度器，每个�
       curr->vruntime += calc_delta_fair(delta_exec, curr);
       
       curr->exec_start = now;
-  }
-  ```
+   }
+   ```
 
 4. 上下文切换  
-  在选择好调度的参数的参数，正式开始进行调度的动作，主要包括**保存当前进程状态**和**恢复目标进程状态**。
-  1. 保存当前进程的执行状态，包括通用寄存器、浮点寄存器、程序计数器（PC）、栈指针（SP）以及页表基地址等关键信息到进程控制块 task_struct 中，确保下次调度时能够准确恢复进程的执行环境。
-  2. 恢复目标进程的执行状态，将目标进程控制块中保存的寄存器状态加载到 CPU 中，切换页表以访问目标进程的内存空间，并恢复执行上下文，使目标进程能够从上次中断的地方继续执行。
+   在选择好调度的参数的参数，正式开始进行调度的动作，主要包括**保存当前进程状态**和**恢复目标进程状态**。
+   1. 保存当前进程的执行状态，包括通用寄存器、浮点寄存器、程序计数器（PC）、栈指针（SP）以及页表基地址等关键信息到进程控制块 task_struct 中，确保下次调度时能够准确恢复进程的执行环境。
+   2. 恢复目标进程的执行状态，将目标进程控制块中保存的寄存器状态加载到 CPU 中，切换页表以访问目标进程的内存空间，并恢复执行上下文，使目标进程能够从上次中断的地方继续执行。
 
-  ```c
-  // 简化的上下文切换伪代码
-  void context_switch(struct task_struct *prev, struct task_struct *next)
-  {
+   ```c
+   // 简化的上下文切换伪代码
+   void context_switch(struct task_struct *prev, struct task_struct *next)
+   {
       struct mm_struct *mm, *oldmm;
       
       // 切换内存管理上下文
@@ -236,10 +238,10 @@ Linux 使用调度类（Scheduling Class）来组织不同的调度器，每个�
       
       // 切换寄存器上下文
       switch_to(prev, next, prev);
-  }
-  ```
+   }
+   ```
 
-  上下文切换开销主要包括寄存器保存/恢复（~100-200个时钟周期）、页表切换（~1000-2000个时钟周期）、缓存失效和 TLB 失效，可通过延迟 TLB 失效、缓存亲和性优化和进程迁移限制等策略进行优化。
+   上下文切换开销主要包括寄存器保存/恢复（~100-200个时钟周期）、页表切换（~1000-2000个时钟周期）、缓存失效和 TLB 失效，可通过延迟 TLB 失效、缓存亲和性优化和进程迁移限制等策略进行优化。
 
 ## 调度优化策略
 Linux 内核采用一些常见的优化手段来确保调度的优化。
