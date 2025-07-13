@@ -1,1 +1,0 @@
-import{_ as e,c as t,o}from"./chunks/framework.Dgg8-8ov.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"kernel/linux/develop/lock.md","filePath":"kernel/linux/develop/lock.md"}'),n={name:"kernel/linux/develop/lock.md"};function r(a,l,c,s,p,d){return o(),t("div")}const k=e(n,[["render",r]]);export{_ as __pageData,k as default};
