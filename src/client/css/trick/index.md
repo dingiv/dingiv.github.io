@@ -1,3 +1,8 @@
+---
+title: CSS trick
+order: 9999
+---
+
 # CSS trick
 在工程化项目中，css 的规模非常大，并且 css 本身具有混乱 debuff，管理起来非常痛苦。css 的解决方案有很多，但是多也造成了技术选型的困难。
 

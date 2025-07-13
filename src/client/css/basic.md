@@ -1,8 +1,9 @@
 ---
-title: 属性
+title: 语言基础
+order: 0
 ---
 
-# CSS 属性
+# CSS
 
 ## 层叠性
 

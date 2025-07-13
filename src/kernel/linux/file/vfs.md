@@ -2,13 +2,90 @@
 Linux 继承了 Unix 系统的经典哲学——**一切皆文件**的思想。虚拟文件系统（Virtual File System，VFS）是 Linux 内核中的一个重要抽象层，它为不同的文件系统提供了统一的接口，使得应用程序可以用相同的方式访问不同类型的文件系统。
 
 VFS 的主要作用是：
-1. 统一接口抽象：为各种文件系统提供统一的 API 接口，包括 open、read、write、close 等系统调用
-2. 文件系统抽象：将不同的文件系统（如 ext4、NTFS、NFS 等）抽象为统一的文件系统接口
-3. 设备抽象：将硬件设备（如磁盘、网络设备、字符设备）抽象为文件
-4. 进程间通信抽象：将管道、套接字等 IPC 机制也抽象为文件
-5. 系统信息抽象：将系统信息（如/proc、/sys）也以文件形式提供
+1. 统一文件操作接口：为各种文件系统提供统一的 API 接口，包括 open、read、write、close 等系统调用，抹平不同的文件系统（如 ext4、NTFS、NFS 等）的差异；
+2. 系统信息和硬件信息抽象：将系统内部的信息以虚拟文件的形式挂载到 VFS 中的**临时文件** `devtmpfs` 节点，用户进程可以通过访问文件的方式来获取系统的信息，包括管道、套接字、/proc、/sys等；将硬件设备（如磁盘、网络设备、字符设备）抽象为文件；
+3. 作为系统调用接口的补充：系统调用接口的数量有限，且长期保持稳定，新的内核模块可以通过暴露虚拟文件接口，让用户程序以操作文件的方式与内核模块交互；
 
-### VFS 的架构设计
+## 层次结构
+VFS 是一个从上到下的层次结构
++ 用户态文件句柄 file
++ 内核态文件树节点 dentry
++ 物理数据映射节点 inode
+
+特别地，对于磁盘管理
++ 文件系统结构 super_block
++ 文件系统磁盘元数据
+
+## 用户态文件句柄
+用户态进程需要访问一个文件的时候，需要先打开一个文件，打开文件的过程就是创建一个文件句柄的过程。文件句柄的内核态数据结构是 `struct file`，用户态通过 open 函数返回的**文件描述符**（一个 int 类型的文件 id），每一个进程所打开的文件都会保存在进程的结构体中，从而存储进程所持有的文件资源。
+
+```c
+struct file {
+    struct path f_path;             // 文件路径
+    struct inode *f_inode;          // 关联的inode
+    const struct file_operations *f_op; // 文件操作函数
+    spinlock_t f_lock;              // 文件锁
+    atomic_long_t f_count;          // 引用计数
+    unsigned int f_flags;           // 文件标志
+    fmode_t f_mode;                 // 文件模式
+    struct mutex f_pos_lock;        // 位置锁
+    // ...
+};
+```
+
+## 内核态文件树节点
+在内核的内存中驻留着一个全局的虚拟文件树，用于向用户空间提供结构化的文件目录系统，用户可以通过文件的形式访问系统的各个资源和文件，这层结构是向上提供的抽象。
+
+树中的每一个节点都是使用一个 dentry 结构来表示，这是一个树节点。通过该节点可以访问父目录和该目录中内容，或者说它是一个文件。
+```c
+struct dentry {
+    unsigned int d_flags;           // 目录项标志
+    struct dentry *d_parent;        // 父目录项
+    struct qstr d_name;             // 文件名
+    struct inode *d_inode;          // 关联的 inode
+    const struct dentry_operations *d_op; // 目录项操作函数
+    struct super_block *d_sb;       // 所属超级块
+    struct list_head d_child;       // 子目录项链表
+    struct list_head d_subdirs;     // 子目录链表
+    // ...
+};
+```
+
+每一个 dentry 都必须关联一个 inode，用于指向这个文件代表的真实物理资源。
+
+## 物理数据映射节点
+Linux 中的设备主要就是分为三种，字符设备、块设备、网络设备，访问虚拟文件树时，一个文件必须关联到一个真实的物理资源上，也就是这三种设备中的一种。
+
+```c
+struct inode {
+    umode_t i_mode;                 // 文件类型和权限
+    uid_t i_uid;                    // 用户ID
+    gid_t i_gid;                    // 组ID
+    const struct inode_operations *i_op; // inode 操作函数
+    const struct file_operations *i_fop; // 文件操作函数
+    struct super_block *i_sb;       // 所属超级块
+    struct address_space *i_mapping; // 地址空间
+    unsigned long i_ino;            // inode号
+    atomic_t i_count;               // 引用计数
+    unsigned int i_nlink;           // 硬链接数
+    dev_t i_rdev;                   // 设备号
+    loff_t i_size;                  // 文件大小
+    struct timespec i_atime;        // 访问时间
+    struct timespec i_mtime;        // 修改时间
+    struct timespec i_ctime;        // 创建时间
+    spinlock_t i_lock;              // inode锁
+    struct mutex i_mutex;           // inode互斥锁
+    // ...
+};
+```
+
+### 字符设备
+一个字符设备被看作一个 inode，使用一个 inode 进行抽象，
+
+
+### 块设备
+
+### 网络设备
 
 
 ### VFS 的核心数据结构
@@ -327,20 +404,3 @@ static const struct file_operations socket_file_ops = {
     .release = sock_close,
 };
 ```
-
-### VFS 的优势
-
-1. **统一接口**：所有文件系统都使用相同的系统调用接口
-2. **可扩展性**：可以轻松添加新的文件系统类型
-3. **设备抽象**：将硬件设备抽象为文件，简化设备访问
-4. **进程间通信**：通过文件接口实现进程间通信
-5. **系统信息访问**：通过文件接口访问系统信息
-
-### VFS 的挑战
-
-1. **性能开销**：VFS 层增加了额外的系统调用开销
-2. **复杂性**：需要处理各种文件系统的差异
-3. **缓存管理**：需要管理复杂的缓存层次结构
-4. **并发控制**：需要处理多进程并发访问的同步问题
-
-通过 VFS，Linux 实现了"一切皆文件"的设计哲学，为应用程序提供了统一、简洁的文件访问接口，大大简化了系统编程的复杂性。
