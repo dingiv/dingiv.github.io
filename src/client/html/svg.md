@@ -1,3 +1,8 @@
+---
+title: SVG
+order: 20
+---
+
 # SVG
 SVG（Scalable Vector Graphics，可缩放矢量图形）是一种基于 XML 纯文本的图片格式，广泛用于网页设计、图标和图形展示。与 JPEG 和 PNG 等位图格式不同，SVG 是矢量格式，具有独特的特性和优势。
 
