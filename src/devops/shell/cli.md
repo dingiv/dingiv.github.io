@@ -16,6 +16,8 @@
 - fio_libaio：异步 I/O 测试
 - dd：数据复制
 - lsblk/df/du：块设备/磁盘空间管理
+- udev
+- mount/umount
 
 ## 内存管理
 - free：查看系统内存使用概况
