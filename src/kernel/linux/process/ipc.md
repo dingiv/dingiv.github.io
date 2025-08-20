@@ -167,6 +167,9 @@ int main() {
 - `SIGKILL`：强制终止（不可捕获）
 - `SIGINT`：中断信号（Ctrl+C）
 - `SIGUSR1/SIGUSR2`：用户自定义信号
+- SIGABRT:
+- SIGHUP: 对于控制台程序而言，代表终端被切换到后台了；对于 deamon 程序而言，代表要求重载配置文件；
+- SIGPIPE: 读写
 
 如果程序没有显示注册，操作系统将为其使用默认行为：
 - 终止进程（如 SIGKILL、SIGTERM）

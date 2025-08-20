@@ -13,3 +13,13 @@
 + Cinema 4D。特点：用户友好的界面，适合初学者和专业人士，支持建模、动画、渲染和物理模拟。用途：广告制作、动画制作、电影特效等。
 + SketchUp。特点：简单易用的建模工具，适合快速建模和设计。用途：建筑设计、室内设计、工程规划等。
 + SolidWorks。特点：专注于工程和制造设计，提供强大的实体建模和工程分析工具。用途：工程设计、产品设计、制造业应用等。
+
+## 游戏美工流
+游戏美术资源的典型工作流程：
+
++ 建模（Blender/ZBrush）
++ 贴图（Substance Painter/Krita）
++ 材质（Blender/Unity/UE4）
++ 特效（Niagara/VFX Graph/Houdini）
++ 动画（Blender/Maya）
++ 导出与优化（导出 FBX/glTF 到 Unity、Unreal Engine 4（Publishing License）或 Bevy（Rust））

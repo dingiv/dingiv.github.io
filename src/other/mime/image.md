@@ -20,9 +20,14 @@
 图片编辑软件是主要用来处理和加工已有图片的软件。
 
 - PS（Adobe Photoshop）。强大的图像编辑和绘图软件，适合于位图类型，行业龙头软件。
-- GIMP（GNU Image Manipulation Program）。开源免费的 PS 的对标品。适合于位图。
-- Inkscape。开源免费的矢量图形设计软件。
+- GIMP（GNU Image Manipulation Program）。开源免费的 PS 的对标品，适合于位图。
 - AI（Adobe Illustrator）。矢量图形设计软件，适用于创建标志、插图和排版。
+- Inkscape。开源免费的矢量图形设计软件，对标 AI。
+
+## 动画制作软件
+动画一般是通过多个连续的关键帧形成的流畅画面效果，也有通过骨骼绑定来形成动画的软件。
+
+- spine。2D 游戏动画制作软件，支持 2D 骨骼动画，游戏行业龙头软件。
 
 ## vs code 图片插件
 - [Draw.io Integration](https://github.com/hediet/vscode-drawio)。开源项目[draw.io](https://github.com/jgraph/drawio)的 vs code 集成，该项目是使用 Web 技术编写的流程图编辑器，使用矢量图进行编辑，内置了丰富的基本图形，包括表格等，其数据文件`.drawio`或者`.dio`是基于 xml 语法的纯文本文件，可以输入为 svg、html 和 png 文件，具有非常的高通用性。该插件，额外支持了`.drawio.svg`、`.drawio.png`、`.dio.svg`和`.dio.png`文件，在 vs code 中，该插件将覆盖默认文件行为。
