@@ -18,7 +18,7 @@ order: 50
 并发是多个任务交替执行，而并行是多个任务同时执行。并发是操作系统营造的进程间同时执行的假象，通过时间片轮转的方式让多个进程交替使用 CPU，而并行则需要多核 CPU 的支持，真正实现多个任务的同时执行。
 
 ### 协程（Coroutine）
-协程是一种由程序员控制调度的轻量级线程，具有可**在任意位置暂停和恢复**的特点，相比传统线程它具有资源消耗低、并发性能高和编程模型简单的优势。在现代的应用中，协程是实现异步编程的重要手段，它可以让程序在发生了 IO 调用的时候不再等待，而是切换上下文去执行其他任务。
+协程是一种由程序员控制调度的应用级线程，具有可**在任意位置暂停和恢复**的特点，相比系统级线程它具有资源消耗低、并发性能高和编程模型简单的优势。在现代的应用中，协程是实现异步编程的重要手段，它可以让程序在发生了 IO 调用的时候不再等待，而是切换上下文去执行其他任务。
 
 ## 常见的异步编程模式
 异步编程的本体就是回调函数，程序不再等待一个费时操作的执行，而是事先注册一个回调函数，当操作执行完成后由等待者调用回调函数处理结果。
@@ -33,18 +33,10 @@ fs.readFile('file.txt', (err, data) => {
 });
 ```
 
-### Promise
-Promise 是一种更高级的异步编程模式，它通过状态机来实现异步操作的状态管理，并提供了一个链式调用风格的 API 解决了回调地狱的问题，提供了更清晰的错误处理机制。Promise 对象代表一个异步操作的最终完成或失败，并返回其结果：
+### Promise + async/await
+Promise 是一种更高级的异步编程模式，它通过状态机对象来封装异步操作，并提供了一个链式调用风格的 API 解决了回调地狱的问题，提供了更清晰的错误处理机制。Promise 对象代表一个异步操作的最终完成或失败，并返回其结果。
 
-```javascript
-fetch('https://api.example.com/data')
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error(error));
-```
-
-### async/await
-Async/Await 是异步编程中中断当前函数的语法糖，使得程序员可以像书写同步代码那样来书写异步代码，让异步代码的编写和阅读更加直观和简单。它本质上是一种更优雅的异步编程方式。
+Async/Await 是异步编程中中断当前函数的语法糖，使得程序员可以像书写同步代码那样来书写异步代码，让异步代码的编写和阅读更加直观和简单。它本质上是使用了状态机的语法糖封装，对 Promise 进行了进一步的抽象。
 
 ```javascript
 async function getData() {
@@ -56,11 +48,17 @@ async function getData() {
         console.error(error);
     }
 }
+
+fetch('https://api.example.com/data')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
 ```
 
 ### 事件驱动
-事件驱动模式通过事件发射器和监听器实现异步通信，当特定事件发生时触发相应的处理函数。这种模式特别适合处理用户交互和系统事件，如 Node.js 中的 EventEmitter：
+事件驱动模式通过事件发射器和监听器实现异步通信，当特定事件发生时触发相应的处理函数。事件的监听者注册回调函数，并由底层的事件循环进行阻塞监听或者检测事件队列中的消息，当事件发生时，寻找对应的监听者，并触发事件监听函数。事件发射器可以是底层操作系统事件，如定时器和读写文件，也可以使用程序中的其他模块直接向任务队列中添加消息，被监听器检测到后执行回调任务。
 
+这种模式特别适合处理用户交互和系统事件，如 Node.js 中的 EventEmitter：
 ```javascript
 const EventEmitter = require('events');
 const emitter = new EventEmitter();
@@ -73,7 +71,7 @@ emitter.emit('event', 'Hello World');
 ```
 
 ### 协程
-协程是实现异步编程的一个重要方法，Python 通过 async/await 语法实现协程，而 Go 语言则通过 goroutine 实现轻量级线程。
+协程是实现异步编程的一个重要方法，Python 通过 async/await 语法实现协程，而 Go 语言则通过 goroutine 实现协程。
 
 ```python
 async def fetch_data():
