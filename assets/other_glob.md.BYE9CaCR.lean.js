@@ -1,0 +1,1 @@
+import{_ as o,c,o as d,ae as a}from"./chunks/framework.CBTkueSR.js";const g=JSON.parse('{"title":"glob","description":"","frontmatter":{},"headers":[],"relativePath":"other/glob.md","filePath":"other/glob.md"}'),t={name:"other/glob.md"};function s(l,e,r,i,n,h){return d(),c("div",null,[...e[0]||(e[0]=[a("",36)])])}const b=o(t,[["render",s]]);export{g as __pageData,b as default};

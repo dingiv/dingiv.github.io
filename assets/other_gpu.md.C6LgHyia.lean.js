@@ -1,0 +1,1 @@
+import{_ as d,c as r,o as a,ae as e}from"./chunks/framework.CBTkueSR.js";const u=JSON.parse('{"title":"GPU","description":"","frontmatter":{},"headers":[],"relativePath":"other/gpu.md","filePath":"other/gpu.md"}'),l={name:"other/gpu.md"};function i(h,t,o,n,c,p){return a(),r("div",null,[...t[0]||(t[0]=[e("",33)])])}const A=d(l,[["render",i]]);export{u as __pageData,A as default};
