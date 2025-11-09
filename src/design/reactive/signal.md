@@ -1,4 +1,4 @@
-# Signal 响应式原语
+# Signal
 
 Signal 是一种轻量级的响应式原语，它代表了一个随时间变化的值，并且能够自动追踪依赖关系。Signal 是现代前端框架（如 Vue、Angular、Solid.js、Preact等）中实现响应式系统的核心概念。
 

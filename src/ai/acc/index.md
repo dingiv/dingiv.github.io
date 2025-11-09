@@ -19,7 +19,7 @@ order: 60
 | Apple（苹果）    | Metal Graphics            | Metal Compute（+ Core ML / ANE） |
 | NVIDIA（英伟达） | OpenGL / Vulkan / DirectX | CUDA（核心）                     |
 | AMD（超微）      | OpenGL / Vulkan / DirectX | ROCm（Radeon Open Compute）      |
-| Intel（补充）    | OpenGL / Vulkan / DirectX | oneAPI（DPC++ / SYCL）           |
+| Intel            | OpenGL / Vulkan / DirectX | oneAPI（DPC++ / SYCL）           |
 
 ## Torch
 Torch 框架为了使用硬件加速计算，主动实现各个 GPU 厂商的封装层，将各家的硬件 API 进行屏蔽，从而让上层的数据科学家无需触及糟心而混乱的 GPU 生态，专注于数据训练即可，在调用 torch 的 API 时，torch 将自动识别当前的硬件环境，使用对应的硬件进行加速，当前支持的硬件平台包括：

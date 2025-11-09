@@ -1,4 +1,4 @@
-# MOCm
+# ROCm
 
 
 Radeon Open Compute Platform (ROCm)
