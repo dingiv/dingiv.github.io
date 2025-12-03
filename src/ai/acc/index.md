@@ -1,7 +1,10 @@
 ---
-title: 硬件加速
+title: 加速技术
 order: 60
 ---
+
+# 计算加速技术
+目前的 AI 训练需要大量的计算资源，是阻碍 AI 发展的重大绊脚石。通过计算加速技术提高大模型训练和部署的资源需求，从而大力推动 AI 进化和商业化落地。
 
 # 硬件加速
 使用 GPU 的加速可并行执行的计算任务，目前主要包括俩个领域：图形渲染和科学计算。人工智能领域主要使用科学计算 API 进行加速。
@@ -31,3 +34,6 @@ Torch 框架为了使用硬件加速计算，主动实现各个 GPU 厂商的封
 | Apple M 芯片    | MPS （Metal Performance Shaders） | Metal Compute           |
 | Intel GPU / CPU | XPU  （oneAPI）                   | oneDNN                  |
 | CPU             | Native                            | OpenMP / MKL / BLAS     |
+
+## 并行化
+vllm ，deepspeed，llama.cpp

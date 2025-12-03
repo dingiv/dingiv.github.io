@@ -72,8 +72,14 @@ source .venv/bin/activate
 python main.py
 ```
 
-## 打包
-打包是从开发环境部署到生产环境前的准备工作，或者将自己编写的包发布到远程的 pypi 服务器中。现代 Python 项目推荐使用 pyproject.toml（基于 PEP 517/518），它统一管理元数据、依赖和构建配置，支持多种后端（如 setuptools、flit、poetry）。
+## 项目管理
+Python 项目管理包括，构建、打包、发布、依赖管理等。发布是从开发环境部署到生产环境前的准备工作，或者将自己编写的包发布到远程的 pypi 服务器中。
+
+### setup.py
+旧版本 python 项目管理技术，通过 requirements.txt 来管理的依赖。
+
+### pyproject.toml
+`pyproject.toml` 是 Python 现代项目的标准配置文件，取代了 **setup.py + requirements.txt** 的老方案。它是 PEP 518/517/621 规范定义的统一入口文件，包含项目元数据 + 构建配置 + 依赖管理。在项目构建发布的时候使用。出于安全考虑，使用了 pyproject.toml，取消了 setup.py 的动态执行的能力。不过，由于 requirements.txt 配置简单，使用广泛，pyproject.toml 依然可以与 requirements.txt 混用。
 
 通过配置一个 `pyproject.toml` 文件，定义项目的依赖和数据，从而通过 `build` 模块进行打包和构建。构建完成后，在 dist 目录下将会出现一个压缩包，便是构建产物。
 ```bash

@@ -137,3 +137,11 @@
 21. Index / IndexMut `[n]` 下标访问
 22. \[Xxx\]Assign
 23. ...
+
+
+## trait bound 自约束
+
+
+## 泛型实现
+为任意类型实现一个trait
+
