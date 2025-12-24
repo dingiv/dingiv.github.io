@@ -68,6 +68,10 @@ Geforce RTX 型号专注于消费级市场。其中 RTX 50X0 系列属于 Blackw
 
 ### 专业级 Quadro
 
+<a href="https://www.nvidia.com/en-us/products/workstations/quadro/"><img src="./quadro.png" /></a>
+
+<a href="https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/"><img src="./quadro-pro.png" /></a>
+
 RTX 专业级，专注于图形工作站等领域，也可以用来训练 AI，但是优化的不如 Blackwell。
 | 型号     | 系列      | 显存  | FP32 TFLOPS |
 | -------- | --------- | ----- | ----------- |
@@ -90,6 +94,12 @@ RTX 专业级，专注于图形工作站等领域，也可以用来训练 AI，�
 | A1000    | Ampere    | 8     | 19          |
 | A800     | Ampere    |       | 19          |
 | A400     | Ampere    |       | 19          |
+
+Turing
+Volta
+Pascal
+Maxwell
+Kepler
 
 ### 企业级 Tesla
 

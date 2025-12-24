@@ -19,29 +19,15 @@ order: 20
 ### MacOS
 - Clang：MacOS 默认编译器
 
+## GCC
 
-## 跨平台构建系统
+### 编译步骤
+
+## 构建系统
+
+### autotools
+
 
 ### CMake
 
 ### Meson
-
-# GCC
-
-## 编译步骤
-
-## GDB
-
-### 实现原理
-
-
-### 启动方法
-
-### 断点管理
-
-
-### 运行管理
-
-## Cygwin
-
-## MingW

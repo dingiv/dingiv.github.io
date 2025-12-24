@@ -36,4 +36,4 @@ Torch 框架为了使用硬件加速计算，主动实现各个 GPU 厂商的封
 | CPU             | Native                            | OpenMP / MKL / BLAS     |
 
 ## 并行化
-vllm ，deepspeed，llama.cpp
+vllm ，deepspeed，llama.cpp，sglang

@@ -49,6 +49,12 @@ pid_t getppid(void);
 int kill(pid_t pid, int sig);
 ```
 
+## mount
+
+```c
+
+```
+
 ## 调度管理
 获取或设置进程的优先级（nice 值），影响调度。调整进程的调度优先级，影响 CPU 分配。常用于优化实时任务或后台进程。
 ```c
