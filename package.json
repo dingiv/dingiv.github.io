@@ -15,9 +15,9 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^24.10.4",
-    "markdown-it-mathjax3": "^4.0.0",
+    "markdown-it-mathjax3": "^4.3.2",
+    "vite": "^5.4.0",
     "vitepress": "^1.6.4",
-    "yaml": "^2.8.2",
-    "vite": "^5.4.0"
+    "yaml": "^2.8.2"
   }
 }
