@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 import { join, resolve } from 'node:path'
 import { appendFileSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
-import { Plugin } from 'vite'
+import { PluginOption } from 'vite'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 
@@ -42,6 +42,9 @@ export const createConfig = () => defineConfig({
       label: '本页导航',
       level: 'deep'
     }
+  },
+  markdown: {
+    math: true,
   },
 })
 
@@ -132,7 +135,7 @@ const buttonHtml = `
 `;
 
 function vitePluginRestart() {
-  return <Plugin>{
+  return <PluginOption>{
     name: 'vite-plugin-restart',
     configureServer(server) {
       // Middleware to handle restart request

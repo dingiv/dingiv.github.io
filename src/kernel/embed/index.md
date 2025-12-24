@@ -19,3 +19,5 @@ order: 30
 | RTOS 级                 | 1 ~ 16 MB   | < 128 MB | 32 位 MCU /低端 SoC，几十到几百 MHz | 工业 HMI、手持设备、传感器网关、智能家电、轻量 GUI（LVGL）       |
 | 嵌入式 Linux 级         | 16 ~ 128 MB | < 1 GB   | ARM Cortex-A5/A7/A8 或类似中端 SoC  | framebuffer GUI、Qt Embedded、SDL2 应用、网络服务、触摸屏 HMI    |
 | Linux 级                | > 128MB     | > 1GB    | ARM Cortex-A53/A72、x86 SoC         | 高端 HMI、工业平板、Flutter/Qt GUI、视频播放、多任务处理         |
+
+> 嵌入式 Linux 裁剪了大量的内核模块和功能，使得 Linux 也能够运行在资源受限的硬件环境上。
