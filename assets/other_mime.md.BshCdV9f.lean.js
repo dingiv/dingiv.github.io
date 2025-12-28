@@ -1,0 +1,1 @@
+import{_ as l,c as i,o,ae as a}from"./chunks/framework.CDjunVez.js";const p=JSON.parse('{"title":"媒体文件","description":"","frontmatter":{},"headers":[],"relativePath":"other/mime.md","filePath":"other/mime.md"}'),t={name:"other/mime.md"};function e(n,r,s,g,d,u){return o(),i("div",null,[...r[0]||(r[0]=[a("",90)])])}const c=l(t,[["render",e]]);export{p as __pageData,c as default};
