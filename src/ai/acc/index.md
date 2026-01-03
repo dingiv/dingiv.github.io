@@ -34,6 +34,3 @@ Torch 框架为了使用硬件加速计算，主动实现各个 GPU 厂商的封
 | Apple M 芯片    | MPS （Metal Performance Shaders） | Metal Compute           |
 | Intel GPU / CPU | XPU  （oneAPI）                   | oneDNN                  |
 | CPU             | Native                            | OpenMP / MKL / BLAS     |
-
-## 并行化
-vllm ，deepspeed，llama.cpp，sglang

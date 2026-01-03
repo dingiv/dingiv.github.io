@@ -1,166 +1,73 @@
 ---
-title: 模型记忆
+title: 记忆
 order: 20
 ---
-# AI 记忆
-现在的大模型（Grok、Claude、GPT-4o、DeepSeek 等）虽然参数几千亿，但每次对话都是“失忆”的白痴——上一次教它的操作、偏好、模板，下一次又得重新教。真正的 AI 助手必须拥有「记忆」。
-
-
 # 模型记忆
+现在的大模型（ChatGPT、DeepSeek 等）虽然参数量高达数千亿，但每次对话都是"失忆"的状态——上一次教它的操作、偏好、模板，下一次又得重新教。真正的 AI 必须拥有「记忆」能力。
 
-模型会失去记忆本质原因在于大模型的代码结构。大模型的代码可以理解成一个纯函数，它接受一个输入信息，然后运行神经网络预测该输入应该对应的输出，预测的过程中所使用的参数是在训练中不断地迭代更新，最后保存下来的，重新部署模型，仅仅只是用于推理任务，无法再修改参数，原因是因为更新一次参数相当于在训练模型，训练模型所需要的资源要远大于部署。
+模型会失去记忆的本质原因在于大模型的架构设计。大模型可以理解为一个纯函数：接受输入信息，通过神经网络预测相应的输出。预测过程中使用的参数是在训练阶段通过不断迭代更新后固定下来的。部署后的模型一般仅用于推理任务，不再修改参数——因为更新参数相当于重新训练模型，而训练所需的计算资源远大于推理部署。
 
-本文将介绍为大模型添加记忆的部分技术方向
-+ Context 工程
-+ 模型记忆层
-+ 动态微调
+目前工程上使用的为大模型添加记忆的技术主要是 Context 工程和 LoRA。
 
 ## Context 工程
-Context 把记忆塞进上下文，在用户提出的问题的基础上，额外增加
+Context 工程的核心思想是将记忆信息注入上下文窗口。在用户提出问题时，先检索相关的历史信息、文档或操作记录，将它们附加到 prompt 中，然后在调用模型时一并传入，使其"回忆起"之前的交互内容。
 
-### 1.1 RAG（Retrieval-Augmented Generation）
-- 核心：每次对话前把相关文档、历史操作记录、截图描述检索出来塞进 prompt
-- 落地方式：
-  - 向量数据库（Chroma、FAISS、Qdrant、Milvus）
-  - 截图 → CLIP/IP-Adapter 编码 → 存向量库
-  - 代码片段、操作日志 → 文本嵌入 → 存向量库
-- 优点：零微调、无状态、可无限扩展
-- 缺点：上下文窗口限制（目前最长 200k~1M），贵
+### 会话管理
+是基本的 Context 工程，也是现代模型应用必备的能力，回忆和概括用户的历史对话、进行偏好补充、预设提示词等等，让用户能够更加方便地和模型进行对话。
 
-### 1.2 MCP（Memory-Augmented Context Prompting）
-- 2024 年新提出的一种“超级 RAG”
-- 思路：不是把所有记忆都塞进去，而是让模型自己维护一个「记忆摘要表」
-- 每次对话后让模型输出：
-  ```markdown
-  【记忆更新】
-  - 用户最常用的登录按钮坐标：(1420, 870)
-  - 用户偏好的 OCR 语言：chi_sim
-  - 上次失败的模板：login_button_v2.png（被遮挡）
+落地简单，实现依赖于外部程序实现和架构设计，不是对模型本身的能力提升。本质是，随身携带历史数据，而不是记忆。
 
-下次对话自动把这张表放在 prompt 最前面
-实际效果：200k 上下文压缩到 4k 还能保持 95% 记忆准确率
+随着，对话的长度增加，每次 prompt 的体积会迅速增大，模型推理的上下文有大小限制，需要逐渐采用压缩和过滤，防止模型无法处理，减少推理开销。
 
-## 记忆层
+### RAG
+RAG（检索增强生成）每次对话前，将相关文档、历史操作记录、截图描述等从知识库中检索出来，注入到 prompt 中。
 
-+ LoRA（Low-Rank Adaptation）本质是给大模型再插一个极小的适配器（几 MB 到几百 MB）
-优点：
-训练快（几分钟到几小时）
-存储小（一个用户一个 LoRA 文件）
-可以热切换（同一套权重，换不同 LoRA 就是不同人格/技能）
-
-目前最成熟的记忆方式：
-用户每完成一次成功操作 → 收集 (截图, 操作, 结果) 三元组
-每 20~50 条经验微调一次 LoRA
-推理时自动加载用户专属 LoRA
-
-+ Elastic Weight Consolidation (EWC)
-
-Description: Penalizes changes to important parameters from prior tasks during new training, using a Fisher information matrix to estimate parameter importance.
-How it Simulates Memory: Preserves "core" knowledge by consolidating weights, mimicking synaptic stabilization in the brain.
-Advantages: Reduces forgetting without storing data; effective for sequential tasks.
-2025 Status: Integrated in continual learning frameworks; outperforms LoRA in some multi-task benchmarks.
-
-+ Memory Layers
-
-Description: Adds sparse, high-capacity layers (e.g., key-value stores) to models, allowing selective activation of parameters for specific memories.
-How it Simulates Memory: Enables targeted recall without full retraining; finetuning these layers avoids broad interference.
-Advantages: More efficient than LoRA for personalization; supports online adaptation.
-2025 Status: Emerging in continual learning; shown to maintain 95% retention in fact-learning tasks.
-
-
-
-## 动态微调：让模型“边用边学”
-真正的记忆必须是在线、持续的。下面三种技术正在 2025 年快速落地：
-3.1 Hebbian 学习（类脑可塑性）
-
-核心思想：“一起放电的神经元，连接更强”
 实现方式：
-成功操作 → 加大对应 LoRA 权重（+0.01~0.1）
-失败操作 → 减小对应 LoRA 权重（-0.05）
-不需要梯度回传，纯前向更新，速度极快（毫秒级）
+- 使用向量数据库（Chroma、FAISS、Qdrant、Milvus）存储记忆
+- 截图 → 使用 CLIP/IP-Adapter 编码 → 存入向量库
+- 代码片段、操作日志 → 文本嵌入 → 存入向量库
 
-9. Regularization Methods (e.g., Orthogonal Projections)
+落地简单，但受上下文窗口限制（目前最长 200k~1M token），真正可控、稳定的生产系统仍然在 8k~64k 之间，检索和推理成本较高。优化方向，使用模型概括之前的上下文，减少 Context 的体积。
 
-Description: Constrains weight updates to orthogonal subspaces, separating new and old knowledge.
-How it Simulates Memory: Projects gradients away from sensitive directions.
-Advantages: Simple integration; works with Hebbian rules.
-2025 Status: Applied in SNN continual learning; boosts forgetting resistance.
+### MCP
+MCP 是（Model Context Protocol）解决模型调用外部工具的规范协议，由 anthropic 公司提出，MCP 技术引入了模型外部调用的能力，让模型学习使用外部工具，从而扩展模型的能力。同时，MCP 技术也可以作为模型获知外界记忆的一种重要途径。
 
-3. Spike-Timing-Dependent Plasticity (STDP) Enhancements
+实现方式：
+- 让模型能够接受一个遵循 MCP 协议的格式的 json 字串，模型看见字串后能够返回一个 json 格式的调用命令，外部的 CPU 代码在模型返回时，检测到模型输出了调用请求，执行相应的调用任务后，重新执行一次模型生成，将结果注入到本次生成的 prompt 中。
 
-Description: Bio-inspired rule adjusting weights based on neuron firing timing; extended for spiking neural networks (SNNs).
-How it Simulates Memory: Creates time-sensitive associations, enabling temporal sequence recall.
-Advantages: Energy-efficient for edge devices; complements Hebbian rules.
-2025 Status: Used in neuromorphic continual learning (NCL); improves unsupervised adaptation.
+是目前模型必备的能力，缺点是需要训练模型使用 MCP，一些模型在训练的时候没有遵循 anthropic 倡导的 MCP。
 
-+ 经验回放（Experience Replay）
+## LoRA
+LoRA（低秩适配）为大模型插入一个极小的适配器（几 MB 到几百 MB）记忆层，在保持原模型参数不变的情况下学习个性化知识。LoRA 是现在进行模型迁移学习的重要技术，通过模型`预训练 -> 微调 -> 部署`三部曲，实现模型向垂直领域和个性定制的迁移。同时，LoRA 也是实现模型记忆能力的重要思路。
 
-灵感来源：AlphaGo、DQN
-实现：
-维护一个经验池（成功率 > 90% 的操作序列）
-空闲时（或者睡觉时）拿出来回放 5~20 次继续微调
-类似人类睡觉巩固记忆
+实现方式：
+1. 用户每完成一次成功操作 → 收集（截图、操作、结果）三元组
+2. 每积累 20~50 条经验，微调一次 LoRA
+3. 推理时自动加载用户专属 LoRA
 
-实测效果：24 小时回放后，相同任务成功率从 78% → 96%
+优点：
+- 训练快速：几分钟到几小时即可完成训练
+- 存储高效：一个用户一个 LoRA 文件，占用空间小
+- 灵活切换：同一套基础权重，切换不同 LoRA 即可获得不同的"人格"或"技能"
 
-3.3 神经调制（Neuromodulation）
+LoRA 技术通过在模型中添加轻量级的参数层来保存个性化知识，无需修改原始模型的全部参数。该技术可以让模型拥有新的技能，从能力层面改变模型，而不是让简单地回想起一些数据。但是，开销相较于 Context 工程而言很大，不能适应高频调整，本质是经验蒸馏，而不是回忆。
 
-给模型加一个“情绪/重要性”信号
-成功 → 释放“多巴胺” → 学习率 ×5
-失败 → 释放“去甲肾上腺素” → 学习率 ×10 + 加大探索
-目前落地方式：用一个极小的 MLP 预测“重要性分数”，动态调节 LoRA 学习率
+## 可控持续学习
+可控持续学习（Offline），让外部程序记录模型的调用日志，并且定期自动训练，自动微调。
 
-8. Brain-Inspired Internal Replay
+实现方式：
+1. 维护一个经验日志，存储过去成功执行的内容和接受的信息；
+2. 在空闲时（或者"睡眠"时）自动发起训练，继续微调，类似人类睡眠时巩固记忆的过程；
 
-Description: Reactivates latent representations of past experiences during training, without external data storage.
-How it Simulates Memory: Mimics hippocampal replay for consolidation, strengthening internal traces.
-Advantages: No data overhead; aligns with sleep-like phases.
-2025 Status: Extends experience replay; effective in ANNs and SNNs for lifelong learning.
+属于程序架构层面的改变，并且目前没有成功落地示例。
 
-4. 未来：终极记忆方案（2026~2027 可能实现）
+## 未来展望
+目前的 Context 工程落地简单，但是不是真正改变模型使其记住；LoRA 能够改变模型本身，但是速度太慢，实现复杂。
 
+真正的记忆必须是在线、持续的，模型"边用边学"。
 
-方案,记忆容量,更新速度,预计落地时间
-RAG + MCP,几乎无限,秒级,已落地
-用户专属 LoRA,几千~几万条经验,分钟级,已落地
-动态 Hebbian + 回放,十万条级,秒~分钟,2025 Q4
-Mamba / RWKV 状态记忆,无限长序列,实时,2026+
-外挂海马体（独立记忆网络）,真正的终身记忆,实时,2027+
+### SNN
+SNN（Spiking Neural Network）脉冲神经网络技术，对目前的神经网络提出架构级的改变，用“脉冲/尖峰”作为信号的神经网络，试图在计算机制层面逼近生物神经元，对模型记忆友好，自带记忆和时间的概念，能够满足动态微调，目前还处于实验室中。
 
-## 其他方式
-Bayesian Continual Learning
-
-Description: Models uncertainty in weights via probabilistic distributions, updating posteriors incrementally.
-How it Simulates Memory: Handles ambiguity in new data while retaining probabilistic priors from old tasks.
-Advantages: Quantifies confidence in recalls; robust to noisy environments.
-2025 Status: Applied in SNNs for online learning; reduces overfitting in dynamic settings.
-
-
-5. Predictive Coding
-
-Description: Networks predict sensory inputs and update based on prediction errors, propagating signals hierarchically.
-How it Simulates Memory: Builds internal models of past experiences for proactive recall.
-Advantages: End-to-end differentiable; aligns with cortical hierarchies.
-2025 Status: Explored in NCL for bio-plausible learning; enhances unsupervised memory formation.
-
-5. Predictive Coding
-
-Description: Networks predict sensory inputs and update based on prediction errors, propagating signals hierarchically.
-How it Simulates Memory: Builds internal models of past experiences for proactive recall.
-Advantages: End-to-end differentiable; aligns with cortical hierarchies.
-2025 Status: Explored in NCL for bio-plausible learning; enhances unsupervised memory formation.
-
-
-7. Metaplasticity
-
-Description: Modulates plasticity rates dynamically (e.g., via neuromodulators like dopamine), altering how easily weights change.
-How it Simulates Memory: Prevents over-stabilization or excessive forgetting by adapting learning dynamics.
-Advantages: Integrates with existing neuromodulation; enhances hybrid networks.
-2025 Status: Used in corticohippocampal-inspired models; reduces forgetting in task-agnostic learning.
-
-9. Regularization Methods (e.g., Orthogonal Projections)
-
-Description: Constrains weight updates to orthogonal subspaces, separating new and old knowledge.
-How it Simulates Memory: Projects gradients away from sensitive directions.
-Advantages: Simple integration; works with Hebbian rules.
-2025 Status: Applied in SNN continual learning; boosts forgetting resistance.
+### 神经符号融合
+融合符号主义 AI，同时解决可解释性和可记忆性的问题，对目前的神经网络提出架构级的改变，让神经网络中融合符号主义 AI 的推理能力，落地十分遥远。
