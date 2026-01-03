@@ -9,7 +9,7 @@ const srcDir = resolve('src')
 
 // https://vitepress.dev/reference/site-config
 export const createConfig = () => defineConfig({
-  title: "漫话随笔",
+  title: "Spark Note",
   description: "我的计科学习随笔",
   srcDir: srcDir,
   outDir: 'docs',

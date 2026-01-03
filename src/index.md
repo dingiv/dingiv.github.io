@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-  name: 漫话随笔
-  text: 随手写的计科笔记
+  name: Div's Spark Note
+  text: 随心所欲的计科笔记
   tagline: 记下火花点点，汇成思维明灯
   actions:
     - theme: brand
@@ -14,12 +14,14 @@ hero:
       link: /examples
 
 features:
-  - title: 前端视角
-    details: 从前端视角出发，探讨前端技术、工具和最佳实践。
-    theme: brand
-  - title: 不只前端
-    details: 涵盖前端、后端、运维、算法等多个领域，广泛的涉猎。
-  - title: 持续更新
-    details: 持续更新，不断学习，分享最新的技术动态和心得体会。
+  - title: 广泛涉猎
+    details: 从底层内核到前端应用，从算法基础到 AI 实践，涵盖计算机科学各个领域的技术笔记。
+    icon: 📚
+  - title: 深度与广度并重
+    details: 既有基础理论的广泛探讨，也有基于工程实践经验的深度总结。
+    icon: 🔍
+  - title: 随学随记
+    details: 记录学习过程中的思考与总结，分享技术实践的心得体会，语言通俗直白。
+    icon: ✨
 ---
 
