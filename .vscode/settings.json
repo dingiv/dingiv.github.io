@@ -6,5 +6,11 @@
         "**/.DS_Store": true,
         "**/Thumbs.db": true
     },
-    "hide-files.files": [],
+    "terminal.integrated.env.windows": {
+        "CONDA_EXE": "C:/code/conda/condabin/conda.bat",
+        "CONDA_PREFIX": "C:/code/conda",
+        "ANTHROPIC_BASE_URL": "https://claudelike.online/api",
+        "ANTHROPIC_AUTH_TOKEN": "cr_f7b64f07bc1b0db63bc7fa7583f0696347f775d1fb12139178160100ea81d2b3",
+        "WEBSITE": "https://claudelike.online/"
+    },
 }
