@@ -9,8 +9,9 @@
     "terminal.integrated.env.windows": {
         "CONDA_EXE": "C:/code/conda/condabin/conda.bat",
         "CONDA_PREFIX": "C:/code/conda",
-        "ANTHROPIC_BASE_URL": "https://claudelike.online/api",
-        "ANTHROPIC_AUTH_TOKEN": "cr_f7b64f07bc1b0db63bc7fa7583f0696347f775d1fb12139178160100ea81d2b3",
-        "WEBSITE": "https://claudelike.online/"
+        "ANTHROPIC_AUTH_TOKEN": "e3162463c3a645f1b04a3028a9d62238.DGRvpaDBei2AFdj2",
+        "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+        "API_TIMEOUT_MS": "3000000",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
     },
 }

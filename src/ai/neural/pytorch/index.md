@@ -1,3 +1,8 @@
+---
+title: PyTorch
+order: 60
+---
+
 # PyTorch
 
 PyTorch 是由 Meta (Facebook) AI Research 开发的开源深度学习框架，于 2016 年发布。它以动态计算图、Python 原生接口和灵活性著称，已成为学术研究和工业应用中最流行的深度学习框架之一。

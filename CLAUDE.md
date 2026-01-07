@@ -4,101 +4,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a VitePress-based technical documentation site written in Chinese (漫话随笔 - "Casual Notes"), covering computer science topics including algorithms, operating systems, networking, databases, frontend/backend development, and more.
+This is a technical documentation website ("Spark Note") built with VitePress. It's a personal knowledge base containing computer science learning notes organized by topic categories.
 
-## Development Commands
+## Commands
 
+### Development
 ```bash
-# Install dependencies (using pnpm)
+# Install dependencies
 pnpm install
 
-# Start development server with hot reload
+# Start development server (starts at localhost:5173)
 pnpm dev
 
-# Build static site (outputs to docs/)
+# Build static site to docs/ directory
 pnpm build
 
-# Preview production build
+# Preview built site locally
 pnpm preview
 ```
+
+### Deployment
+The site automatically deploys to GitHub Pages via GitHub Actions when pushing to the master branch.
 
 ## Architecture
 
 ### Content Organization
-
-All documentation content lives in `src/` and is organized by topic:
-
-- `basic/` - Computer science fundamentals (algorithms, OS, networking, databases, graphics, hardware, compilers)
-- `design/` - Software design (OOP, FP, reactive programming, concurrency patterns)
-- `client/` - Client-side development (Rust, Dart/Flutter, rendering, shader languages)
-- `server/` - Server-side development (Go, Java, SQL/NoSQL, architecture)
-- `devops/` - DevOps topics (Git, Docker, Kubernetes, CI/CD, shell scripting)
-- `kernel/` - Low-level programming (C, Assembly, Linux kernel, embedded systems)
-- `ai/` - Artificial intelligence and machine learning
-- `web3/` - Blockchain and Web3 technologies
+All documentation content is in `src/` directory, organized by topic:
+- `ai/` - AI/ML topics (LLM, neural networks, PyTorch)
+- `basic/` - CS fundamentals (algorithms, data structures, OS, networking)
+- `client/` - Frontend technologies (JavaScript, React, Vue, TypeScript)
+- `server/` - Backend technologies (Java, Go, databases, distributed systems)
+- `design/` - Software design patterns and architecture
+- `devops/` - DevOps tools (Docker, Kubernetes, Git)
+- `kernel/` - Low-level systems (Linux kernel, C, assembly)
+- `web3/` - Blockchain technologies
 - `other/` - Miscellaneous topics
-- `public/` - Static assets (images, files) that will be copied to the site root
 
-### Content Structure
+### Configuration System
+The sidebar navigation is auto-generated from the file structure using custom logic in `.vitepress/config.ts`. Each directory's `index.md` file defines its section title and order via YAML frontmatter:
+```yaml
+---
+title: Section Title
+order: 1
+---
+```
 
-Each topic directory follows this structure:
-- `index.md` - Contains frontmatter with `title` and `order` fields, acts as the section homepage
-- Topic-specific markdown files with optional frontmatter for title and ordering
+### Build Configuration
+- Uses VitePress with custom Vite plugin that adds a server restart button
+- MathJax3 enabled for mathematical expressions
+- Output directory: `docs/` (used by GitHub Pages)
+- Clean URLs enabled for SEO
 
-### VitePress Configuration
-
-**Location**: `.vitepress/config.ts`
-
-Key architectural features:
-
-1. **Dynamic Sidebar Generation**: The `createSidebarItem()` function recursively scans `src/` to build the sidebar navigation tree
-   - Reads frontmatter from each `index.md` to get section titles and ordering
-   - Supports `order` field for custom sorting (defaults to 9999)
-   - Automatically collapses nested sections
-
-2. **Frontmatter Parsing**: The `readFrontMatter()` function extracts metadata from markdown files
-   - Supports YAML frontmatter format (`---\ntitle: ...\norder: ...\n---`)
-   - Falls back to parsing the first heading if no frontmatter exists
-   - Used for both sidebar text and ordering
-
-3. **Custom Vite Plugin**: `vitePluginRestart()` adds a restart button to the dev server
-   - Accessible at fixed position (top-left corner)
-   - Triggers server restart via `/__vite_plugin_restart` endpoint
-   - Useful for configuration changes that require full restart
-
-4. **Build Output**: Configured to output to `docs/` directory (likely for GitHub Pages deployment)
-
-### Theme
-
-**Location**: `.vitepress/theme.ts`
-
-Currently uses the default VitePress theme with no customizations.
-
-## Key Technical Details
-
-- **Language**: Chinese (zh-CN)
-- **Framework**: VitePress 1.6.4+
-- **Math Support**: LaTeX math rendering via `markdown-it-mathjax3`
-- **Clean URLs**: Enabled (removes .html extensions)
-- **Module System**: ES Modules (type: "module" in package.json)
-- **TypeScript**: ESNext target, bundler module resolution
-
-## Working with Content
-
-When adding or modifying documentation:
-
-1. Place markdown files in the appropriate `src/` subdirectory
-2. Add frontmatter to control sidebar ordering:
-   ```yaml
-   ---
-   title: 文章标题
-   order: 10
-   ---
-   ```
-3. Lower `order` values appear first in the sidebar
-4. Each directory should have an `index.md` that serves as the section landing page
-5. Math expressions are supported using LaTeX syntax
-
-## Deployment
-
-The build output goes to `docs/`, suggesting this site is deployed via GitHub Pages (common pattern for `username.github.io` repos).
+### Key Files
+- `.vitepress/config.ts` - Main configuration, auto-sidebar generation logic
+- `.github/workflows/deploy.yml` - CI/CD pipeline for GitHub Pages deployment
+- `package.json` - Minimal dependencies (VitePress, TypeScript, MathJax3)
