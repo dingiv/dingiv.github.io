@@ -59,3 +59,4 @@ order: 1
 - `.vitepress/config.ts` - Main configuration, auto-sidebar generation logic
 - `.github/workflows/deploy.yml` - CI/CD pipeline for GitHub Pages deployment
 - `package.json` - Minimal dependencies (VitePress, TypeScript, MathJax3)
+- `prompt.md` - Language style for the whole blog site when writing
