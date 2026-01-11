@@ -12,6 +12,7 @@
         "ANTHROPIC_AUTH_TOKEN": "e3162463c3a645f1b04a3028a9d62238.DGRvpaDBei2AFdj2",
         "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
         "API_TIMEOUT_MS": "3000000",
-        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1,
+        "AUTHROPIC_MODE": "glm"
     },
 }

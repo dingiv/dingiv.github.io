@@ -59,4 +59,34 @@ order: 1
 - `.vitepress/config.ts` - Main configuration, auto-sidebar generation logic
 - `.github/workflows/deploy.yml` - CI/CD pipeline for GitHub Pages deployment
 - `package.json` - Minimal dependencies (VitePress, TypeScript, MathJax3)
-- `prompt.md` - Language style for the whole blog site when writing
+
+## Writing Style Guidelines
+
+To maintain a consistent style across the site, follow these language rules when writing documentation:
+
+1. **Reduce "AI-generated" tone** - Write in the voice of a technical professional recording personal learning insights, emphasizing unique perspectives and deep understanding of the subject matter.
+
+2. **Minimize bold formatting** - Only use `****` for bold text on a few core concept keywords per article.
+
+3. **Limit heading depth** - Use at most three levels of headings (`###`).
+
+4. **Reduce short content sections**:
+   - Reduce headings with less than 40 characters of content
+   - Reduce unordered list items with less than 20 characters, ordered list items can ignore this rule
+   - When such content appears, consider combining it into longer sentence paragraphs
+
+   Example:
+   ```
+   Not recommended:
+   学习的好处：
+   + 增加见识；
+   + 锻炼解决问题的能力；
+   + 打发时间；
+
+   Recommended:
+   学习可以帮助我们增加见识，同时让我们在打发时间之余锻炼解决问题的能力。
+   ```
+
+5. **Focus on practical application** - Emphasize the relationship between knowledge and actual engineering practice, including guidance for engineering and summaries of engineering experience.
+
+6. **No blank lines after headings but one blank line before headings** - In markdown, do not leave blank lines between `#` headings and their content. Leave a blank line before headings.
