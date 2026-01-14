@@ -230,3 +230,17 @@ shell 的语法内容包括三个部分：
 
 ### 环境变量
 shell 在进行执行的时候，会将系统中定义的环境变量加载到 shell 中，作为 shell 的变量来供给 shell 脚本中的逻辑进行使用，可以通过`echo`命令来查看环境变量，也可以通过`export`命令来设置环境变量，环境变量是全局变量，可以在整个 shell 中访问。
+
+### 错误处理
+shell 脚本的错误处理基于 set -e 心智模型。
+
+```sh
+set -eEo pipe
+
+function error_handler() {
+    local lineno=$1
+    echo '...'
+}
+
+trap 'error_handler $LINENO; exit 1' ERR
+```

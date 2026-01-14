@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a technical documentation website ("Spark Note") built with VitePress. It's a personal knowledge base containing computer science learning notes organized by topic categories.
+This is a technical documentation website ("Spark Notes") built with VitePress. It's a personal knowledge base containing computer science learning notes organized by topic categories.
 
 ## Commands
 
@@ -47,7 +47,11 @@ The sidebar navigation is auto-generated from the file structure using custom lo
 title: Section Title
 order: 1
 ---
+
+# Article Title ≠ Section Title
 ```
+
+The yaml frontmatter must be write at the first line of the file before the first-level title.
 
 ### Build Configuration
 - Uses VitePress with custom Vite plugin that adds a server restart button

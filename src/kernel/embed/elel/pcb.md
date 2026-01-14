@@ -21,3 +21,6 @@ FPGA 是一种可编程硬件技术，从硬件层面上实现复杂的可编程
 
 
 对比fpga和microcontroller
+
+
+## SBC

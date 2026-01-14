@@ -10,4 +10,4 @@ Web Assembly 被描述为一个语言运行时，为支持**多语言前端**而
 
 JavaScript 和 Web 平台往往被单线程和脚本语言性能困扰，可以采用 Web Worker 技术和 Web Assembly 技术来缓解 CPU 密集任务的压力。使用 Rust 编写 WASM 可以作为 JavaScript 的二进制插件，从而胜任 CPU 密集型任务。
 
-另一方面，WASM 也能够直接支持在 WASM 运行环境中访问 DOM 结构，从而不依赖显示的 HTML/CSS 文件来进行 UI 展示。
+另一方面，WASM 也能够直接支持在 WASM 运行环境中访问 DOM 结构，从而不依赖显式的 HTML/CSS 文件来进行 UI 展示。

@@ -35,4 +35,3 @@
 
 + 内核层，PTY 子系统：位于 drivers/tty/pty.c，提供主从设备对（Master/Slave Pair）。主设备：/dev/ptmx，由**终端模拟器或 SSH 守护进程**打开。从设备：/dev/pts/0 等，分配给具体会话。数据流：主设备接收用户程序的输入，传递给从设备；从设备输出（如 shell 的结果）返回给主设备。Line Discipline：与物理终端类似，处理字符格式化。
 + 用户空间，同上。
-  

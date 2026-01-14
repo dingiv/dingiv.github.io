@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: Div's Spark Note
+  name: Div's Spark Notes
   text: 随心所欲的计科笔记
   tagline: 记下火花点点，汇成思维明灯
   actions:

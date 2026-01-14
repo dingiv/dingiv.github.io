@@ -1,2 +1,2 @@
 # GLSL
-OpenGL 提供的 SL。
+OpenGL 提供的着色语法。

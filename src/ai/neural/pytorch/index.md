@@ -4,22 +4,18 @@ order: 60
 ---
 
 # PyTorch
-
 PyTorch 是由 Meta (Facebook) AI Research 开发的开源深度学习框架，于 2016 年发布。它以动态计算图、Python 原生接口和灵活性著称，已成为学术研究和工业应用中最流行的深度学习框架之一。
 
 ## 核心特性
+- **动态计算图（Define-by-Run）**：与静态图不同，PyTorch 在运行时构建计算图，使得调试更加直观；
+- **Pythonic 设计**：API 设计符合 Python 习惯，学习曲线平缓；
+- **硬件加速多后端支持**：通过 CUDA 实现高效的张量运算，能够支持多款不同的 GPU 后端，也允许通过实现接口添加自定义后端；
+- **丰富的生态系统**：包括 torchvision（计算机视觉）、torchaudio（音频处理）、torchtext（自然语言处理）等；
 
-- **动态计算图（Define-by-Run）**：与静态图不同，PyTorch 在运行时构建计算图，使得调试更加直观
-- **Pythonic 设计**：API 设计符合 Python 习惯，学习曲线平缓
-- **强大的 GPU 加速**：通过 CUDA 实现高效的张量运算
-- **丰富的生态系统**：包括 torchvision（计算机视觉）、torchaudio（音频处理）、torchtext（自然语言处理）等
-
-## 张量（Tensor）
-
-张量是 PyTorch 中最基本的数据结构，类似于 NumPy 的 ndarray，但支持 GPU 加速和自动微分。
+## 张量
+张量（Tensor）是 PyTorch 中最基本的数据结构，类似于 NumPy 的 ndarray，但支持 GPU 加速和自动微分。
 
 ### 创建张量
-
 ```python
 import torch
 
@@ -37,7 +33,6 @@ x = torch.tensor([1.0, 2.0], dtype=torch.float32, device='cuda')
 ```
 
 ### 张量操作
-
 ```python
 # 基本运算
 y = x + 2
@@ -55,7 +50,6 @@ x[:, 1]                  # 第二列
 ```
 
 ### 张量与 NumPy 互转
-
 ```python
 # Tensor -> NumPy
 numpy_array = tensor.cpu().numpy()
@@ -65,7 +59,6 @@ tensor = torch.from_numpy(numpy_array)
 ```
 
 ## Module
-
 `nn.Module` 是 PyTorch 中所有神经网络模块的基类，是构建网络的核心抽象。
 
 ### 定义模块
@@ -89,7 +82,6 @@ model = SimpleNet()
 ```
 
 ### Module 的重要特性
-
 - **参数管理**：自动追踪所有子模块的参数
 - **设备转移**：通过 `.to(device)` 轻松在 CPU/GPU 间移动
 - **训练/评估模式**：`.train()` 和 `.eval()` 控制 Dropout、BatchNorm 等层的行为
@@ -108,9 +100,8 @@ torch.save(model.state_dict(), 'model.pth')
 model.load_state_dict(torch.load('model.pth'))
 ```
 
-## 自动求导（Autograd）
-
-PyTorch 的自动微分系统是其核心功能，能够自动计算张量操作的梯度。
+## 自动微分
+PyTorch 的自动微分（Autograd）系统是其核心功能，能够自动计算张量操作的梯度。
 
 ### 基本用法
 
@@ -133,7 +124,6 @@ print(x.grad)  # dy/dx = 2x + 3 = 7
 - `.backward()` 从输出节点反向遍历计算图，应用链式法则
 
 ### 梯度控制
-
 ```python
 # 临时禁用梯度计算（推理时使用）
 with torch.no_grad():
@@ -150,8 +140,7 @@ y = x.detach()  # y 不再追踪梯度
 ```
 
 ## 神经网络
-
-PyTorch 提供了 `torch.nn` 模块用于构建神经网络。
+PyTorch 提供了 `torch.nn` 模块用于快速构建神经网络，减少样板代码。
 
 ### 常用层
 
@@ -297,50 +286,3 @@ inputs = inputs.to(device)
 if torch.cuda.device_count() > 1:
     model = nn.DataParallel(model)
 ```
-
-## 常见实践
-
-### 学习率调度
-
-```python
-from torch.optim.lr_scheduler import StepLR, CosineAnnealingLR
-
-scheduler = StepLR(optimizer, step_size=30, gamma=0.1)
-
-for epoch in range(num_epochs):
-    train(...)
-    scheduler.step()
-```
-
-### 梯度裁剪
-
-```python
-# 防止梯度爆炸
-torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-```
-
-### 混合精度训练
-
-```python
-from torch.cuda.amp import autocast, GradScaler
-
-scaler = GradScaler()
-
-for batch_x, batch_y in dataloader:
-    optimizer.zero_grad()
-
-    with autocast():
-        outputs = model(batch_x)
-        loss = criterion(outputs, batch_y)
-
-    scaler.scale(loss).backward()
-    scaler.step(optimizer)
-    scaler.update()
-```
-
-## 相关资源
-
-- [官方文档](https://pytorch.org/docs/)
-- [官方教程](https://pytorch.org/tutorials/)
-- [PyTorch Lightning](https://lightning.ai/)：高层封装框架
-- [Hugging Face Transformers](https://huggingface.co/transformers/)：基于 PyTorch 的 NLP 库
