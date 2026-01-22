@@ -103,3 +103,58 @@ export default {
 2. **合理使用操作符**：选择适当的操作符处理数据流
 3. **错误处理**：使用 catchError 等操作符处理错误
 4. **性能优化**：使用 debounceTime、throttleTime 等操作符优化性能
+
+
+
+Signal 是一种轻量级的响应式原语，它代表了一个随时间变化的值，并且能够自动追踪依赖关系。Signal 是现代前端框架（如 Vue、Angular、Solid.js、Preact等）中实现响应式系统的核心概念。
+
+## Signal 的基本概念
+
+Signal 本质上是一个包含值的容器，它能够：
+1. 存储一个值
+2. 追踪对该值的访问（读取）
+3. 在值发生变化时通知所有依赖项
+
+```javascript
+// 基本使用示例
+const count = signal(0);  // 创建一个初始值为 0 的 signal
+
+// 读取值
+console.log(count());  // 输出: 0
+
+// 设置新值
+count.set(1);
+console.log(count());  // 输出: 1
+
+// 更新值（基于当前值）
+count.update(c => c + 1);
+console.log(count());  // 输出: 2
+```
+
+## Signal 与响应式系统
+
+Signal 是构建响应式系统的基础，它通过以下机制实现响应式：
+
+1. **依赖追踪**：当读取 signal 的值时，系统会记录当前正在执行的代码依赖于这个 signal，其实现基础是要求副作用函数要运行在指定的容器中，容器能够监控副作用函数对于其感兴趣的值获取操作；
+2. **变更通知**：当 signal 的值发生变化时，系统会通知所有依赖这个 signal 的代码重新执行
+3. **批量更新**：多个 signal 的变化会被批量处理，避免不必要的重复计算
+
+```javascript
+// 依赖追踪示例
+const firstName = signal('John');
+const lastName = signal('Doe');
+
+// 创建一个计算值
+const fullName = computed(() => {
+    // 当 firstName 或 lastName 变化时，这个函数会重新执行
+    return `${firstName()} ${lastName()}`;
+});
+
+// 监听变化，将副作用函数放进容器中进行执行，这里的 effect 函数就是一个容器
+effect(() => {
+    console.log(`Full name changed to: ${fullName()}`);
+});
+
+// 修改值会触发重新计算
+firstName.set('Jane');  // 输出: Full name changed to: Jane Doe
+```

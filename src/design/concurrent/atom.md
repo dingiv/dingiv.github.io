@@ -133,4 +133,3 @@ int value = atomic_load(&counter); // Reads counter atomically
 - 原子操作适合简单数据类型（如整型），复杂结构体仍需加锁保护。
 - 无锁并发虽然高效，但实现复杂，需谨慎设计，避免ABA问题等陷阱。
 - 在 SMP（多核）系统下，原子操作通常伴随内存屏障（memory barrier）以保证可见性和有序性。
-
