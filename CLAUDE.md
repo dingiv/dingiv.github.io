@@ -38,7 +38,6 @@ All documentation content is in `src/` directory, organized by topic:
 - `devops/` - DevOps tools (Docker, Kubernetes, Git)
 - `kernel/` - Low-level systems (Linux kernel, C, assembly)
 - `web3/` - Blockchain technologies
-- `other/` - Miscellaneous topics
 
 ### Configuration System
 The sidebar navigation is auto-generated from the file structure using custom logic in `.vitepress/config.ts`. Each directory's `index.md` file defines its section title and order via YAML frontmatter:
@@ -93,4 +92,4 @@ To maintain a consistent style across the site, follow these language rules when
 
 5. **Focus on practical application** - Emphasize the relationship between knowledge and actual engineering practice, including guidance for engineering and summaries of engineering experience.
 
-6. **No blank lines after headings but one blank line before headings** - In markdown, do not leave blank lines between `#` headings and their content. Leave a blank line before headings.
+6. **No blank line after headings but one blank line before headings** - In markdown, do not leave blank lines between `#` headings and their content. Leave a blank line before headings.

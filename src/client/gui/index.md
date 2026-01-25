@@ -22,6 +22,8 @@ order: 20
 乘着 Web 的东风，JS 已经成为 GUI 第一顺位语言。使用一个 JS 宿主，便可以轻松实现一个跨平台的图形界面程序。最著名通用的 JS 宿主环境当属浏览器，除此之外，还有很多其他的 JS 宿主环境。
 
 + 小程序，微信小程序、支付宝小程序、抖音小程序……超级 App 们都有自己的小程序平台。本质上就是一个阉割版浏览器，提供了特定的 API（支付、定位、分享等），用类似 Web 技术开发应用。优点是流量入口巨大（微信十几亿用户），缺点是被平台束缚（审核、功能限制、抽成）。
++ Electron，桌面端跨屏平台的 JS 宿主，内部直接打包 nodejs，浏览器和源代码，形成一个完整的本地 C/S 应用，软件包体积很大，但同时也能保证非常强大的兼容性。
++ ReactNative，Facebook 开发使用 JS 和 React 语法作为上层的移动端 UI 框架，通过暴露定制的 UI 虚拟 DOM 元素让开发者描述组件，下层根据虚拟 DOM 翻译对应平台的 UI 元素。
 + 浏览器插件，浏览器插件让开发者能修改网页行为、添加新功能。Chrome 插件用 HTML+CSS+JavaScript 开发，能访问页面 DOM、拦截网络请求、添加右键菜单。AdBlock、Grammarly、React DevTools 这些工具都是插件。Manifest V3 是最新标准，但限制比 V2 多，开发者迁移过程痛苦。
 + VS Code 插件，VS Code 本身就是 Electron 应用，它的插件系统也用 Web 技术。插件可以用 JavaScript 或 TypeScript 编写，能扩展编辑器的功能（语法高亮、代码片段、主题、调试器）。 marketplace.visualstudio.com 上有数万插件，几乎任何编程需求都能找到现成方案。
 + 其他宿主，WPS、Adobe Creative Cloud、AutoCAD 这些桌面软件也开始提供 JS 插件 API。Office 的 Office Add-ins、Photoshop 的 UXP 插件系统，都是 JS 宿主环境的例子。传统桌面软件意识到开放的插件生态能让产品更有生命力，而 JavaScript 是最通用的选择——前端工程师多，学习成本低。
