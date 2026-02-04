@@ -34,6 +34,7 @@
 
 ## 网络工具
 - ip：综合性网络管理工具
+- nmcli：网络接口管理
 - iptables/nftables：netfilter 模块管理
 - tc：流量控制
 - tcpdump：网络抓包

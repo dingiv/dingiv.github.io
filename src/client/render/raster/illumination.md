@@ -189,3 +189,6 @@ D_{aniso} = \frac{1}{\pi \alpha_t \alpha_b \cos^4 \theta_h \left[\frac{(\vec{\om
 $$
 
 当 $\alpha_t = \alpha_b$ 时退化为各向同性的 GGX。头发渲染使用 Marschner 模型，考虑了 R（表面反射）、TT（进入后穿出）、TRT（进入后内部反射再穿出）三种光路，需要单独的着色模型处理。
+
+## 折射模型
+// TODO: 

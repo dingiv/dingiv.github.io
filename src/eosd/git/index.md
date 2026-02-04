@@ -5,6 +5,9 @@ order: 20
 
 # Git
 
+// TODO:
+git 分支管理，工作流，cicd，流水线，门禁，git hook，husky
+
 ## commit。约定式提交
 + feat: 新功能、新特性
 + fix: 修改 bug

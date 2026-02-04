@@ -38,6 +38,10 @@ title: NLP
 分词：Natural / Language / Processing / is / interesting
 ```
 
+// TODO:
+**词表**
+transformer 中的 vocabulary
+
 ### 词性标注与命名实体识别
 词性标注为每个词标注名词、动词、形容词等语法属性，是句法分析的基础。而命名实体识别（NER）则更具实用价值——它从文本中识别出人名、地名、组织名、时间等实体。工业界常用 BIO 标注格式：B (Begin) 表示实体开始，I (Inside) 表示实体内部，O (Outside) 表示非实体。NER 在信息抽取、知识图谱构建、智能客服等场景中有着广泛的应用。
 

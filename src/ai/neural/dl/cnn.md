@@ -73,6 +73,11 @@ EfficientNet 通过复合缩放方法同时优化网络的深度、宽度和分�
 
 ConvNeXt 重新审视了纯卷积网络的潜力。它借鉴了 Vision Transformer 的设计理念，如更大的卷积核（7×7）、层归一化（LayerNorm）、更少的激活函数等，使得纯卷积网络在 ImageNet 上首次超越了同级 ViT。这证明了经典的卷积架构经过改进仍有强大生命力。
 
+## 空间感知
+// TODO: 
+cnn 空间感知
+前后图层层叠，景深
+
 ## 工程实践考量
 
 ### 训练技巧与优化
@@ -101,10 +106,3 @@ CNN 相比 ViT 的核心优势在于归纳偏置强。CNN 假设相邻像素相�
 
 对于实际应用，如果数据量在百万级别以下，或者需要在资源受限的设备上部署，CNN 仍然是更实用的选择。ResNet-50 及其变体在精度和效率之间取得了良好平衡，是许多应用的首选。如果关注模型大小和推理速度，可以考虑 MobileNet 或 EfficientNet 的轻量级版本。
 
-## 学习路径
-
-入门建议先理解卷积操作的数学原理和反向传播推导，然后使用 PyTorch 或 TensorFlow 从零实现一个简单的 CNN。接着可以研究经典架构的演进过程，从 LeNet 到 AlexNet、VGG、ResNet，理解每个改进背后的动机。
-
-论文推荐阅读《Gradient-Based Learning Applied to Document Recognition》（LeNet）、《ImageNet Classification with Deep Convolutional Neural Networks》（AlexNet）、《Deep Residual Learning for Image Recognition》（ResNet）。如果关注模型压缩和部署，可以研究 pruning、quantization、knowledge distillation 等技术。
-
-在现代 CV 任务中，CNN 和 ViT 各有优势。理解 CNN 的工作原理不仅有助于选择合适的模型架构，更能为理解 ViT 等新兴架构提供对比和参照。毕竟，CNN 凝结了人类对视觉理解的深刻智慧，这些智慧至今仍有启发意义。
