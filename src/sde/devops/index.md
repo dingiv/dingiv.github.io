@@ -32,3 +32,10 @@ CI/CD 工具：Jenkins, GitLab CI/CD
 配置管理：Ansible, Chef, Puppet
  
 ![devops](./devops.png)
+
+
+
+
+契约测试 (Pact),明确 API 的输入输出规范。,开发不用猜接口，测试有据可依。
+功能开关 (Feature Toggles),通过配置决定代码是否生效。,运维可以随时关闭出问题的模块，开发可以小步快跑上线。
+12-Factor App,一套云原生应用的设计准则（如配置与代码分离）。,极大降低了运维在不同环境下部署的难度。
