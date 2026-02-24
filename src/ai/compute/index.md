@@ -8,14 +8,15 @@ order: 60
 
 ## 算力软件栈
 从上层应用到硬件的计算资源调用链路如下：
-+ 大模型应用层：大模型部署、调度与记忆管理。
-+ 模型算法层：实现具体的 AI 模型算法，如 Transformer、CNN 等。
-+ 深度学习框架层（PyTorch）：屏蔽底层硬件差异，定义统一的张量算子接口，由各厂商的后端实现具体调用逻辑。
-+ 算子层：封装 PyTorch 的张量操作，调用厂商提供的加速计算 API。算子通常基于特定 DSL 编写，如 NVIDIA 的 CUDA C++。
-+ 加速计算 API 接口层：用户态的硬件加速 DSL，如 CUDA C++，负责将高层语法编译为中间表示（PTX），供驱动程序处理。还有比较新的 OpenAI 的 Triton。
-+ HAL 层：封装 `/dev/nvidia0` 等设备节点，提供 `libcuda.so`（计算）、`libnvidia-glcore.so`（图形）等闭源动态库，与内核驱动通信。
-+ 内核驱动层：将 PTX 中间码编译为 GPU 机器码（SASS），管理硬件资源。NVIDIA 驱动曾是数百 MB 的巨型二进制，后通过 GSP 架构重构。
-+ 硬件层：NVIDIA GPU、AMD GPU、Google TPU、华为昇腾 NPU 等物理设备。
++ 大模型应用层：大模型调度与记忆管理；
++ 模型算法层：实现具体的 AI 模型算法，如 Transformer、CNN 等；
++ 模型部署层：；
++ 深度学习框架层（PyTorch）：屏蔽底层硬件差异，定义统一的张量算子接口，由各厂商的后端实现具体调用逻辑；静态编译能力集成，增加编译期技术，进一步优化算法层代码；
++ 算子层：实现 PyTorch 的张量操作，调用厂商提供的加速计算 API。算子通常基于特定 DSL 编写，如 NVIDIA 的 CUDA C++；
++ 加速计算 API 接口层：用户态的硬件加速 DSL，如 CUDA C++，负责将高层语法编译为中间表示（PTX），供驱动程序处理。还有比较新的 OpenAI 的 Triton;
++ HAL 层/系统调用层：封装 `/dev/nvidia0` 等设备节点，提供 `libcuda.so`（计算）、`libnvidia-glcore.so`（图形）等闭源动态库，与内核驱动通信；
++ 内核驱动层：将 PTX 中间码编译为 GPU 机器码（SASS），管理硬件资源。NVIDIA 驱动曾是数百 MB 的巨型二进制，后通过 GSP 架构重构；
++ 硬件层：NVIDIA GPU、AMD GPU、Google TPU、华为昇腾 NPU 等物理设备；
 
 ![](./compute.dio.svg)
 
@@ -38,6 +39,8 @@ order: 60
 | NVIDIA（英伟达） | OpenGL / Vulkan / DirectX | CUDA                             |
 | AMD（超微）      | OpenGL / Vulkan / DirectX | ROCm（Radeon Open Compute）      |
 | Intel            | OpenGL / Vulkan / DirectX | oneAPI（DPC++ / SYCL）           |
+
+其中，Vulkan 作为现代的 OpenGL 的继任者，且支持跨厂商硬件的图形 API 标准，是学习现代渲染的必备技术。在 AI 计算领域，目前由 OpenAI 主导的 Triton 有望成为加速计算领域的 Vulkan，引领跨厂商间的 API 互通，成为 OpenCL 的现代继任者。
 
 ## Torch
 Torch 框架为了使用硬件加速计算，规定各个 GPU 厂商的封装层，将各家的硬件 API 进行屏蔽，从而让上层的数据科学家无需触及糟心而混乱的 GPU 生态，专注于数据训练即可，在调用 torch 的 API 时，torch 将帮助识别当前的硬件环境，使用对应的硬件进行加速，常见的硬件平台包括：
@@ -91,3 +94,6 @@ SPIR-V（Standard Portable Intermediate Representation）则是 Khronos 制定�
 | 运行时编译 | 驱动内置 ptxas | 驱动内置 SPIR-V 编译器   |
 
 在新架构下，NVIDIA 的 HAL 层同时支持接收 PTX 和 SPIR-V，开发者可根据目标平台选择合适的中间表示。
+
+## Triton
+当前的加速计算接口往往局限于特定的 GPU 硬件平台，缺乏跨厂商的 API 语言，为此，OpenAI 推出了
