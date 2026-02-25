@@ -41,3 +41,5 @@ local
 .vitepress/cache
 
 docs
+
+.temp
