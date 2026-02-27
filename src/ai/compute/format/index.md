@@ -11,7 +11,7 @@ order: 50
 | 格式             | 推出方             | 特点                             | 适用场景           | 详细介绍                  |
 | ---------------- | ------------------ | -------------------------------- | ------------------ | ------------------------- |
 | PyTorch .pt/.pth | Meta               | PyTorch 原生格式，支持完整计算图 | PyTorch 训练/推理  | -                         |
-| HF 风格          | Hugging Face       | config + safetensors，生态标准   | 开源模型分发       | [HF 风格](./transformers) |
+| HF 风格          | Hugging Face       | config + safetensors，生态标准   | 开源模型分发       | [HF 风格](./hf) |
 | ONNX             | Microsoft/Facebook | 框架无关，跨平台推理             | 跨框架部署         | [ONNX](./onnx)            |
 | GGUF             | llama.cpp          | 量化友好，CPU 推理优化           | 本地部署、边缘设备 | -                         |
 

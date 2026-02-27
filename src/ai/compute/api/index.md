@@ -9,8 +9,8 @@ order: 16
 | 接口     | 硬件平台          | 底层调用                | 详细介绍           |
 | -------- | ----------------- | ----------------------- | ------------------ |
 | CUDA     | NVIDIA GPU        | cuBLAS、cuDNN、TensorRT | [CUDA](./cuda)     |
-| Triton   | 跨平台            | 转 CUDA、ROCm           | [Triton](./triton) |
-| OpenCL   | 跨平台            | -                       | [OpenCL](./opencl) |
+| Triton   | 跨平台            | CUDA、ROCm...           | [Triton](./triton) |
+| OpenCL   | 跨平台            | *                       | [OpenCL](./opencl) |
 | SIMD     | CPU               | OpenMP、MKL、BLAS       | [SIMD](./cpu)      |
 | ROCm     | AMD GPU           | hipBLAS、MIOpen         | -                  |
 | Metal    | Apple M 芯片      | MPS                     | -                  |

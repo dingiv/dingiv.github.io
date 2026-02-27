@@ -1,5 +1,4 @@
-# 其他推理引擎
-
+# 其他
 除了 vLLM 和 DeepSpeed 外，AI 领域还有多个重要的推理和训练引擎。这些引擎各有特色：llama.cpp 专注本地部署和 CPU 推理，Megatron-LM 是超大规模模型训练的基石，TensorRT-LLM 追求极致性能，TGI 注重生产环境稳定性，SGLang 针对多轮对话场景优化。
 
 ## llama.cpp
@@ -40,24 +39,6 @@ llama-server --model llama-2-7b-q4.gguf --port 8080
 ### 适用场景
 
 llama.cpp 最适合资源受限环境：笔记本电脑、边缘设备、开发测试机器。对于生产环境的服务化部署，vLLM/TGI/TensorRT-LLM 更合适，因为它们的并发能力和吞吐量更高。但对于个人使用、离线部署、隐私敏感场景，llama.cpp 是最佳选择。llama.cpp 的另一个优势是跨平台，Windows、macOS、Linux、Android、iOS 全平台支持，使得它成为嵌入式 AI 应用的首选推理引擎。
-
-## Megatron-LM
-
-Megatron-LM 是 NVIDIA 开发的超大规模模型训练框架，首创了张量并行技术，并系统性地提出了 3D 并行策略。它是训练 GPT-3 175B、Megatron-Turing NLG 530B 等里程碑模型的基石。关于 3D 并行的详细实现原理，参见 [模型并行](./parallel)。
-
-### 张量并行原理
-
-张量并行的核心是将矩阵乘法算子切分到多个 GPU。对于 Transformer 的 MLP 层 $Y = XW$，其中 $X \in [B, S, H]$，$W \in [H, 4H]$。列并行将 $W$ 按列切分为 $W_1, W_2, \dots, W_n$，每张卡计算 $Y_i = XW_i$，最后通过 AllConcat 拼接 $Y = [Y_1, Y_2, \dots, Y_n]$。
-
-多头注意力更适合张量并行：$n$ 个头天然可以分配到 $n$ 张卡，每张卡计算自己的 QKV 投影和注意力输出，最后通过 AllReduce 聚合。这种切分完全符合 Transformer 的数学结构，通信开销极小。
-
-### Sequence Parallel
-
-长序列训练时，KV Cache 和注意力计算在序列维度上的内存和计算压力巨大。Megatron-LM 提出的 Sequence Parallel 将序列维度也进行切分，配合 Ring Attention 将通信复杂度从 $O(n^2)$ 降至 $O(n)$。这使得 128K 上下文的 GPT-3 训练成为可能。
-
-### 使用成本
-
-Megatron-LM 的工程复杂度远高于 DeepSpeed 和 FSDP。它要求模型代码按照特定的并行模式重写，且不支持即插即用的模型加载。但对于训练千亿级以上参数的模型，其性能优化是无可替代的。NVIDIA 的 NGC 容器预装了 Megatron-LM，可直接在 Base Command 平台上启动训练。
 
 ## TensorRT-LLM
 
@@ -164,3 +145,20 @@ def get_weather(location: str):
 SGLang 和 vLLM 都来自 UC Berkeley，但定位不同。vLLM 追求极致的吞吐量和通用性，适合高并发的在线服务；SGLang 追求特定场景的优化（多轮对话、结构化生成、工具调用），适合 Agent 应用和复杂 prompt 场景。
 
 对于大多数通用推理场景，vLLM 的性能和生态更成熟。但对于 Agent 开发、RAG 应用、需要频繁调用工具的场景，SGLang 的针对性优化会带来显著收益。对于多轮对话、结构化输出、长文档处理等场景，SGLang 的性能可领先 vLLM 2-5 倍。但对于简单的单轮问答、高并发短 prompt 场景，vLLM 的吞吐量更高。
+
+## Megatron-LM
+Megatron-LM 是 NVIDIA 开发的超大规模模型**训练**框架，首创了张量并行技术，并系统性地提出了 3D 并行策略。它是训练 GPT-3 175B、Megatron-Turing NLG 530B 等里程碑模型的基石。关于 3D 并行的详细实现原理，参见 [模型并行](../impl/parallel)。
+
+### 张量并行原理
+
+张量并行的核心是将矩阵乘法算子切分到多个 GPU。对于 Transformer 的 MLP 层 $Y = XW$，其中 $X \in [B, S, H]$，$W \in [H, 4H]$。列并行将 $W$ 按列切分为 $W_1, W_2, \dots, W_n$，每张卡计算 $Y_i = XW_i$，最后通过 AllConcat 拼接 $Y = [Y_1, Y_2, \dots, Y_n]$。
+
+多头注意力更适合张量并行：$n$ 个头天然可以分配到 $n$ 张卡，每张卡计算自己的 QKV 投影和注意力输出，最后通过 AllReduce 聚合。这种切分完全符合 Transformer 的数学结构，通信开销极小。
+
+### Sequence Parallel
+
+长序列训练时，KV Cache 和注意力计算在序列维度上的内存和计算压力巨大。Megatron-LM 提出的 Sequence Parallel 将序列维度也进行切分，配合 Ring Attention 将通信复杂度从 $O(n^2)$ 降至 $O(n)$。这使得 128K 上下文的 GPT-3 训练成为可能。
+
+### 使用成本
+
+Megatron-LM 的工程复杂度远高于 DeepSpeed 和 FSDP。它要求模型代码按照特定的并行模式重写，且不支持即插即用的模型加载。但对于训练千亿级以上参数的模型，其性能优化是无可替代的。NVIDIA 的 NGC 容器预装了 Megatron-LM，可直接在 Base Command 平台上启动训练。

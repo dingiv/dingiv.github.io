@@ -24,7 +24,7 @@ SPIR-V 采用 SSA（Static Single Assignment）形式的指令集。每个操作
 
 SPIR-V 的类型系统包括标量（ScalarType）、向量（VectorType）、矩阵（MatrixType）、数组（ArrayType）、结构体（StructType）、指针（PointerType）、图像（ImageType）、采样器（SamplerType）等。类型声明使用 OpType 指令，如 `OpTypeFloat 32` 声明 32 位浮点类型，`OpTypeVector %float 3` 声明三维向量。类型系统是强类型的，不支持隐式转换，确保了跨平台的正确性。
 
-```spirv
+```
 ; SPIR-V 示例：简单的加法
 OpCapability Shader
 OpMemoryModel Logical GLSL450
@@ -50,7 +50,7 @@ SPIR-V 使用装饰（Decorations）将变量连接到管线阶段和资源。`L
 
 内存布局由 `std140` 和 `std430` 规则决定。`std140` 用于统一缓冲区（Uniform Buffer），标量对齐到 4 字节，向量对齐到 16 字节（vec3 例外），数组元素对齐到 16 字节。`std430` 用于存储缓冲区（Storage Buffer），标量和向量对齐到其元素大小，数组元素对齐到其元素大小（无额外填充）。这些规则确保 CPU 和 GPU 对数据布局的理解一致，避免了隐式对齐问题。
 
-```spirv
+```
 ; 统一缓冲区布局示例
 OpMemberDecorate %Uniforms 0 Offset 0      ; modelMatrix
 OpMemberDecorate %Uniforms 1 Offset 64     ; viewMatrix

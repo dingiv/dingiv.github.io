@@ -68,12 +68,11 @@ OpenCL 在以下场景仍有一定价值：
 - **原型验证**：快速验证算法在多种硬件上的可行性，无需为每种平台重写代码
 
 ## SPIR-V
-
 SPIR-V（Standard Portable Intermediate Representation）是 OpenCL 生态的重要组成部分。它是一种中间表示格式，类似于 CUDA 的 PTX，可将 OpenCL C 代码编译为与硬件无关的二进制，然后在运行时由驱动编译为目标设备的机器码。
 
 SPIR-V 的优势在于**分发便捷**。开发者可以发布 SPIR-V 二进制而非源代码，保护知识产权的同时保证跨平台兼容。SPIR-V 也被 Vulkan 采用（作为着色器的中间表示），这使得 OpenCL 和 Vulkan 可以共享编译工具链。
 
-然而，SPIR-V 的推广并不顺利。NVIDIA 不支持 SPIR-V（CUDA 只接受 PTX），AMD 的 ROCm 虽然支持 SPIR-V，但性能不如 HIP。Khronos 推出的 SYCL（基于 C++ 的并行编程语言）使用 SPIR-V 作为中间表示，但 SYCL 的生态同样不温不火。
+然而，SPIR-V 的推广并不顺利。NVIDIA 的 CUDA 不支持 SPIR-V（CUDA 只接受 PTX，SPIV-R 目前主要是图形侧在用），AMD 的 ROCm 虽然支持 SPIR-V，但性能不如 HIP。Khronos 推出的 SYCL（基于 C++ 的并行编程语言）使用 SPIR-V 作为中间表示，但 SYCL 的生态同样不温不火。
 
 ## 与 CUDA 对比
 
