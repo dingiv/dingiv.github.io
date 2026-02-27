@@ -1,38 +1,75 @@
 ---
 title: vLLM
+order: 10
 ---
 
 # vLLM
+vLLM 是 UC Berkeley SkyLab 实验室研发的开源 LLM 推理引擎，通过 PagedAttention 创新性地解决了 KV Cache 管理问题，成为 2023-2024 年最流行的 LLM 推理框架之一。其核心贡献在于将操作系统的虚拟内存管理思想应用到 KV Cache 管理中，实现了高吞吐量和低延迟的推理服务。
 
-vLLM 是 UC Berkeley 研发的开源推理引擎，通过 PagedAttention 创新性地解决了 KV Cache 管理问题，成为 2023-2024 年最流行的 LLM 推理框架之一。
+## 核心卖点
+vLLM 的核心卖点可以概括为三点：**极致的吞吐量**、**高效的显存利用**、**开箱即用的易用性**。
+
+吞吐量是 vLLM 的首要优化目标。通过优化吞吐量，让 AI 模型从服务单一用户向高并发服务器转变，这意味着同样的硬件可以服务更多用户，帮助商业部署的推理服务降低成本。vLLM 使用连续批处理（continuous batching）和 PagedAttention，在 NVIDIA A100 上的吞吐量可达 TGI 的 2-4 倍。
+
+显存利用是 vLLM 的第二大优势。大模型推理的显存瓶颈往往不是模型权重，而是 KV Cache。对于 7B 模型在 2048 长度、batch size 32 的场景，KV Cache 需要 8GB（FP16），超过模型权重本身（14GB）。vLLM 的 PagedAttention 将显存利用率提升到接近理论极限，使得在单张 A100（40GB）上可以运行更大的 batch size 或更长的序列。
+
+易用性是 vLLM 被广泛采用的第三个原因。vLLM 兼容 HuggingFace 模型格式，无需转换即可直接加载；兼容 OpenAI API，一行代码即可启动推理服务；支持张量并行，无需手动切分模型。这些设计使得部署大模型推理服务变得前所未有的简单。
 
 ## PagedAttention
 
-传统推理引擎将每个请求的 KV Cache 作为连续显存块管理，这带来两个问题：一是预分配困难——无法预测序列长度，预分配过多浪费显存，过少则中断生成；二是内存碎片——不同请求的序列长度差异导致显存无法有效复用。
+PagedAttention 是 vLLM 的核心创新，它解决了 KV Cache 管理的两个根本问题：**预分配困难**和**内存碎片**。
 
-PagedAttention 借鉴操作系统的虚拟内存管理，将 KV Cache 分页（page），每页固定大小（如 16 个 token）。每个请求的 KV Cache 是一组页面的链表，页面可分散在显存任意位置。这消除了预分配问题——按需申请页面；也解决了内存碎片——页面大小统一，可自由复用。
+传统推理引擎将每个请求的 KV Cache 作为连续显存块管理。这要求在推理开始前预分配足够大的显存块，但序列长度无法预测——预分配过多浪费显存，预分配过少则生成中断。并且，不同请求的序列长度差异巨大（有的 10 个 token，有的 1000 个 token），预分配的显存块无法复用，导致内存碎片。
 
-更重要的是，PagedAttention 支持跨请求的 KV Cache 共享。系统 prompt（如"你是一个有用的助手"）在多个请求中完全相同，共享其 KV Cache 可节省大量显存。在多轮对话中，用户 prompt 重复出现时也可共享，这特别适合客服机器人等场景。
+PagedAttention 的核心洞察是：**KV Cache 不需要连续存储**。借鉴操作系统的虚拟内存管理，将 KV Cache 分页，每页固定大小（如 16 个 token）。每个请求的 KV Cache 是一组页面的链表，页面可分散在显存任意位置。这消除了预分配问题——按需申请页面即可；也解决了内存碎片——页面大小统一，可自由复用。
+
+PagedAttention 的实现依赖于三个核心组件：Block Manager（页面分配器）、Cache Engine（缓存引擎）、Scheduler（调度器）。
+
+Block Manager 负责管理 KV Cache 页面的分配和释放。当新的请求到达时，Block Manager 为其分配 KV Cache 页面；当请求完成或页面不再需要时，Block Manager 标记页面为可复用。Block Manager 使用位图（bitmap）或空闲链表（free list）管理空闲页面，分配和释放的时间复杂度都是 O(1)。
+
+Cache Engine 负责页面的实际读写。当需要访问某个位置（如第 100 个 token 的 KV）时，Cache Engine 计算该位置所在的页面（page_id = position // block_size），然后从显存中读取对应的页面数据。Cache Engine 使用 CUDA kernel 实现，针对不同硬件（A100、H100）优化了内存访问模式。
+
+Scheduler 负责决定何时计算哪些位置。vLLM 的 Scheduler 采用了迭代式调度（iterative scheduling）：每次生成一个 token 后，Scheduler 会检查所有请求的状态，决定下一轮计算哪些位置。这避免了传统静态 batch 的"等待整批完成"问题，实现了连续批处理。
 
 ## 连续批处理
+连续批处理（continuous batching）是 vLLM 调度器的核心优化。传统推理引擎使用静态 batch：所有请求放入一个 batch，等待所有请求都完成后，再处理下一批。这导致短序列完成后，GPU 空转等待长序列完成，浪费计算资源。
 
-vLLM 的调度器支持 continuous batching，即当 batch 中某个序列生成结束时（遇到 EOS token 或达到长度限制），立即插入新序列，而非等待整个 batch 完成。这充分利用了 GPU 的计算资源，避免了传统静态 batch 中"短序列完成后 GPU 空转"的问题。
+连续批处理的思路是：**当 batch 中某个序列生成结束时，立即插入新序列**。这充分利用了 GPU 的计算资源，避免了空转。例如，batch 中有三个请求，分别需要生成 10、100、1000 个 token。传统静态 batch 需要等待 1000 个 token 全部生成完成；连续批处理会在 10 token 的请求完成后立即插入新请求，GPU 始终满载运行。
 
-调度器还支持前缀缓存（prefix caching）——重复的 prompt 前缀只计算一次 KV Cache，后续请求直接复用。对于常见的系统 prompt + 用户 prompt 组合，这可将首 token 延迟降低 50% 以上。
+实现连续批处理需要解决两个挑战：一是如何高效检测序列结束（EOS token 或达到长度限制），二是如何安全地插入新序列（不影响其他正在生成的序列）。vLLM 通过在 CUDA kernel 中检测 EOS token 来判断序列结束，通过原子操作保证插入新序列时的并发安全。
 
-## 使用方式
+连续批处理的收益在高并发场景下尤为明显。对于 chatbot 场景，用户请求的序列长度差异巨大（有的问一个问题，有的进行多轮对话），连续批处理可将吞吐量提升 3-10 倍。
 
-```python
-from vllm import LLM, SamplingParams
+## 前缀缓存
+前缀缓存（prefix caching）是 vLLM 的另一大优化。很多推理请求共享相同的 prompt 前缀，如系统 prompt（"你是一个有用的助手"）或用户 prompt 的开头部分。前缀缓存的核心思想是：**相同的 prompt 前缀只计算一次 KV Cache，后续请求直接复用**。
 
-llm = LLM(model="meta-llama/Llama-2-7b", tensor_parallel_size=2)
-prompts = ["Hello, my name is", "The future of AI is"]
-sampling_params = SamplingParams(temperature=0.8, top_p=0.95, max_tokens=100)
-outputs = llm.generate(prompts, sampling_params)
-```
+前缀缓存的实现依赖于 KV Cache 的共享机制。当新请求到达时，Scheduler 会检查其 prompt 前缀是否与已有请求的前缀匹配。如果匹配，直接复用已有请求的 KV Cache，只需计算不匹配的部分。这大幅减少了重复计算，对于客服机器人等场景（所有用户共享相同的系统 prompt），首 token 延迟可降低 50% 以上。
 
-vLLM 兼容 OpenAI API，可通过 `vllm serve` 命令启动兼容服务，直接替换 OpenAI API 的 base_url 即可。这种兼容性使得从 OpenAI 迁移到自托管模型变得非常简单。
+前缀缓存的挑战在于如何高效匹配前缀。v读写一个简单的前缀匹配算法（逐字符比较）是 O(n) 的，在高并发下会成为瓶颈。vLLM 使用基数树（Radix Tree）来存储已计算的前缀，匹配时间复杂度为 O(1)。同时，前缀缓存需要考虑 KV Cache 的版本问题——当模型权重更新后，缓存的 KV Cache 需要失效。
 
-## 性能对比
+## 推理架构
+vLLM 的推理架构分为三层：API 层、调度层、计算层。
 
-vLLM 官方 benchmark 显示，相比 TGI（Text Generation Inference），vLLM 在吞吐量上提升 2-4 倍，在首 token 延迟上降低 30-50%。这主要归功于 PagedAttention 的高效内存管理和连续批处理的调度优化。但 vLLM 的 GPU 显存占用略高，因为页面元数据（page table）需要额外维护。
+API 层提供 Python API 和 OpenAI 兼容接口。Python API 包括 `LLM` 类（高-level 接口）和 `SamplingParams` 类（采样参数），支持同步和异步推理。OpenAI 兼容接口通过 `vllm serve` 命令启动 HTTP 服务，完全兼容 OpenAI API 格式，可直接替换 base_url。
+
+调度层是 vLLM 的核心，包括 Scheduler（调度器）、Block Manager（页面管理器）、Cache Engine（缓存引擎）。Scheduler 负责决定何时计算哪些位置，Block Manager 负责 KV Cache 页面的分配和释放，Cache Engine 负责页面的实际读写。调度层运行在独立的控制线程中，通过 CUDA stream 与计算层通信。
+
+计算层由多个 Worker 组成，每个 Worker 负责 GPU 上的计算任务。Worker 接收 Scheduler 的计算指令（如"计算第 100 个位置的 attention"），调用 CUDA kernel 完成计算。Worker 支持 pipeline 并行，将计算、内存拷贝、通信重叠，最大化 GPU 利用率。
+
+## 模型执行器
+
+vLLM 的模型执行器（Model Executor）负责加载和执行模型。支持多种模型格式：HuggingFace 格式（safetensors/pytorch_model.bin）、GGUF 格式（llama.cpp）、ONNX 格式。模型加载时自动识别格式，选择合适的执行后端。
+
+模型执行器支持张量并行（tensor parallel），将模型切分到多个 GPU 上执行。对于大模型（如 Llama-2-70B），单张 GPU 无法容纳，需要使用张量并行将模型分配到多张卡。vLLM 的张量并行实现基于 Ray，支持多机多卡部署。
+
+模型执行器还支持量化模型加载。vLLM 原生支持 AWQ、GPTQ、INT8 等量化格式，加载量化模型时自动反量化到 FP16/BF16 进行计算。这使得 4-bit 量化的 7B 模型可在单张消费级 GPU（24GB）上运行。
+
+## 内核优化
+
+vLLM 的内核优化是其性能优势的来源。vLLM 手写了大量 CUDA kernel，针对 Attention、矩阵乘法、LayerNorm 等算子进行了深度优化。
+
+PagedAttention kernel 是 vLLM 的核心 kernel，负责计算分页存储的 KV Cache。标准 Attention kernel 需要连续的 KV Cache，而 PagedAttention kernel 需要处理分页存储，这带来了额外的内存访问开销。vLLM 通过 tiling 和 shared memory 优化，将分页开销降到最低。
+
+FlashAttention-2 kernel 是 vLLM 的另一个核心 kernel。FlashAttention 通过分块计算减少显存访问次数，推理速度提升 2-3 倍。vLLM 的 FlashAttention 实现针对分页存储进行了适配，支持动态页面大小（根据序列长度自动调整）。
+
+vLLM 还针对特定的模型架构进行了优化。对于 LLaMA 模型，vLLM 实现了 grouped query attention（GQA）的优化 kernel；对于 ChatGLM 模型，vLLM 实现了 multi-query attention（MQA）的优化 kernel。这些针对特定架构的优化使得 vLLM 在不同模型上都能发挥最佳性能。

@@ -4,13 +4,13 @@ order: 60
 ---
 
 # PyTorch
-PyTorch 是由 Meta (Facebook) AI Research 开发的开源深度学习框架，于 2016 年发布。它以动态计算图、Python 原生接口和灵活性著称，已成为学术研究和工业应用中最流行的深度学习框架之一。
+PyTorch 是由 Meta (Facebook) AI Research 开发的开源深度学习框架，于 2016 年发布。它以动态计算图、Python 原生接口和灵活性著称，已成为学术研究和工业应用中最流行的深度学习框架之一。PyTorch 的设计哲学是"最小化框架的侵入性"，让开发者能够用 Python 的思维方式表达神经网络，同时通过高效的 C++ 后端实现高性能计算。
 
-## 核心特性
-- **动态计算图（Define-by-Run）**：与静态图不同，PyTorch 在运行时构建计算图，使得调试更加直观；
-- **Pythonic 设计**：API 设计符合 Python 习惯，学习曲线平缓；
-- **硬件加速多后端支持**：主要通过 CUDA 和 N 卡实现高效的张量运算，但也能够支持多款不同的 GPU 后端，甚至允许通过实现接口添加自定义后端；
-- **丰富的生态系统**：包括 torchvision（计算机视觉）、torchaudio（音频处理）、torchtext（自然语言处理）等；
+理解 PyTorch 有两个视角：算法工程师视角关注如何使用 PyTorch 构建和训练模型，AI infra 工程师视角关注 PyTorch 的实现原理和底层架构。前者是"用"，后者是"懂"。
+
+## 算法工程师视角：使用 PyTorch
+
+从使用者的角度来看，PyTorch 的核心特性可以概括为四点：动态计算图、Pythonic 设计、硬件加速、丰富生态。动态计算图（Define-by-Run）意味着图是在运行时构建的，这使得调试更加直观——可以用 print 语句打印中间变量、用 Python debugger 单步跟踪代码。Pythonic 设计体现在 API 符合 Python 习惯，张量操作像 NumPy 一样自然，学习曲线平缓。硬件加速通过多后端支持实现，无需修改代码即可在 NVIDIA GPU、AMD GPU、Apple M 芯片、Intel GPU 上运行。丰富的生态系统包括 torchvision（计算机视觉）、torchaudio（音频处理）、torchtext（自然语言处理）等，覆盖了深度学习的各个应用领域。
 
 ## 张量
 张量（Tensor）是 PyTorch 中最基本的数据结构，类似于 NumPy 的 ndarray，但支持 GPU 加速和自动微分。

@@ -65,3 +65,87 @@ LoRA 配置上，秩 r=16 是好的起点。如果发现模型学习能力不足
 数据质量比数量更重要。在投入计算资源之前，先人工检查标注数据——答案是否准确、风格是否一致、是否覆盖了任务的主要场景。一个有用的技巧是先用小模型（如 1B 参数）快速试验，如果小模型无法从数据中学到有用的模式，那么大模型也不会更好。
 
 评估微调效果时，除了自动指标（如准确率、BLEU 分数），一定要进行人工评估。生成式任务的自动指标往往不可靠（两个看似不同的答案可能都正确），人工抽样评估能发现模型的实际问题和改进方向。建立评估集（与训练集分离），定期评估模型表现，防止训练过程中的退化。
+
+
+
+# LoRA 与 PEFT
+
+LoRA（Low-Rank Adaptation）和 PEFT（Parameter-Efficient Fine-Tuning，参数高效微调）是一类通过少量参数调整来适配大模型到特定任务的技术。与全参数微调需要更新所有模型参数不同，PEFT 只更新一小部分参数（通常不到 1%），大幅降低显存占用和训练成本。
+
+## 背景
+
+大模型的微调成本高昂。一个 7B 参数的模型，全参数微调需要存储所有参数的梯度、优化器状态，显存需求是模型权重的 3-4 倍。FP16 权重需要 14GB，加上梯度和优化器状态需要约 50GB 显存，这超出了单张消费级 GPU 的容量。
+
+PEFT 通过只更新一小部分参数来解决这个问题。LoRA 通过添加低秩矩阵来模拟参数更新，Adapter 通过添加小型适配器层，Prefix Tuning 通过优化 prompt 前缀。这些方法的共同特点是：冻结大部分原始参数，只训练少量新增参数，显存需求降低到原本的 1/10 甚至更低。
+
+## LoRA 原理
+
+LoRA 的核心洞察是：模型在微调时的参数更新矩阵具有低秩特性。假设预训练权重为 $W_0$，微调后的权重为 $W = W_0 + \Delta W$。LoRA 假设 $\Delta W$ 可以分解为两个低秩矩阵的乘积：$\Delta W = BA$，其中 $B \in [d, r]$，$A \in [r, k]$，$r \ll \min(d, k)$ 是秩。
+
+训练时冻结 $W_0$，只更新 $B$ 和 $A$。推理时，将 $W_0 + BA$ 合并为实际权重。由于 $r$ 通常取 8-64，而 $d$ 和 $k$ 可达 4096，参数量从 $d \times k$ 降低到 $r \times (d + k)$，减少约 100-500 倍。对于 7B 模型，全参数微调需要训练 70 亿参数，LoRA（r=64）只需训练约 1000 万参数。
+
+LoRA 的另一个优势是**可插拔**。不同任务对应不同的 LoRA 权重（$B$ 和 $A$），基础模型 $W_0$ 可以共享。这意味着我们可以用一个 7B 基础模型支持多个任务（聊天、代码生成、数学推理），每个任务只需 10-20 MB 的 LoRA 权重，大幅降低存储和部署成本。
+
+## QLoRA
+
+QLoRA（Quantized LoRA）是对 LoRA 的改进，结合了量化技术。它的核心思想是：基础模型以 4-bit 量化加载（显存占用降低 75%），LoRA 适配器以 FP16 训练。这使得 7B 模型的微调只需约 6GB 显存，单张消费级 GPU 即可训练。
+
+QLoRA 的关键技术包括：4-bit NormalFloat 量化（一种针对正态分布权重的量化方法）、双重量化（每层分别计算量化 scale）、以及优化的梯度计算（避免 4-bit 梯度的精度损失）。QLoRA 在保持与全参数微调相当精度的同时，将显存占用降低到原本的 1/4。
+
+## 其他 PEFT 方法
+
+除了 LoRA，PEFT 还包括多种技术：
+
+| 方法 | 原理 | 优点 | 缺点 |
+|------|------|------|------|
+| Adapter | 在每层插入小型适配器网络 | 灵活性高 | 推理时需要逐层计算适配器 |
+| Prefix Tuning | 优化 prompt 前缀作为虚拟 token | 不修改模型权重 | 难以训练，性能不稳定 |
+| Prompt Tuning | 直接优化 prompt 嵌入 | 最简单 | 表达能力有限 |
+| IA3 | 学习激活缩放因子 | 参数量最少 | 性能略低于 LoRA |
+
+Adapter 是早期的 PEFT 方法，在 Transformer 的每层 FFN 后插入小型适配器网络（两层 MLP）。推理时需要逐层计算适配器，增加推理延迟。Prefix Tuning 优化 prompt 前缀（在每层插入虚拟 token 的 embedding），但训练不稳定，且难以收敛。
+
+## 使用方式
+
+HuggingFace 的 PEFT 库提供了统一的接口：
+
+```python
+from peft import LoraConfig, get_peft_model
+from transformers import AutoModelForCausalLM
+
+base_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b")
+peft_config = LoraConfig(
+    task_type="CAUSAL_LM",
+    r=64,                     # rank
+    lora_alpha=128,            # scaling factor
+    target_modules=["q_proj", "v_proj"],  # 要训练的模块
+    lora_dropout=0.05,
+)
+
+model = get_peft_model(base_model, peft_config)
+# 训练时只更新 LoRA 参数
+model.print_trainable_parameters()  # 显示可训练参数量
+```
+
+训练完成后，LoRA 权重可以保存为独立的 `adapter_model.safetensors` 文件，推理时加载到基础模型上：
+
+```python
+from peft import PeftModel
+
+base_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b")
+model = PeftModel.from_pretrained(base_model, "path/to/lora/adapter")
+
+# 可选：合并到基础模型
+merged_model = model.merge_and_unload()
+merged_model.save_pretrained("merged-model")
+```
+
+## 工程实践
+
+LoRA 的 rank（$r$）选择需要权衡性能和效率。$r$ 越大，表达能力越强，但参数量越多。常见取值范围是 8-128，对于复杂任务（如代码生成）可用 256。target_modules 的选择也很重要：对于 LLaMA 模型，通常选择 `["q_proj", "v_proj"]`（query 和 value 投影）；对于 ChatGLM 模型，可能需要选择 `["query_key_value"]`。
+
+LoRA 的另一个应用场景是**多任务部署**。一个基础模型可以挂载多个 LoRA 适配器，推理时根据请求类型动态切换。例如客服机器人可使用同一基础模型，挂载"商品咨询"、"退款处理"、"投诉处理"三个 LoRA 适配器，根据用户意图路由到对应的适配器。这比部署三个独立模型节省大量显存。
+
+## 局限性
+
+LoRA 的局限性在于表达能力的上限。对于需要大幅改变模型行为的任务（如学习新语言、全新知识领域），LoRA 可能无法达到全参数微调的效果。但对于大多数适配任务（风格迁移、领域适配、指令微调），LoRA 在降低成本的同时保持了接近全参数微调的性能。

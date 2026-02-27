@@ -6,13 +6,13 @@ title: FlashAttention
 
 FlashAttention 是 Stanford 提出的 Attention 优化算法，通过分块计算和在线更新，将 Attention 的显存访问减少 10 倍以上，推理速度提升 2-3 倍。它是 LLM 推理加速的基石，被 vLLM、TGI、TensorRT-LLM 等主流框架采用。
 
-## 标准Attention的问题
+## 标准 Attention 的问题
 
 标准 Attention 的计算公式为 $\text{Attention}(Q, K, V) = \text{softmax}(\frac{QK^T}{\sqrt{d}})V$。朴素实现需要三步：1) 计算 $S = QK^T$（注意力分数矩阵），2) 计算 $P = \text{softmax}(S)$（注意力权重），3) 计算 $O = PV$（输出）。每步都需要读写显存，且 $S$ 和 $P$ 矩阵的大小为 $[n^2, n^2]$（$n$ 为序列长度），显存占用巨大。
 
 对于序列长度 4096、batch size 32、head dim 128 的 Attention，$S$ 矩阵需要 $32 \times 4096 \times 4096 \times 2$ bytes（FP16）≈ 1GB，$P$ 矩阵同样 1GB。这还未计算 KV Cache，仅中间结果就占用 2GB 显存。显存带宽成为瓶颈，因为每次计算都需要读写这些大矩阵。
 
-## FlashAttention的优化
+## FlashAttention 的优化
 
 FlashAttention 的核心洞察是**无需显式构造 $S$ 和 $P$ 矩阵**，而是通过分块计算在线更新 softmax 和输出。具体来说，将 $Q, K, V$ 按序列维度分块（block size 如 128），每个块单独计算 Attention，然后合并块的结果。
 

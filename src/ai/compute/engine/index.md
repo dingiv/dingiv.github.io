@@ -27,13 +27,23 @@ KV Cache 优化是推理性能的核心。标准 Attention 需要缓存所有历
 
 ## 推理框架
 
-| 框架         | 核心技术                    | 适用场景                       |
-| ------------ | --------------------------- | ------------------------------ |
-| vLLM         | PagedAttention、连续批处理  | 高吞吐在线服务、长序列         |
-| TGI          | FlashAttention、量化基准    | HuggingFace 模型部署、生产环境 |
-| TensorRT-LLM | 算子融合、INT4/INT8 量化    | NVIDIA GPU、极致性能           |
-| llama.cpp    | CPU/GPU 混合推理、GGUF 量化 | 本地部署、资源受限环境         |
-| SGLang       | RadixAttention、结构化并发  | 多轮对话、复杂 prompt          |
+| 框架         | 核心技术                    | 适用场景                       | 详细介绍 |
+| ------------ | --------------------------- | ------------------------------ | -------- |
+| vLLM         | PagedAttention、连续批处理  | 高吞吐在线服务、长序列         | [vLLM](./vllm) |
+| TGI          | FlashAttention、量化基准    | HuggingFace 模型部署、生产环境 | [TGI](./other#tgi) |
+| TensorRT-LLM | 算子融合、INT4/INT8 量化    | NVIDIA GPU、极致性能           | [TensorRT-LLM](./other#tensorrt-llm) |
+| llama.cpp    | CPU/GPU 混合推理、GGUF 量化 | 本地部署、资源受限环境         | [llama.cpp](./other#llamacpp) |
+| SGLang       | RadixAttention、结构化并发  | 多轮对话、复杂 prompt          | [SGLang](./other#sglang) |
+
+## 推理优化技术
+
+除了上述框架中的核心技术外，推理引擎还依赖以下优化技术：
+
+- **模型并行** [模型并行](./parallel) - 张量并行与流水线并行的分布式推理与训练
+- **投机采样** [投机采样](./speculative) - 通过小模型辅助大模型加速生成
+- **参数高效微调** [LoRA/PEFT](./lora) - 通过少量参数调整适配模型到特定任务
+- **量化推理** [量化](../kernel/quantization) - INT8/INT4 量化降低显存占用
+- **混合专家** [MoE](./moe) - 稀疏激活打破参数量与计算量的耦合
 
 选择推理框架需要考虑硬件平台（NVIDIA GPU vs CPU vs Apple Silicon）、部署规模（单机 vs 集群）、延迟要求（在线服务 vs 离线批处理）。vLLM 和 TGI 在 NVIDIA GPU 上性能最强，llama.cpp 适合本地部署，TensorRT-LLM 适合对性能极致优化的场景。
 

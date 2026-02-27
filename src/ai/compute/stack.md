@@ -35,39 +35,27 @@ AI 算力技术层次结构，从上层应用到硬件的计算资源调用链�
   
   PyTorch 等框架提供抽象接口，让开发者无需关心硬件细节。框架定义统一的张量算子接口（如 add、matmul），由各厂商后端实现具体调用。自定义算子可封装 torch.Tensor 操作，调用下层 API。NVIDIA 的 CUDA C++ 用于编写内核，框架编译这些为可执行代码。桥接算法和硬件，允许跨设备移植代码。
 
-  代表技术：Pytorch 框架、vllm 引擎、deepspeed 引擎；
+  代表技术：PyTorch 框架、vllm 引擎、deepspeed 引擎；
 
 + **加速计算 API 接口层**  
-  提供编程接口，直接操作加速硬件。CUDA C++ 是 NVIDIA 的 DSL，编写内核代码编译为 PTX，支持线程块和共享内存管理。Triton 是 OpenAI 的开源 DSL，简化内核编写并支持自动调优。接口层编译高层代码为中间码交给驱动处理，重点是性能优化。
+  提供编程接口，直接操作加速硬件。CUDA C++ 是 NVIDIA 的 DSL，编写算子代码编译为 PTX，支持线程块和共享内存管理。Triton 是 OpenAI 的开源 DSL，简化内核编写并支持自动调优。接口层编译高层代码为中间码交给驱动处理，重点是性能优化。
+
+  代表技术：CUDA、Triton；
 
 + **HAL + 系统调用**  
-  硬件抽象层提供用户空间库，隐藏内核细节，由硬件厂商编写提供。通过 `/dev/nvidia*` 节点访问 GPU，提供 `libcuda.so` 用于计算任务（如 cuBLAS 库的线性代数），`libnvidia-glcore.so` 处理图形渲染。这一层是闭源的，确保兼容性。PyTorch 通过 torch.cuda 调用 libcuda.so 启动内核。
+  硬件抽象层提供用户空间库，隐藏内核细节，由硬件厂商编写提供。提供 `libcuda.so` 用于计算任务（如 cuBLAS 库的线性代数），`libnvidia-glcore.so` 处理图形渲染，这一层是闭源的，厂商需要确保兼容性。PyTorch 通过 torch.cuda 调用 `libcuda.so` 使用 CUDA 功能，`libcuda.so` 继续向下通过 `/dev/nvidia*` 节点和文件操作进入内核态调用硬件。
 
 + **内核驱动**  
-  操作系统内核模块处理最终编译和资源分配，由硬件厂商编写提供。驱动将 PTX 转为 SASS（特定于 GPU 架构的机器码），调度 SM、内存分配和上下文切换。NVIDIA 驱动曾是数百 MB 的大型 blob，后通过 GSP 架构重构为模块化设计，提高了安全性。AMD 的 ROCm 驱动类似但开源程度更高。
+  内核驱动透传控制和 GPU 程序到硬件，由硬件厂商编写提供。NVIDIA 驱动曾是数百 MB 的大型 blob，且是闭源的，驱动将 PTX 转为 SASS（特定于 GPU 架构的机器码），调度 SM、内存分配和上下文切换。后通过 GSP 架构重构为模块化设计，将闭源代码和编译逻辑向 HAL 层和硬件转移，驱动层则面向了开源。AMD 的 ROCm 驱动类似但开源程度更高。
 
 + **硬件层**  
   底层物理芯片执行计算，包括 NVIDIA GPU（A100/H100）、AMD GPU（MI300 系列）、Google TPU、华为昇腾 NPU 等。硬件决定峰值性能，如 H100 的 80 TFLOPS FP16。趋势是向定制 ASIC 发展以降低功耗。
 
-## Pytorch
+## [PyTorch](./engine/pytorch)
 Pytorch 是 Facebook 开源的深度学习框架，它引导社区的 AI 模型训练生态，让社区形成许多无形的路径依赖。目前，多数 AI 引擎多会围绕 Pytorch 继续构建，从而复用当前已有的社区生态。
 
-具体参考 [Pytorch](./engine/pytorch)
-
-torch 原生模型格式
-
-内置网络结构和算子实现，算子无感，但是支持自定义算子
-
-自动微分机制
-
-硬件屏蔽
-
-编译器优化，黑魔法
-
-分布式能力引入
-
-## Triton
-OpenAI 牵头的标准接口，统一了硬件数据面的 DSL，使得
+## [Triton](./api/triton)
+OpenAI 牵头的标准接口，PyTorch 2.0 成为其一等公民，有望成为统一硬件数据面的 DSL。
 
 ## GSP 架构
 GSP（GPU System Processor）是 NVIDIA 从 Turing 架构开始在 GPU 芯片上集成的专用 RISC-V 处理器，将原本运行在内核驱动中的复杂逻辑下沉到 GPU 固件中执行，然后将计算语法编译的任务上移到用户态去做。
