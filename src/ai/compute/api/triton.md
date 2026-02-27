@@ -47,8 +47,8 @@ def add_kernel(...):
     ...
 ```
 
-## 与 PyTorch 集成
-Triton kernel 可通过 `torch.compile` 或 `torch.ops.load_custom_op` 集成到 PyTorch 模型中。PyTorch 2.0 原生支持 Triton，`torch.compile` 会自动将符合模式的算子编译为 Triton kernel（如逐元素操作、归约操作）。这无需修改模型代码，只需添加 `torch.compile(model)` 即可享受 Triton 的性能提升。
+## PyTorch 一等公民
+Triton kernel 可通过 `torch.compile` 或 `torch.ops.load_custom_op` 集成到 PyTorch 模型中。PyTorch 2.0 原生支持 Triton，`torch.compile` 会自动将符合模式的算子编译为 Triton kernel（如逐元素操作、归约操作）。这无需修改模型代码，只需添加 `torch.compile(model)` 即可享受 Triton 的性能提升。自此，PyTorch 的强势推行，Triton 已成为 PyTorch 平台的一等公民。
 
 对于自定义算子，可通过 `torch.library.custom_op` 注册 Triton kernel：
 
@@ -76,6 +76,8 @@ Triton 的优势在于开发效率。一个 Triton kernel 从编写、调试、�
 Triton 的抽象级别高于 CUDA，但也因此牺牲了部分性能控制力。对于需要极致优化的算子（如 FlashAttention-2 的手写 assembly），Triton 难以达到同等性能。此外，Triton 的生态系统仍在发展中，调试工具（`triton.testing`）和性能分析工具（`triton.testing.do_bench`）不如 CUDA 成熟。
 
 Triton 目前支持 NVIDIA GPU 和 AMD GPU（通过 ROCm），不支持 CPU 和其他加速器（如 TPU、NPU）。对于非 CUDA 平台，需要考虑其他方案（如 OpenCL、SYCL）。
+
+Triton 只定义了数据面 DSL，未能实现控制面代码的封装屏蔽，对于不同的厂商硬件上的控制面代码，例如：显存管理和通信控制等，依然需要上层的 AI 引擎层来管理和调度。
 
 ## 未来展望
 Triton 的发展方向包括：更好的自动调优（基于机器学习的配置搜索）、更丰富的标准库（卷积、RNN、Transformer）、更完善的调试工具（interleaved execution、race condition 检测）。OpenAI 正在使用 Triton 重写 PyTorch 的标准算子，未来 `torch.nn.functional` 的大部分算子可能由 Triton 实现，而非 cuDNN。

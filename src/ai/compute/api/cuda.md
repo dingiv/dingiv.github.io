@@ -1,5 +1,4 @@
 # CUDA
-# CUDA
 CUDA (Compute Unified Device Architecture) 是 NVIDIA 的 GPU 编程平台，通过扩展 C++ 语法，让开发者能够编写在 GPU 上执行的并行计算程序。CUDA 是深度学习加速的基石，PyTorch、TensorFlow 等框架的底层都调用 CUDA kernel。
 
 ## 编程模型
@@ -70,16 +69,3 @@ Tensor Core 要求矩阵维度是 16 的倍数（fragment 大小为 16×16），
 ## 工具链
 
 CUDA 的工具链包括编译器（`nvcc`）、调试器（`cuda-gdb`）、性能分析器（`nsys`、`ncu`）。`nvcc` 将 `.cu` 文件编译为 PTX（中间表示）或 cubin（二进制），PTX 在运行时由驱动编译为 SASS（GPU 机器码），这实现了跨代兼容（同一 PTX 可在不同 GPU 上运行）。`cuda-gdb` 是 GDB 的 CUDA 扩展，支持设置断点、检查变量、单步执行 kernel。`nsys`（Nsight Systems）分析 kernel 的执行时间、内存传输、CPU-GPU 并行情况；`ncu`（Nsight Compute）深入分析 kernel 的内存带宽、occupancy、指令混合，指导优化。
-
-## 学习路径
-
-CUDA 的学习曲线陡峭，建议从简单到复杂逐步深入：
-
-1. **基础概念**：理解 host-device 异构执行、kernel 启动、线程索引计算
-2. **内存管理**：掌握 `cudaMalloc`、`cudaMemcpy`、内存层次（register、shared、global）
-3. **并行模式**：学习归约（reduce）、前缀和（scan）、直方图（histogram）等常见并行算法
-4. **性能优化**：理解 occupancy（SM 占用率）、合并访问、warp divergence、shared memory bank conflict
-5. **Tensor Core**：学习 WMMA API、 CUTLASS 库（NVIDIA 的模板化矩阵乘法库）
-
-编写高效 CUDA kernel 需要对 GPU 架构有深入理解，但也因此能榨干硬件性能。对于深度学习开发者，直接编写 CUDA 的场景不多（大部分时间使用 PyTorch），但理解 CUDA 有助于调试性能问题、阅读 `torch.nn.functional` 的底层实现、编写自定义算子。
-

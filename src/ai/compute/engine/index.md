@@ -27,13 +27,13 @@ KV Cache 优化是推理性能的核心。标准 Attention 需要缓存所有历
 
 ## 推理框架
 
-| 框架 | 核心技术 | 适用场景 |
-|------|----------|----------|
-| vLLM | PagedAttention、连续批处理 | 高吞吐在线服务、长序列 |
-| TGI | FlashAttention、量化基准 | HuggingFace 模型部署、生产环境 |
-| TensorRT-LLM | 算子融合、INT4/INT8 量化 | NVIDIA GPU、极致性能 |
-| llama.cpp | CPU/GPU 混合推理、GGUF 量化 | 本地部署、资源受限环境 |
-| SGLang | RadixAttention、结构化并发 | 多轮对话、复杂 prompt |
+| 框架         | 核心技术                    | 适用场景                       |
+| ------------ | --------------------------- | ------------------------------ |
+| vLLM         | PagedAttention、连续批处理  | 高吞吐在线服务、长序列         |
+| TGI          | FlashAttention、量化基准    | HuggingFace 模型部署、生产环境 |
+| TensorRT-LLM | 算子融合、INT4/INT8 量化    | NVIDIA GPU、极致性能           |
+| llama.cpp    | CPU/GPU 混合推理、GGUF 量化 | 本地部署、资源受限环境         |
+| SGLang       | RadixAttention、结构化并发  | 多轮对话、复杂 prompt          |
 
 选择推理框架需要考虑硬件平台（NVIDIA GPU vs CPU vs Apple Silicon）、部署规模（单机 vs 集群）、延迟要求（在线服务 vs 离线批处理）。vLLM 和 TGI 在 NVIDIA GPU 上性能最强，llama.cpp 适合本地部署，TensorRT-LLM 适合对性能极致优化的场景。
 
@@ -72,12 +72,12 @@ MoE（Mixture of Experts）通过稀疏激活打破参数量与计算量的耦�
 
 ## 训练框架
 
-| 框架 | 核心能力 | 适用场景 |
-|------|----------|----------|
-| DeepSpeed | ZeRO 显存优化、CPU 卸载 | 大规模预训练、显存受限环境 |
-| FSDP | PyTorch 原生分片训练 | 与 PyTorch 生态深度集成 |
-| Megatron-LM | 张量并行、3D 并行 | 超大规模模型（100B+） |
+| 框架        | 核心能力                  | 适用场景                   |
+| ----------- | ------------------------- | -------------------------- |
+| DeepSpeed   | ZeRO 显存优化、CPU 卸载   | 大规模预训练、显存受限环境 |
+| FSDP        | PyTorch 原生分片训练      | 与 PyTorch 生态深度集成    |
+| Megatron-LM | 张量并行、3D 并行         | 超大规模模型（100B+）      |
 | Colossal-AI | Gemini 显存管理、序列并行 | 长序列模型、多样化并行策略 |
-| Ray Train | 弹性训练、容错恢复 | 云原生环境、故障容忍场景 |
+| Ray Train   | 弹性训练、容错恢复        | 云原生环境、故障容忍场景   |
 
 选择框架需要考虑团队技术栈、模型规模、硬件拓扑。DeepSpeed 易上手且文档丰富，适合快速实验；FSDP 与 PyTorch 无缝集成，适合已有 PyTorch 代码迁移；Megatron-LM 性能最强但工程复杂度高，适合训练千亿级以上参数模型。
