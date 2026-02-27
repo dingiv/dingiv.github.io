@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as r}from"./chunks/framework.BwbIerCg.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"client/render/api/webgl.md","filePath":"client/render/api/webgl.md"}'),a={name:"client/render/api/webgl.md"};function n(c,o,i,s,l,p){return t(),r("div")}const m=e(a,[["render",n]]);export{_ as __pageData,m as default};
