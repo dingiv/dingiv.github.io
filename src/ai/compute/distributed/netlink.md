@@ -4,56 +4,133 @@ order: 65
 ---
 
 # 通信链路
-分布式 AI 系统的通信链路分为机内通信（GPU 互联）和机间通信（网络互联）两类。机内通信带宽高延迟低，机间通信带宽低延迟高。合理规划通信拓扑是分布式系统设计的基础，通信带宽往往成为分布式训练的瓶颈。
+分布式 AI 系统的通信链路分为三类：机内通信（CPU 与 GPU 之间）、卡间通信（GPU 与 GPU 之间）和机间通信（服务器与服务器之间）。机内通信是数据进入计算单元的通道，卡间通信支撑单机内的并行计算，机间通信实现跨节点的分布式训练。三种通信的带宽依次递减、延迟依次递增，合理规划通信拓扑是分布式系统设计的基础。
+
+从通信工程视角来看，通信系统是一个跨越电气工程、体系结构、操作系统和分布式算法的分层体系，理解各层的协议语义和瓶颈所在，才能真正优化分布式训练效率。
+
+## 协议分层视角
+
+通信链路可按通信分层模型理解，不同技术在不同层进行创新。
+
+**物理层**：电信号如何在铜线或光纤上传输，SerDes 编解码速率、lane 数量决定带宽。带宽本质是单 lane 速率 × lane 数 × 编码效率。
+
+**数据链路层**：CRC 校验、重传机制、流控（Flow Control）。PCIe 使用 credit-based 流控，InfiniBand 使用基于 VL 的流控，以太网依赖 MAC + PFC 实现无损传输。
+
+**传输语义层**：消息传递模型（TCP/IP、MPI）与内存语义模型（RDMA、CXL.mem）的根本差异在于是否绕过远端 CPU 协议栈。RDMA 的 kernel bypass 使延迟降至 ~1 μs。
+
+**一致性层**：CXL.cache 引入缓存一致性，使 CPU cache line 可与 GPU cache line 保持一致，实现"跨设备 NUMA"。
+
+**拓扑层**：Ring、Mesh、Fat-tree 等拓扑结构影响双向切分带宽（bisection bandwidth）和通信延迟。
+
+**集合通信层**：NCCL、MPI、Gloo 等通信库实现 AllReduce、AllGather 等集合操作，其复杂度与拓扑相关（Ring AllReduce 为 O(N)，Tree AllReduce 为 O(log N)）。
+
+**分布式策略层**：数据并行、张量并行、流水线并行将不同通信频率映射到不同物理层，实现"算法感知硬件"。
 
 ## 机内通信
-机内通信指同一服务器内 GPU 之间的数据传输，主要通过 PCIe 总线或专用高速互联实现。
+
+机内通信指同一服务器内 CPU 与 GPU 之间的数据传输，是数据从主机内存进入加速卡显存的必经通道。
 
 ### PCIe
-PCIe（Peripheral Component Interconnect Express）是通用的总线标准，用于 CPU 与 GPU 之间的数据传输。PCIe 5.0 x16 带宽为 64 GB/s，延迟约 1 μs。PCIe 的优势是兼容性好，几乎所有的服务器和 GPU 都支持；劣势是带宽远低于专用互联技术（如 NVLink），且需要经过 CPU，增加了数据拷贝开销。
 
-PCIe 的典型用途是 CPU 与 GPU 间的数据传输：训练数据从磁盘加载到 CPU 内存，然后通过 PCIe 拷贝到 GPU 显存；训练完成后，模型从 GPU 拷贝回 CPU 保存。对于多 GPU 训练，PCIe 也可用于 GPU 间通信，但带宽瓶颈明显。
+PCIe（Peripheral Component Interconnect Express）是通用的总线标准，用于 CPU 与 GPU 之间的数据传输。PCIe 5.0 采用 32 GT/s 的传输速率，x16 配置提供 64 GB/s 带宽，延迟约 1 μs。物理层使用高速串行差分信号和 SerDes 编解码，通过 credit-based 流控实现可靠传输。
+
+PCIe 的优势是兼容性好，几乎所有的服务器和 GPU 都支持；劣势是带宽远低于专用互联技术，且需要经过 CPU，增加了数据拷贝开销。PCIe 的典型用途是 CPU 与 GPU 间的数据传输：训练数据从磁盘加载到 CPU 内存，然后通过 PCIe 拷贝到 GPU 显存；训练完成后，模型从 GPU 拷贝回 CPU 保存。
+
+### CXL
+
+CXL（Compute Express Link）是新一代互联标准，基于 PCIe 物理层，支持 CPU 和加速器间的内存共享和一致性。CXL 支持三种协议：CXL.io（兼容 PCIe 的 IO 协议）、CXL.mem（内存访问协议）、CXL.cache（缓存一致性协议）。CXL 2.0 带宽可达 64 GB/s（与 PCIe 5.0 相当），CXL 3.0 将进一步提升到 128 GB/s。
+
+CXL 的突破在于引入缓存一致性，使 CPU cache line 可与 GPU cache line 保持一致。这是比 RDMA 更高级的语义：RDMA 是远程内存访问，CXL 是远程 cache 访问。CXL 可实现内存池化、内存扩展、设备共享页表等新架构，本质上是在做"跨设备 NUMA"。
+
+### DMA
+
+DMA（Direct Memory Access）是一种直接访问内存的技术，允许外设直接读写主机内存，无需经过 CPU。GPU 的 DMA 引擎可以在 CPU 不参与的情况下，将数据从主机内存拷贝到显存。NVIDIA 的 GPUDirect 技术就是基于 DMA 实现的，可以在 GPU、网卡、存储设备间直接传输数据，实现 zero-copy。
+
+## 卡间通信
+
+卡间通信指同一服务器内 GPU 与 GPU 之间的数据传输，是单机内多卡并行训练的基础。卡间通信的带宽远高于机内通信，延迟与机内通信相当或更低。
+
+### NVLink
+
+NVLink 是 NVIDIA 的 GPU 间高速互联技术，采用专用 SerDes 通道，带宽远超 PCIe。A100 的 NVLink 3.0 带宽为 450 GB/s（单向），H100 的 NVLink 4.0 带宽为 900 GB/s。NVLink 支持内存语义模型，GPU 可直接读写远端 GPU 内存，无需经过 CPU。
+
+NVLink 的拓扑通常采用全连接（每个 GPU 与其他所有 GPU 直连）或环形连接（每个 GPU 只与相邻 GPU 连接）。全连接带宽最高但成本指数增长，环形连接成本较低但延迟叠加。NVLink 的优势在于高带宽低延迟，且 GPU 间直接通信，非常适合张量并行等高频通信场景。Megatron-LM 的张量并行就依赖 NVLink 来实现高效的 allreduce 通信。
+
+### NVSwitch
+
+NVSwitch 是 NVIDIA 的交换芯片，用于连接多个 GPU，实现全连接拓扑。NVSwitch 第二代带宽为 600 GB/s，第三代带宽达 900 GB/s。NVSwitch 可以连接 16 个 GPU，实现任意两个 GPU 间的高速通信。NVIDIA 的 DGX 系列服务器就采用 NVSwitch 构建 GPU 全连接网络，放大双向切分带宽。
+
+### Infinity Fabric
+
+Infinity Fabric 是 AMD 的 GPU 间和 CPU-GPU 间通信技术，用于 MI200 系列 GPU。Infinity Fabric 的带宽约 200-400 GB/s，低于 NVLink 但高于 PCIe。Infinity Fabric 的优势在于支持 CPU 和 GPU 的统一内存架构，可以实现内存共享。
+
+### HCCS
+
+HCCS（Huawei Cube Collective Communication on Scale）是华为昇腾 NPU 的互联技术，用于昇腾 910 系列 NPU 间通信。HCCS 互联带宽约 200-300 GB/s，用于昇腾服务器内的多 NPU 通信。HCCS 的拓扑通常采用 HCCS 环网或全连接。
+
+### ICI
+
+ICI（Inter-Chip Interconnect）是 Google TPU 的互联技术，用于 TPU Pod 内的 TPU 芯片间通信。ICI 互联带宽约 600 GB/s，用于 TPU v4 Pod 内的 4096 个 TPU 芯片通信。ICI 采用 2D mesh 拓扑，每个 TPU 与 4 个相邻 TPU 连接，本质上是平衡成本与带宽的拓扑选择。
 
 ## 机间通信
 
-机间通信指不同服务器之间的数据传输，主要通过高性能网络实现。
+机间通信指不同服务器之间的数据传输，主要通过高性能网络实现。机间通信的带宽远低于卡间通信，延迟也更高。
 
 ### 以太网
 
-以太网是最通用的网络技术，成本较低但性能有限。25 Gigabit 以太网带宽为 3.125 GB/s，100 Gigabit 以太网带宽为 12.5 GB/s。以太网的延迟通常在 10-100 μs，远高于机内通信。以太网的优势是兼容性好、成本低，适合预算敏感的中小规模集群。但对于大规模分布式训练，以太网的带宽瓶颈明显。
+以太网是最通用的网络技术，成本较低但性能有限。25 Gigabit 以太网带宽为 3.125 GB/s，100 Gigabit 以太网带宽为 12.5 GB/s。以太网的延迟通常在 10-100 μs，远高于卡间通信。以太网的优势是兼容性好、成本低，适合预算敏感的中小规模集群。但对于大规模分布式训练，以太网的带宽瓶颈明显。
 
 以太网在 AI 集群中的应用包括：数据并行梯度同步（可通过梯度压缩减少通信量）、模型并行的前向/反向传播（通信频率低，带宽要求较低）、推理服务的负载均衡。
 
 ### InfiniBand
 
-InfiniBand 是高性能网络技术，专为数据中心设计。InfiniBand HDR（200 Gbps）带宽为 25 GB/s，NDR（400 Gbps）带宽为 50 GB/s，下一代 XDR 将达到 800 Gbps（100 GB/s）。InfiniBand 的延迟低至 1 μs，与机内通信相当。
+InfiniBand 是高性能网络技术，专为数据中心设计。InfiniBand HDR（200 Gbps）带宽为 25 GB/s，NDR（400 Gbps）带宽为 50 GB/s，下一代 XDR 将达到 800 Gbps（100 GB/s）。InfiniBand 的延迟低至 1 μs，与卡间通信相当。InfiniBand 使用基于 VL（Virtual Lane）的流控，原生支持 RDMA。
 
-InfiniBand 的优势在于高带宽低延迟，且支持 RDMA（Remote Direct Memory Access），允许应用直接访问远程内存，无需经过 CPU。这使得 InfiniBand 非常适合大规模分布式训练。NVIDIA 的 DGX SuperPOD 就使用 InfiniBand NDR 进行节点间通信，在 512 张 A100 上训练 GPT-3 175B。
+InfiniBand 的优势在于高带宽低延迟，且支持 RDMA，允许应用直接访问远程内存，无需经过 CPU。这使得 InfiniBand 非常适合大规模分布式训练。NVIDIA 的 DGX SuperPOD 就使用 InfiniBand NDR 进行节点间通信，在 512 张 A100 上训练 GPT-3 175B。
 
-InfiniBand 的劣势是成本高、配置复杂。需要专门的网卡（ConnectX）、交换机（Quantum）、线缆，且需要配置 IPoIB（IP over InfiniBand）或 RDMA 协议。对于预算有限的团队，InfiniBand 可能过于昂贵。
+InfiniBand 的劣势是成本高、配置复杂。需要专门的网卡（ConnectX）、交换机（Quantum）、线缆，且需要配置 IPoIB 或 RDMA 协议。
 
 ### RDMA 和 RoCE
 
-RDMA（Remote Direct Memory Access）是一种直接访问远程内存的技术，无需经过远程 CPU。RDMA 由网卡硬件实现，通信双方建立连接后，可直接读写远程内存，延迟低且 CPU 开销小。
+RDMA（Remote Direct Memory Access）是一种直接访问远程内存的技术，无需经过远程 CPU。RDMA 由网卡硬件实现，通信双方建立连接后，可直接读写远程内存，延迟低且 CPU 开销小。RDMA 的本质不是"快"，而是绕过远端 CPU 协议栈，实现 kernel bypass。
 
-InfiniBand 原生支持 RDMA。以太网上的 RDMA 称为 RoCE（RDMA over Converged Ethernet），RoCE v2 带宽约 100-200 Gbps（12.5-25 GB/s），RoCE v3 将进一步提升到 400 Gbps。RoCE 的优势在于基于以太网，成本低于 InfiniBand；劣势是依赖无损网络（lossless network），需要配置 PFC（Priority Flow Control）和 ECN（Explicit Congestion Notification）。
+InfiniBand 原生支持 RDMA。以太网上的 RDMA 称为 RoCE（RDMA over Converged Ethernet），RoCE v2 带宽约 100-200 Gbps（12.5-25 GB/s），RoCE v3 将进一步提升到 400 Gbps。RoCE 的优势在于基于以太网，成本低于 InfiniBand；劣势是依赖无损网络，需要配置 PFC（防止丢包）和 ECN（拥塞标记）。如果网络丢包，RDMA 语义就会崩溃，所以 RoCE 的配置复杂度较高。
 
-### 无带宽缩放
+## 通信分层策略
 
-Scaling Law 表明，模型的性能与计算量（FLOPs）和训练数据量密切相关。但分布式训练的通信开销随着 GPU 数量增加而增加，如果通信带宽不足，增加 GPU 可能无法线性提升训练速度。这就是"通信墙"（communication wall）问题。
+三种通信的带宽和延迟差异巨大，合理规划通信分层可以最大化训练效率。典型的分层策略是：高频通信使用卡间通信，中频通信使用机内通信，低频通信使用机间通信。
 
-为了突破通信墙，需要采用通信与计算重叠（overlap）、梯度压缩、拓扑感知通信、混合精度训练等技术。Megatron-DeepSpeed 的 3D 并行策略就是针对通信优化的典范：节点内使用 NVLink 进行张量并行（高频通信），节点间使用流水线并行（低频通信），最外层使用数据并行（最低频通信）。
+Megatron-DeepSpeed 的 3D 并行策略就是针对通信优化的典范：节点内使用 NVLink 进行张量并行（高频通信），节点间使用流水线并行（低频通信），最外层使用数据并行（最低频通信）。这种分层策略可以充分利用不同通信链路的特性，最大化训练效率。
 
-## 加速卡互联
-除了 NVIDIA 的 NVLink，其他厂商也有各自的加速卡互联技术。AMD 的 Infinity Fabric 用于 GPU 间和 CPU-GPU 间通信，带宽约 200-400 GB/s。Intel 的 CXL（Compute Express Link）是新一代互联标准，支持 CPU 和加速器间的内存共享，带宽可达 128 GB/s。Intel 的 Xeon Phi（KNM）使用 KNL 互联，带宽约 100 GB/s。
+通信库实现集合操作的复杂度与拓扑相关：Ring AllReduce 时间复杂度为 O(N)，Tree AllReduce 为 O(log N)。理解拓扑特性有助于选择合适的通信算法。
 
-华为昇腾 NPU 的 HCCS（Huawei Cube Collective Communication on Scale）互联带宽约 200-300 GB/s，用于昇腾 910 系列 NPU 间通信。Google TPU 的 ICI（Inter-Chip Interconnect）互联带宽约 600 GB/s，用于 TPU Pod 内的 TPU 芯片间通信。
+## 通信墙
 
-### NVLink
-NVLink 是 NVIDIA 的 GPU 间高速互联技术，带宽远超 PCIe。A100 的 NVLink 3.0 带宽为 450 GB/s（单向），H100 的 NVLink 4.0 带宽为 900 GB/s。NVLink 是双向的，两个方向可同时传输数据，总带宽翻倍。
+所谓通信墙（communication wall），本质是计算增长约 O(N)，而通信增长约 O(N log N) 或 O(N²)。当 GPU 数量增加时，参数同步量线性增长，拓扑拥塞指数增长。物理层无法无限扩展，光模块功耗、交换芯片端口密度、电源限制都会成为瓶颈。
 
-NVLink 的优势在于高带宽低延迟，且无需经过 CPU，GPU 间直接通信。这使得 NVLink 非常适合张量并行（tensor parallel）等高频通信场景。Megatron-LM 的张量并行就依赖 NVLink 来实现高效的 allreduce 通信。
+为了突破通信墙，需要采用通信与计算重叠、梯度压缩、拓扑感知通信、混合精度训练等技术。通信与计算重叠是指在计算的同时进行通信，隐藏通信延迟；梯度压缩是指减少梯度同步的数据量；拓扑感知通信是指根据网络拓扑优化通信路径；混合精度训练是指使用低精度数据类型减少通信量。
 
-NVLink 的拓扑通常采用全连接（每个 GPU 与其他所有 GPU 直连）或环形连接（每个 GPU 只与相邻 GPU 连接）。全连接带宽最高但成本高，环形连接成本较低但通信可能需要多跳。8 卡 GPU 的服务器通常采用 NVLink Switch（全连接），16 卡以上的服务器可能采用混合拓扑。
+下一代互联技术开始使用硅光、光互连背板、Chiplet 封装内互联等技术，计算正在向"光速墙"逼近。
+
+真正的优化不是"换一张更快的网卡"，而是理解整条分层栈的瓶颈在哪里。
+
+
+## 硬件层
+
+## USB
+
+## PCIe
+
+## 以太网线
+
+## InfiniBand
+
+## NVLink
+
+## 协议层
+
+### 以太网
 
 ### CXL
+
+### RDMA

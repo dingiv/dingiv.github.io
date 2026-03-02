@@ -1,0 +1,233 @@
+# 通信链路
+
+
+# 通信链路分析与协议分层
+
+## 一、从“链路类型”到“协议分层”的视角
+
+原文按照物理拓扑划分为：机内通信、卡间通信、机间通信。这是**部署视角**。
+
+如果换成通信工程视角，我们会关心：
+
+* 物理层（Physical Layer）
+* 数据链路层（Data Link Layer）
+* 传输层 / 互联层
+* 协议语义层（例如 RDMA、Collective 通信语义）
+* 分布式框架层（NCCL / MPI / Megatron 等）
+
+不同链路技术，其实是在不同层做创新。
+
+---
+
+## 二、物理层：电信号、SerDes 与带宽的本质
+
+物理层关注的核心问题只有三个：
+
+* 比特如何在铜线 / 光纤上传输
+* 信号速率是多少（GT/s）
+* 每条链路有多少 lane
+
+例如：
+
+* PCIe 5.0：32 GT/s 每 lane，x16 形成总带宽
+* NVLink：采用专用 SerDes 通道
+* InfiniBand：HDR / NDR 代表不同物理编码速率
+
+“带宽”本质上是：
+
+带宽 ≈ 单 lane 速率 × lane 数 × 编码效率
+
+延迟则与：
+
+* 物理距离
+* SerDes 编解码延迟
+* 交换芯片转发深度
+
+有关。
+
+关键洞察：
+
+PCIe、CXL、NVLink 在物理层都是高速串行差分信号 + SerDes，本质差别不在电信号，而在协议层。
+
+---
+
+## 三、数据链路层：可靠传输与流控
+
+这一层负责：
+
+* CRC 校验
+* 重传机制
+* Flow Control（信用机制）
+
+例如：
+
+* PCIe 使用 credit-based flow control
+* InfiniBand 使用基于 VL（Virtual Lane）的流控
+* 以太网依赖 MAC + PFC（Priority Flow Control）实现无损
+
+RoCE 之所以复杂，是因为它在以太网上模拟 InfiniBand 的无损语义。
+
+如果网络丢包，RDMA 语义就会崩溃。
+
+所以 RoCE 依赖：
+
+* PFC（防止丢包）
+* ECN（拥塞标记）
+
+这就是协议层“语义依赖物理行为”的典型例子。
+
+---
+
+## 四、互联协议层：内存语义 vs 消息语义
+
+这是本文的关键技术点。
+
+通信可以分成两种模型：
+
+1. 消息传递模型（Message Passing）
+2. 共享内存模型（Shared Memory Semantics）
+
+### 1️⃣ 消息模型
+
+典型代表：
+
+* TCP/IP
+* MPI
+
+特点：
+
+* 发送 send()
+* 接收 recv()
+* CPU 参与协议栈处理
+
+### 2️⃣ 内存语义模型
+
+典型代表：
+
+* RDMA
+* CXL.mem
+* NVLink peer memory
+
+特点：
+
+* 直接读写远程内存
+* CPU 不参与数据路径
+* Zero-copy
+
+RDMA 的本质不是“快”，而是绕过远端 CPU 协议栈。
+
+这就是所谓 kernel bypass。
+
+这也是为什么 InfiniBand 延迟能做到 ~1 μs。
+
+---
+
+## 五、缓存一致性层：CXL 的突破
+
+CXL.cache / CXL.mem 引入了 cache coherency。
+
+这意味着：
+
+CPU cache line 可以与 GPU cache line 保持一致。
+
+这是比 RDMA 更高级的语义：
+
+RDMA 是远程内存访问。
+
+CXL 是远程 cache 访问。
+
+这会改变系统架构，例如：
+
+* 内存池化
+* 内存扩展
+* 设备共享页表
+
+如果你熟悉 NUMA，本质上 CXL 在做“跨设备 NUMA”。
+
+---
+
+## 六、交换结构：拓扑与带宽放大
+
+NVSwitch、InfiniBand Switch 的作用是：
+
+* 构建 Clos / Fat-tree / Ring / Mesh 拓扑
+* 放大 bisection bandwidth（双向切分带宽）
+
+环形拓扑的带宽利用率高，但延迟叠加。
+
+全连接拓扑延迟最低，但成本指数增长。
+
+Google TPU Pod 的 ICI 使用 2D mesh，本质上是平衡成本与带宽。
+
+这是拓扑学与通信工程的结合。
+
+---
+
+## 七、从硬件到框架：通信抽象层
+
+硬件之上还有软件抽象层：
+
+* NCCL（GPU 集合通信）
+* MPI（分布式通信）
+* Gloo
+* OneCCL
+
+它们实现：
+
+* AllReduce
+* AllGather
+* Broadcast
+* ReduceScatter
+
+这些集合操作的复杂度与拓扑相关：
+
+Ring AllReduce：O(N)
+Tree AllReduce：O(log N)
+
+Megatron 的 3D 并行，其实是把不同通信频率映射到不同物理层。
+
+这是“算法感知硬件”。
+
+---
+
+## 八、通信墙的物理本质
+
+所谓 communication wall，本质是：
+
+计算增长 ~ O(N)
+通信增长 ~ O(N log N) 或 O(N^2)
+
+当 GPU 数量增加，
+
+* 参数同步量线性增长
+* 拓扑拥塞指数增长
+
+物理层无法无限扩展。
+
+光模块功耗、交换芯片端口密度、电源限制都会成为瓶颈。
+
+这就是为什么下一代互联开始使用：
+
+* 硅光（Silicon Photonics）
+* 光互连背板
+* Chiplet 封装内互联
+
+计算正在向“光速墙”逼近。
+
+---
+
+## 九、分层总结（从下到上）
+
+1. 物理层：SerDes、电气信号、光模块
+2. 数据链路层：流控、重传
+3. 传输语义层：消息 vs 内存语义（TCP vs RDMA）
+4. 一致性层：Cache coherency（CXL）
+5. 拓扑层：Ring / Mesh / Fat-tree
+6. 集合通信层：NCCL / MPI
+7. 分布式训练策略层：数据并行 / 张量并行 / 流水线并行
+
+原文主要讨论的是第 1、3、5 层。
+
+补充之后，可以看到通信系统是一个跨越电气工程、体系结构、操作系统和分布式算法的综合工程。
+
+真正的优化不是“换一张更快的网卡”，而是理解整条分层栈的瓶颈在哪里。
