@@ -1,0 +1,9 @@
+NAPI + 中断缓解机制（解决 100G 网卡下中断风暴问题）
+
+GRO/GSO/TSO 的零拷贝与分段机制
+
+XDP 与 eBPF 如何重塑网络路径
+
+多队列网卡与 CPU 亲和（RSS / RPS）
+
+TCP 栈源码路径分析（tcp_v4_rcv → tcp_rcv_established）
