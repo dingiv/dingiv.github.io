@@ -12,6 +12,7 @@ order: 16
 | Triton   | 跨平台            | CUDA、ROCm...           | [Triton](./triton) |
 | OpenCL   | 跨平台            | *                       | [OpenCL](./opencl) |
 | SIMD     | CPU               | OpenMP、MKL、BLAS       | [SIMD](./cpu)      |
+| SIMT     | GPU               | CUDA、Metal、OpenCL     | [SIMT](./simt)     |
 | ROCm     | AMD GPU           | hipBLAS、MIOpen         | -                  |
 | Metal    | Apple M 芯片      | MPS                     | -                  |
 | oneAPI   | Intel GPU/CPU     | XPU、oneDNN             | -                  |
