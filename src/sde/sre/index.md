@@ -14,3 +14,11 @@ order: 40
 | 测试/维护 | SonarQube、Mutation Testing          |
 | 安全      | Trivy、Falco                         |
 
+
+发布模式
+
+主从热备
+
+金丝雀发布
+
+灰度发布

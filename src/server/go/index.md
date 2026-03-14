@@ -1,6 +1,5 @@
 ---
-title: Go 语言
-order: 1
+title: Go
 ---
 
 # Go 语言

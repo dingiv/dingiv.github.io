@@ -1,6 +1,6 @@
 ---
 title: GUI
-order: 20
+order: 10
 ---
 
 # GUI 程序

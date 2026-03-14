@@ -1,6 +1,6 @@
 ---
 title: Rust
-order: 50
+order: 40
 ---
 
 # Rust
