@@ -4,7 +4,6 @@ order: 10
 ---
 
 # BIOS 与 UEFI
-
 BIOS (Basic Input/Output System) 和 UEFI (Unified Extensible Firmware Interface) 是计算机系统启动时最先运行的固件程序，负责初始化硬件并将控制权交给操作系统。理解它们的工作原理对于系统开发和故障排查具有重要意义。
 
 ## BIOS
