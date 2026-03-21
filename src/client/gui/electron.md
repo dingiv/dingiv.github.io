@@ -1,3 +1,3 @@
 # Electron
 
-![](./electron-world.png)
+![](./images/electron-world.png)

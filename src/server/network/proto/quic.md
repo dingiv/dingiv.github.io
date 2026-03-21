@@ -1,5 +1,5 @@
 ---
-title: QUIC 协议
+title: QUIC
 order: 6
 ---
 

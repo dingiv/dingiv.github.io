@@ -1,5 +1,5 @@
 ---
-title: CAP 与 BASE
+title: CAP
 order: 1
 ---
 

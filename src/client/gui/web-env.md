@@ -4,10 +4,10 @@
 
 ## 浏览器插件
 
-![alt text](crx-1.png)
+![alt text](./images/crx-1.png)
 
-![alt text](crx-2.png)
+![alt text](./images/crx-2.png)
 
-![alt text](crx-3.jpg)
+![alt text](./images/crx-3.jpg)
 
 ## vscode 插件

@@ -1,5 +1,5 @@
 ---
-title: 微服务治理
+title: 微服务
 order: 20
 ---
 

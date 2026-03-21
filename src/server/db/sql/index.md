@@ -1,6 +1,6 @@
 ---
 title: SQL
-order: 20
+order: 0
 ---
 
 # 关系型数据库服务

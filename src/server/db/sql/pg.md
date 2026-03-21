@@ -1,6 +1,6 @@
 ---
-title: PostgreSQL 架构与实现
-order: 6
+title: PostgreSQL
+order: 20
 ---
 
 # PostgreSQL 架构与实现

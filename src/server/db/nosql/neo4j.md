@@ -1,5 +1,5 @@
 ---
-title: Neo4j 实现原理
+title: Neo4j
 order: 4
 ---
 

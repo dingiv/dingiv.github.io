@@ -1,5 +1,5 @@
 ---
-title: MongoDB 实现原理
+title: MongoDB
 order: 2
 ---
 

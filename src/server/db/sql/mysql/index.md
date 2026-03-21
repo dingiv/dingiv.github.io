@@ -1,6 +1,6 @@
 ---
-title: MySQL 架构与实现
-order: 4
+title: MySQL
+order: 10
 ---
 
 # MySQL 架构与实现

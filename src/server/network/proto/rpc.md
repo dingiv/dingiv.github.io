@@ -4,7 +4,6 @@ order: 7
 ---
 
 # RPC 框架
-
 RPC（Remote Procedure Call）允许程序像调用本地函数一样调用远程服务，屏蔽网络通信的复杂性。
 
 ## RPC 的本质

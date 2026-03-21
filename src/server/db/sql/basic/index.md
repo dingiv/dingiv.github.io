@@ -1,6 +1,6 @@
 ---
-title: SQL 语法基础
-order: 9
+title: sql 基础
+order: 0
 ---
 
 # SQL 语法基础

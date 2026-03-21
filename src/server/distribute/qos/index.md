@@ -1,6 +1,6 @@
 ---
-title: QoS 总览
-order: 1
+title: QoS
+order: 40
 ---
 
 # 服务质量管理

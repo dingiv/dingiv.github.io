@@ -5,7 +5,7 @@ order: 10
 
 # GUI 程序
 目前的主流 UI 平台大致如下：
-![webgui](./webgui.png)
+![webgui](./images/webgui.png)
 
 各个平台都有自己的原生技术，但是原生技术往往难学难用，并且通用性受限，学习的性价比太低，开发的速度太慢，企业成本太高……
 
@@ -16,7 +16,7 @@ order: 10
 
 | WinUI 3                 | SwiftUI                   | GTK +              | Compose         |
 | ----------------------- | ------------------------- | ------------------ | --------------- |
-| ![winui](./winui3.jfif) | ![swiftui](./swiftui.png) | ![gtk](./gtk.jfif) | ![jc](./jc.png) |
+| ![winui](./images/winui3.jfif) | ![swiftui](./images/swiftui.png) | ![gtk](./images/gtk.jfif) | ![jc](./images/jc.png) |
 
 ## JS 宿主环境
 乘着 Web 的东风，JS 已经成为 GUI 第一顺位语言。使用一个 JS 宿主，便可以轻松实现一个跨平台的图形界面程序。最著名通用的 JS 宿主环境当属浏览器，除此之外，还有很多其他的 JS 宿主环境。

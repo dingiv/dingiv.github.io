@@ -1,5 +1,5 @@
 ---
-title: Milvus 实现原理
+title: Milvus
 order: 5
 ---
 

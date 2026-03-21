@@ -1,5 +1,5 @@
 ---
-title: Redis 实现原理
+title: Redis
 order: 1
 ---
 

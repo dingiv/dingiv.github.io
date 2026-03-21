@@ -1,5 +1,5 @@
 ---
-title: Elasticsearch 实现原理
+title: Elasticsearch
 order: 3
 ---
 
