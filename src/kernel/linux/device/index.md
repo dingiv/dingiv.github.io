@@ -10,15 +10,17 @@ order: 50
 Linux 设备管理包括从下层硬件到上层驱动接口的多个层次。
 - 设备抽象层
 - [设备驱动层](./driver/)
-- [物理硬件层](/kernel/embed/device)
+- [物理硬件层](/kernel/embed/device/)
 
-物理硬件往往由厂商制作，硬件厂商往往会自己顾人编写自家硬件的驱动程序，驱动程序在编写的时候需要满足上层操作系统规定的 SPI，从而能够被操作系统识别。
+Linux 设备管理包括从下层硬件到上层驱动接口的多个层次。物理硬件由厂商制作，硬件厂商通常会自行编写驱动程序，驱动程序在编写时需要满足操作系统规定的 SPI（Service Provider Interface），从而能够被操作系统识别和管理。
 
-硬件设备管理的主要工作是使用操作系统定义的 C 语言数据结构来抽象物理设备，并且将设备的驱动关联到数据结构之上，系统操作设备的时候无须直接访问硬件，而是通过抽象设备和驱动来间接访问。设备抽象的主要目标是作为操作系统向驱动规定的 SPI，驱动程序需要按照操作系统的要求，使用规定好的数据结构封装硬件的描述信息和设备支持的操作函数。
+硬件设备管理的主要工作是使用操作系统定义的 C 语言数据结构来抽象物理设备，并且将设备的驱动关联到数据结构之上。系统操作设备时无须直接访问硬件，而是通过抽象设备和驱动来间接访问。设备抽象层的主要目标是作为操作系统向驱动规定的 SPI，驱动程序需要按照操作系统的要求，使用规定好的数据结构封装硬件的描述信息和设备支持的操作函数。
 
 ## 设备抽象层
-设备抽象是内核提供的 [SPI（Service Provider Interface）](./driver) 的一部分。内核提供统一的**设备模型**管理框架，用于管理设备，设备抽象关指向了该设备的驱动函数，提供设备发现、绑定和资源管理的结构化方式。Linux 中的设备使用一个树形结构来保存，驻留在内存中，以 `struct device` 结构作为一个树节点，支持树的正反向遍历，可以将其称为**设备拓扑树**，它是设备树源的实例化结果。
-> 注意这个设备拓扑树和用于设备探测的设备树源配置文件不是一个东西。并且设备树源只定义了平台设备，不定义总线设备，而设备拓扑树还包含了总线设备。
+设备抽象是内核提供的 [SPI（Service Provider Interface）](./driver/) 的一部分。内核提供的管理框架，用于统一管理各种类型的设备。Linux 使用树形结构保存设备信息，驻留在内存中，以 `struct device` 结构作为一个树节点，支持树的正反向遍历。这个结构称为设备拓扑树，是设备模型在运行时的实例化结果。
+
+需要注意的是，设备拓扑树和用于设备探测的设备树源（Device Tree Source）配置文件不是同一个概念。设备树源只定义平台设备，不定义总线设备，而设备拓扑树包含了系统中的所有设备。
+
 ```c
 struct device {
     struct device *parent;     // 父设备（如总线或控制器）
@@ -37,7 +39,7 @@ struct bus_type {
 };
 ```
 
-通过设备抽象，操作系统还可以定义虚拟设备，即使操作系统没看到真实的物理设备，也可以假装有一个，然后使用软件的实现来模拟底层硬件的行为。其中虚拟网卡、虚拟磁盘就是非常典型的例子。
+通过设备抽象，操作系统还可以定义虚拟设备。即使操作系统没有看到真实的物理设备，也可以假装有一个设备存在，然后使用软件的实现来模拟底层硬件的行为。虚拟网卡（veth、tun）、虚拟磁盘（loop、dm-crypt）就是典型的例子。
 
 根据设备的访问方式，主要有三种设备类型，三种类型最终都需要关联成一个 device，然后纳入到设备拓扑树中管理。
 - 字符设备：只支持顺序访问（如 /dev/ttyS0），使用 `struct cdev` 定义。由于字符设备只支持顺序访问，所以字符设备可以直接被看作是一个文件，然后可以直接对其进行读写操作，但是不可以进行文件指针的移动，也就是不支持 `lseek` 操作，通常不支持缓冲。
@@ -45,35 +47,42 @@ struct bus_type {
 - 网络设备：如 eth0，使用 `struct net_device` 定义。处理数据时基于数据包而非字节流或块。一个网络设备上游调用者不是直接来自于用户态的读写操作，而是来自于**内核协议栈**的调用，属于**网络子系统**。
 
 ### 字符设备
+字符设备是像字节流一样访问的设备，通常不支持随机访问。字符设备可以直接映射为文件，用户程序可以通过标准的文件操作（read、write、ioctl）与设备交互。由于只支持顺序访问，字符设备通常不支持 lseek 操作，也不使用缓冲区。
 
 ```c
-// 字符设备
+// 字符设备结构
 struct cdev {
     struct kobject kobj;             // 设备模型信息，将设备纳入设备模型，并暴露到 /sys/class
-    struct module *owner;            // 指向驱动模块，防止卸载
-    const struct file_operations *ops; // 文件操作接口（如 read/write）
-    struct list_head list;           // 链接到 inode 的 cdev 列表
-    dev_t dev;                       // 设备号（major/minor）
+    struct module *owner;            // 指向驱动模块，防止模块在使用时被卸载
+    const struct file_operations *ops; // 文件操作接口
+    struct list_head list;           // 链接到内核的 cdev 列表
+    dev_t dev;                       // 设备号（主设备号和次设备号）
     unsigned int count;              // 设备数量
-    // ...
 };
 
+// 文件操作接口
 struct file_operations {
     struct module *owner;
     ssize_t (*read)(struct file *, char __user *, size_t, loff_t *);
     ssize_t (*write)(struct file *, const char __user *, size_t, loff_t *);
     int (*open)(struct inode *, struct file *);
     int (*release)(struct inode *, struct file *);
-    // ... 还有 ioctl、mmap、poll 等等
+    long (*unlocked_ioctl)(struct file *, unsigned int, unsigned long);
+    int (*mmap)(struct file *, struct vm_area_struct *);
+    unsigned int (*poll)(struct file *, struct poll_table_struct *);
+    // ...
 };
 ```
 
+字符设备驱动开发时，需要实现一组 file_operations 操作函数，并将其赋值给 cdev 结构体的 ops 成员。驱动通过初始化 cdev 并调用 cdev_add() 将其注册到内核，之后用户空间可以通过 `/dev/xxx` 设备文件访问字符设备。
+
 ### 块设备
+块设备是支持随机访问的设备，如硬盘、闪存、SD 卡等。块设备可以按固定大小的块（通常为 512 字节或 4KB）进行读写，支持在设备中任意位置跳转（lseek 操作）。块设备上层是块设备子系统，包含请求队列、I/O 调度、缓存管理等复杂机制。
 
 ```c
-// 块设备
+// 块设备结构
 struct gendisk {
-   struct kobject kobj;             // 嵌入设备模型
+    struct kobject kobj;             // 嵌入设备模型
     int major;                       // 主设备号
     int minors;                      // 次设备号范围
     struct block_device_operations *fops; // 块设备操作接口
@@ -84,20 +93,23 @@ struct gendisk {
     // ...
 };
 
+// 块设备操作接口
 struct block_device_operations {
     int (*open)(struct block_device *, fmode_t);
     void (*release)(struct gendisk *, fmode_t);
     int (*ioctl)(struct block_device *, fmode_t, unsigned, unsigned long);
     int (*media_changed)(struct gendisk *);
     int (*revalidate_disk)(struct gendisk *);
-    // ...
 };
 ```
 
+块设备驱动开发通常需要实现 block_device_operations 结构体。驱动首先通过 register_blkdev() 注册主设备号，然后初始化并注册 gendisk 结构体，将其挂载到内核块设备子系统。这样，用户空间就可以通过 `/dev/sda` 等设备文件访问块设备。
+
 ### 网络设备
+网络设备与字符设备和块设备有本质区别。网络设备不像字符设备和块设备那样通过 `/dev` 目录下的设备文件访问，而是通过套接字接口访问。网络设备处理的是数据包而非字节流或块，其上游调用者不是用户态的直接读写操作，而是内核协议栈。
 
 ```c
-// 网络设备
+// 网络设备结构
 struct net_device {
     char name[IFNAMSIZ];             // 接口名称（如 eth0）
     struct net_device_ops *netdev_ops; // 网络操作接口
@@ -110,51 +122,65 @@ struct net_device {
     // ...
 };
 
+// 网络设备操作接口
 struct net_device_ops {
     int (*ndo_open)(struct net_device *dev);
     int (*ndo_stop)(struct net_device *dev);
-    netdev_tx_t (*ndo_start_xmit)(struct sk_buff *skb, struct net_device *dev);
-    int (*ndo_set_mac_address)(struct net_device *dev, void *addr);
-    // ...
+    netdev_tx_t (*ndo_start_xmit)(struct sk_buff *, struct net_device *);
+    int (*ndo_set_mac_address)(struct net_device *, void *);
+    int (*ndo_do_ioctl)(struct net_device *, struct ifreq *, int);
 };
 ```
+
+网络设备驱动开发时，需要实现 net_device_ops 结构体。驱动分配并初始化 net_device 结构体后，通过 register_netdev() 将其注册到内核网络子系统。此后，内核协议栈会通过 netdev_ops 调用驱动实现的接口进行数据包的收发。
 
 ## 设备驱动层
-驱动是操作系统定义的一套 [SPI（Service Provider Interface）](./driver)。linux 定义了一套驱动程序的规范，要求驱动程序应该长什么样。硬件厂商如果希望 linux 系统能够管理他们生产的硬件，那么就需要实现 linux 定义的 SPI。操作系统无需关心硬件接口的细节，而通过驱动来间接访问和管理设备，而驱动程序则以内核模块的方式加载进内核。编写设备驱动的时候需要实现设备抽象层提供的统一设备模型接口，区分为三种。
+
+驱动程序是操作系统与硬件之间的桥梁。Linux 定义了一套驱动程序的规范，要求驱动程序应该实现特定的接口和结构。硬件厂商如果希望 Linux 系统能够管理他们生产的硬件，就需要实现 Linux 定义的 SPI。驱动程序通常以内核模块的方式加载进内核。
 
 ```c
+// 设备驱动结构
 struct device_driver {
-    const char *name;                    // 驱动的唯一标识，用于设备匹配和 sysfs 暴露
-    struct bus_type *bus;                // 所属总线类型，用于设备匹配和总线管理
-    struct module *owner;                // 驱动模块，防止模块在设备绑定时卸载
+    const char *name;                    // 驱动的唯一标识，用于设备匹配
+    struct bus_type *bus;                // 所属总线类型（如 PCI、USB、Platform）
+    struct module *owner;                // 驱动模块，防止模块在设备绑定时被卸载
     const struct of_device_id *of_match_table; // 设备树匹配表
     const struct acpi_device_id *acpi_match_table; // ACPI 匹配表
-    int (*probe)(struct device *dev);    // 设备初始化函数
+    int (*probe)(struct device *dev);    // 设备初始化函数（设备匹配成功后调用）
     void (*remove)(struct device *dev);  // 设备移除函数
     void (*shutdown)(struct device *dev); // 设备关闭函数
-    int (*suspend)(struct device *dev, pm_message_t state); // 挂起函数
-    int (*resume)(struct device *dev);   // 恢复函数
     // ...
 };
 ```
 
-+ 字符设备驱动开发时，通常需要实现一组 `file_operations` 操作函数（如 open、read、write、release 等），并将其赋值给 `cdev` 结构体的 `ops` 成员。驱动通过初始化 `cdev` 并调用 `cdev_add()` 将其注册到内核，之后用户空间可以通过 `/dev/xxx` 设备文件访问字符设备，所有操作最终会调用到驱动实现的接口，实现对底层硬件的顺序读写和管理。
-+ 块设备的驱动开发通常需要实现 `block_device_operations` 结构体，定义块设备的基本操作接口。驱动首先通过 `register_blkdev()` 注册主设备号，然后初始化并注册 `gendisk` 结构体，将其挂载到内核块设备子系统。这样，用户空间就可以通过 `/dev/sda` 等设备文件访问块设备，所有的操作最终都会调用到驱动实现的接口函数，实现对底层硬件的读写和管理。
-+ 网络设备驱动开发时，首先需要实现 `net_device_ops` 结构体，定义网络设备的操作方法。驱动分配并初始化 `net_device` 结构体后，通过 `register_netdev()` 将其注册到内核网络子系统。此后，内核协议栈会通过 `netdev_ops` 调用驱动实现的接口进行数据包的收发、设备的启动和关闭等操作，实现网络数据的高效传输和管理。
+### 驱动绑定机制
 
-### 驱动绑定
+驱动绑定是将设备与其对应的驱动程序关联起来的过程。当系统检测到新设备时，内核需要找到能够管理该设备的驱动程序。总线类型的 match 函数负责匹配设备和驱动，匹配成功后调用驱动的 probe 函数进行设备初始化。
+
+匹配机制因总线类型而异。PCI 总线通过厂商 ID 和设备 ID 进行匹配，USB 总线通过厂商 ID、产品 ID、设备类进行匹配，平台总线通过设备树或 ACPI 中的 compatible 字符串进行匹配。
+
+匹配成功后，驱动的 probe 函数会被调用。probe 函数负责设备的硬件初始化、资源申请、中断注册等操作。如果 probe 成功返回 0，设备与驱动的绑定就完成了。如果 probe 返回错误码，绑定失败，内核会继续尝试其他匹配的驱动。
+
+设备移除时，内核会调用驱动的 remove 函数。remove 函数需要释放 probe 中申请的所有资源，包括注销中断、释放内存、取消映射等，确保设备能够安全移除或重新绑定。
 
 ### 主次设备号
+设备号是 Linux 内核区分不同设备的标识符，每个设备文件都有一个关联的设备号。设备号由主设备号（major number）和次设备号（minor number）组成，通常表示为 `major:minor` 的形式。
+
+主设备号标识设备驱动程序，次设备号标识由该驱动管理的具体设备实例。例如，所有 SATA 硬盘可能共享主设备号 8，而 sda、sdb、sdc 等具体磁盘通过次设备号 0、1、2 来区分。
+
+传统的设备号分配使用静态分配方式，驱动程序向内核申请一个未使用的主设备号。这种方式简单但不灵活，容易造成设备号冲突。现代内核使用动态分配方式，驱动程序在注册时请求分配一个未使用的主设备号，内核自动分配并返回。
+
+设备号的信息存储在 `/proc/devices` 文件中，可以查看当前系统中已分配的设备号。设备节点（device node）通过 `mknod` 命令或 udev 自动创建，其中包含了设备号信息。内核根据设备号将文件操作路由到对应的设备驱动。
 
 ## 物理硬件层
-物理硬件层，操作系统需要使用**硬件接口**来完成对硬件的管理和数据传输，无须关心硬件内部的具体实现。从硬件接口类型来看，设备的类型主要有两种：**总线设备和平台设备**。总线设备的硬件接口和平台设备的硬件接口有所不同，总线设备的硬件接口需要通过**总线协议**来定义，而平台设备的硬件接口通过**内核自定义**，具体是通过**通过设备树或 ACPI** 来描述。
+物理硬件层，操作系统需要使用**硬件接口**来完成对硬件的管理和数据传输，无须关心硬件内部的具体实现。从硬件接口类型来看，设备的类型主要有两种：**总线设备和平台设备**。总线设备的硬件接口和平台设备的硬件接口有所不同，总线设备的硬件接口需要通过**总线协议**来定义，而平台设备的硬件接口通过**内核自定义**，具体是通过**通过设备树或 ACPI** 来探测和描述。
 
-### [总线设备](/kernel/embed/bus/)
+### [总线设备](/kernel/embed/device/bus/)
 总线设备：通过标准总线协议（如 PCI、USB、I2C、SPI）连接的硬件设备，由总线驱动管理，支持动态探测和枚举。正如其他协议一样，协议的出现可以明确双发通信的流程，使得流程规范化、共识化。
 
 理解总线设备硬件接口，需要结合总线协议规定的硬件行为（设备探测、设备枚举、资源配置等）来理解，在此之上操作才知道如何控制总线设备。但幸运的是，总线设备往往配有一个总线控制器，该控制器实现硬件级别的设备管理，操作系统无需关心过多的设备管理功能，只需要安装总线控制器的驱动，从而调用总线的驱动，让总线控制器来帮忙管理总线设备即可，简化了操作系统的复杂度。
 
-### [平台设备](/kernel/embed/bus/platform)
+### [平台设备](/kernel/embed/device/platform)
 平台设备：SoC 集成或非标准协议的硬件设备（如 UART、GPIO），通过设备树或 ACPI 静态描述，不支持动态枚举。
 > **设备树源**配置文件是一个 Linux 内核提供的一个自定义硬件接口的机制，多见于 arm 平台和嵌入式设备，通过编写一个特殊的 dts （device tree source）文件，然后在内核启动的时候加载进入内核，作为内核启动配置来让内核识别自定义的硬件设备的接口。
 >
@@ -162,10 +188,15 @@ struct device_driver {
 
 平台设备的管理依赖于特定硬件实现，很多硬件厂商自研了专有硬件，嵌入到了特定的平台上，此时使用原版的 Linux 是无法探测这些这些硬件的，所有需要为 Linux 编写**设备树源**，使得 Linux 知道该硬件，即在物理内存地址空间的某一段上存在着一个怎样的硬件，帮助操作系统将物理内存地址空间中的某一段识别为硬件的寄存器空间。
 
-### 数据传输
-数据面的数据传输机制决定设备数据面编程方式和通信性能。平台设备往往更加现代和规范，其使用较为先进的 MMIO 方式，可以将设备的寄存器空间映射到物理内存空间中，从而让操作系统以访问内存的方式来访问设备，简化了操作系统的复杂度。
+### 数据传输方式
+数据面的数据传输机制决定设备数据面编程方式和通信性能。MMIO（Memory-Mapped I/O）是现代设备的主要接口方式，可以将设备的寄存器空间映射到物理内存空间中，从而让操作系统以访问内存的方式来访问设备。Port I/O 是传统的 x86 特有方式，通过专门的 in/out 指令访问设备寄存器。
 
-|设备类型|MMIO|Port I/O|
-|-|-|-|
-|总线设备|广泛使用（如 PCIe、USB、I2C）|老式设备（如 ISA、传统 PCI）|
-|平台设备|主要接口（如 UART、GPIO）|极少使用（仅 x86 特定场景）|
+| 设备类型 | MMIO | Port I/O |
+|---------|------|----------|
+| 总线设备 | 广泛使用（如 PCIe、USB、I2C） | 老式设备（如 ISA、传统 PCI） |
+| 平台设备 | 主要接口（如 UART、GPIO） | 极少使用（仅 x86 特定场景） |
+
+MMIO 方式简化了操作系统的复杂度，操作系统可以使用标准的内存访问指令来操作设备。Port I/O 需要专门的指令，在现代系统中逐渐被 MMIO 取代。
+
+## [udev 设备管理](./udev)
+udev 是 Linux 系统的用户空间设备管理器，负责管理 `/dev` 目录下的设备节点。当系统添加或移除硬件设备时，内核通过 netlink 机制通知 udev，udev 根据预定义的规则执行相应的动作，如创建设备节点、设置权限、加载模块等。udev 将设备管理从内核空间移到用户空间，使得设备管理策略可以通过配置文件灵活调整。
