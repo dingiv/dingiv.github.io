@@ -1,6 +1,6 @@
 ---
 title: U-Boot
-order: 10
+order: 0
 ---
 
 # U-Boot 引导程序
