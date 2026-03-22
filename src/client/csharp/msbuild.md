@@ -1,4 +1,4 @@
-# MSBuild 构建系统
+# MSBuild
 
 MSBuild 是 Microsoft 的构建平台，用于编译、测试和部署 .NET 项目。.csproj 项目文件本质上是 MSBuild 的 XML 脚本，定义了构建过程的各个阶段和目标。现代 .NET SDK 风格的项目大大简化了 MSBuild 配置，但理解 MSBuild 的工作原理对于高级场景仍然必要。
 

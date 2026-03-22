@@ -5,7 +5,7 @@ order: 7
 
 # Service Mesh
 
-Service Mesh（服务网格）是微服务架构的基础设施层，将服务治理逻辑从服务代码中剥离，下沉到 Sidecar 代理。Service Mesh 处理服务间通信，提供服务发现、负载均衡、熔断降级、限流、链路追踪等功能。
+Service Mesh（服务网格）是云原生架构的基础设施层，将服务治理逻辑从服务代码中剥离，下沉到 Sidecar 代理。Service Mesh 处理服务间通信，提供服务发现、负载均衡、熔断降级、限流、链路追踪等功能。
 
 ## 为什么需要 Service Mesh
 

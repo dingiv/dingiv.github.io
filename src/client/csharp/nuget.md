@@ -1,4 +1,4 @@
-# NuGet 包管理
+# NuGet
 
 NuGet 是 .NET 的包管理器，类似于 Python 的 pip、Node.js 的 npm。NuGet 使得开发者可以轻松地发现、安装、更新和移除 .NET 项目中的依赖库。NuGet 包是编译好的代码 (DLL)、相关文件和元数据的压缩包，文件扩展名为 .nupkg。
 
