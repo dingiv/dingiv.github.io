@@ -1,5 +1,5 @@
 ---
-title: 向量数据库深入
+title: 向量
 order: 4
 ---
 

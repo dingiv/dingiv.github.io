@@ -1,5 +1,5 @@
 ---
-title: 图数据库深入
+title: 图
 order: 3
 ---
 
