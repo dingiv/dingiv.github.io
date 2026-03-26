@@ -1,6 +1,5 @@
 ---
-title: 前端 AI 开发
-order: 50
+title: AI UI
 ---
 
 # 前端 AI 开发

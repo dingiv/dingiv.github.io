@@ -1,18 +1,21 @@
 ---
-title: 存储与分布式架构
+title: 分布式能力
 order: 2
 ---
 
 # 存储与分布式架构
+Milvus 生而就是为了分布式设计的。
 
-Milvus 采用存算分离架构，将存储、计算、协调三个关注点彻底解耦。这种架构使得各层可以独立扩缩容——写入量大时增加 Data Node，查询量大时增加 Query Node，存储量大时扩展对象存储集群。理解底层存储机制，有助于排查写入延迟、查询性能异常和数据一致性问题。
+采用存算分离架构，将存储、计算、协调三个关注点彻底解耦。这种架构使得各层可以独立扩缩容——写入量大时增加 Data Node，查询量大时增加 Query Node，存储量大时扩展对象存储集群。理解底层存储机制，有助于排查写入延迟、查询性能异常和数据一致性问题。
 
 ## 整体架构
-
-Milvus 的组件分为四层。接口层由 Proxy 组成，负责客户端连接管理、请求路由、结果聚合和负载均衡，客户端只与 Proxy 通信，不知道内部拓扑。协调层由四个 Coordinator 组成：Root Coordinator 负责 DDL 操作（创建/删除 Collection、索引管理）、Data Coordinator 负责 Data Node 的调度和 Segment 均衡、Query Coordinator 负责 Query Node 的调度和数据加载、Index Coordinator 负责 Index Node 的调度和索引构建任务分发。所有 Coordinator 通过 etcd 选主实现高可用。执行层包括 Data Node（数据写入）、Query Node（查询执行）和 Index Node（索引构建），是无状态的，可以随意增删。存储层包括 etcd（元数据）、MinIO/S3（数据文件）、Pulsar/Kafka（消息日志），Milvus 自身不存储数据，完全依赖外部存储。
+Milvus 的组件分为四层。
++ 接口层由 Proxy 组成，负责客户端连接管理、请求路由、结果聚合和负载均衡，客户端只与 Proxy 通信，不知道内部拓扑。
++ 协调层由四个 Coordinator 组成：Root Coordinator 负责 DDL 操作（创建/删除 Collection、索引管理）、Data Coordinator 负责 Data Node 的调度和 Segment 均衡、Query Coordinator 负责 Query Node 的调度和数据加载、Index Coordinator 负责 Index Node 的调度和索引构建任务分发。所有 Coordinator 通过 etcd 选主实现高可用。
++ 执行层包括 Data Node（数据写入）、Query Node（查询执行）和 Index Node（索引构建），是无状态的，可以随意增删。
++ 存储层包括 etcd（元数据）、MinIO/S3（数据文件）、Pulsar/Kafka（消息日志），Milvus 自身不存储数据，完全依赖外部存储。
 
 ## Segment 的生命周期
-
 Segment 是 Milvus 数据存储和查询的最小单元，理解它的生命周期是理解 Milvus 存储的关键。Segment 经历四个阶段。
 
 Growing Segment 是内存中的可变数据结构，接收实时写入的数据。每个 Collection 在每个 Data Node 上有一个 Growing Segment，写入直接追加到内存缓冲区。Growing Segment 支持实时查询（索引通常为 FLAT），延迟最低。
@@ -44,8 +47,11 @@ Segment 在 MinIO/S3 中的存储按照紧凑的列式格式组织。一个 Flus
 Query 执行的瓶颈通常有两个：Segment 加载和搜索计算。Segment 加载是从对象存储读取索引文件到内存，大型 Segment 的加载时间可达数秒。Milvus 支持 Segment 预加载（Load Collection），在查询前将所有 Segment 加载到内存，避免查询时的冷启动延迟。搜索计算的开销取决于索引类型和数据量，HNSW 的搜索延迟通常在毫秒级。
 
 ## 一致性机制
+Milvus 支持三种一致性级别。
 
-Milvus 支持三种一致性级别。Strong（强一致）保证查询能看到所有已确认写入的数据，实现方式是 Proxy 在执行查询前等待所有 Growing Segment 和最新 Flush 的数据被 Query Node 加载，延迟最高。Bounded（有界延迟）允许指定一个时间窗口（如 5 秒），Proxy 只等待该时间窗口内的数据加载，在延迟和一致性之间取得平衡。Eventual（最终一致）不等待任何未加载的数据，查询只反映已加载的 Segment 状态，延迟最低但可能读到旧数据。
++ Strong（强一致）保证查询能看到所有已确认写入的数据，实现方式是 Proxy 在执行查询前等待所有 Growing Segment 和最新 Flush 的数据被 Query Node 加载，延迟最高。
++ Bounded（有界延迟）允许指定一个时间窗口（如 5 秒），Proxy 只等待该时间窗口内的数据加载，在延迟和一致性之间取得平衡。
++ Eventual（最终一致）不等待任何未加载的数据，查询只反映已加载的 Segment 状态，延迟最低但可能读到旧数据。
 
 工程实践中，大多数 AI 应用（如推荐系统、语义搜索）可以接受 Bounded 或 Eventual 一致性，因为向量检索本身就是近似计算，少量数据延迟不影响最终结果。Strong 一致性适合对数据新鲜度要求严格的场景，如实时内容审核。
 
