@@ -1,9 +1,9 @@
 ---
 title: MongoDB
-order: 2
+order: 40
 ---
 
-# MongoDB 实现原理
+# MongoDB
 
 MongoDB 是面向文档的 NoSQL 数据库，使用 BSON（Binary JSON）格式存储数据。理解 MongoDB 的实现，需要深入它的存储引擎、复制集、分片集群和查询处理。
 

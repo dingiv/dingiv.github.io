@@ -1,9 +1,9 @@
 ---
 title: Neo4j
-order: 4
+order: 60
 ---
 
-# Neo4j 实现原理
+# Neo4j
 
 Neo4j 是原生图数据库，专注于存储和查询图结构数据。理解 Neo4j 的实现，需要深入图数据模型、存储引擎、索引机制和 Cypher 查询语言。
 

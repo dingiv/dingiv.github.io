@@ -3,12 +3,10 @@ title: PostgreSQL
 order: 20
 ---
 
-# PostgreSQL 架构与实现
-
+# PostgreSQL
 PostgreSQL 是最先进的开源对象关系数据库，以其丰富的数据类型、强大的扩展性、ACID 完整支持著称。理解 PostgreSQL 的架构差异，有助于在 MySQL 和 PostgreSQL 之间做出合适的选择。
 
 ## 进程架构
-
 MySQL 采用线程模型，每个连接对应一个线程；PostgreSQL 采用进程模型，每个连接对应一个服务进程。进程模型的优势是稳定性强，一个进程崩溃不影响其他进程；劣势是进程创建和切换开销大，连接数受限。PostgreSQL 使用连接池（如 PgBouncer）缓解这个问题。
 
 PostgreSQL 的后台进程包括：Postmaster（主进程，监听连接请求）、Logger（日志进程）、Checkpointer（检查点进程）、WAL Writer（WAL 写入进程）、Autovacuum（自动清理进程）、Archiver（归档进程）、Stats Collector（统计信息收集进程）。

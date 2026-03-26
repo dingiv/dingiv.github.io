@@ -65,7 +65,7 @@ Span 数据需要上报到链路追踪系统，可以同步上报或异步上报
 
 ### 数据存储
 
-Span 数据存储到数据库（如 Elasticsearch、Cassandra），支持按 Trace ID、Span ID、Tag 查询。Span 数据量大，需要定期清理或归档。
+Span 数据存储到数据库（如 ElasticSearch、Cassandra），支持按 Trace ID、Span ID、Tag 查询。Span 数据量大，需要定期清理或归档。
 
 ## 主流链路追踪系统
 
@@ -79,7 +79,7 @@ Zipkin Client：嵌入在应用中，记录和上报 Span 数据。
 
 Zipkin UI：Web 界面，可视化调用链路。
 
-Zipkin 的特性：简单易用、与 Spring Cloud 集成、支持多种存储（内存、Cassandra、Elasticsearch）。
+Zipkin 的特性：简单易用、与 Spring Cloud 集成、支持多种存储（内存、Cassandra、ElasticSearch）。
 
 Zipkin 的问题：性能较差、功能相对简单、维护状态不佳。
 
@@ -89,7 +89,7 @@ Jaeger 是 Uber 开源的链路追踪系统，兼容 Zipkin 协议。
 
 Jaeger 的架构：Agent（收集 Span 数据）、Collector（接收和存储 Span 数据）、Query（查询 Span 数据）、UI（可视化调用链路）。
 
-Jaeger 的特性：高性能、与 Kubernetes 集成、支持多种存储（Elasticsearch、Cassandra）、支持采样率动态配置。
+Jaeger 的特性：高性能、与 Kubernetes 集成、支持多种存储（ElasticSearch、Cassandra）、支持采样率动态配置。
 
 Jaeger 的优势：性能高、功能完善、云原生、维护活跃。
 

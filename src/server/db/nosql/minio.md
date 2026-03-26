@@ -1,6 +1,6 @@
 ---
 title: MinIO
-order: 6
+order: 50
 ---
 
 # MinIO

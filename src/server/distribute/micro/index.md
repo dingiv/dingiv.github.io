@@ -118,7 +118,7 @@ TCC 模式：Try-Confirm-Cancel 三阶段提交。
     * **缓存**：用 **Redis** 减少数据库 IO。
     * **异步**：用 **RocketMQ** 把耗时任务从主流程剥离。
     * **硬件加速**：对于 C 开发者，你会关注利用 **GPUDirect Storage** 或 **RDMA** 网络减少数据拷贝。
-    * **索引优化**：在 **Elasticsearch** 或 **Milvus** 中通过精密的索引算法加速搜索。
+    * **索引优化**：在 **ElasticSearch** 或 **Milvus** 中通过精密的索引算法加速搜索。
 * **你的 AI 场景**：生成一个 Token 需要多少毫秒（TPOT）？首字返回需要多久（TTFT）？
 
 ---

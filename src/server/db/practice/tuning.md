@@ -57,7 +57,7 @@ ORDER BY object_schema, object_name;
 
 隐式类型转换也会导致索引失效。例如列类型是 VARCHAR，查询条件用整数 `WHERE phone = 13800138000`，MySQL 会进行类型转换，导致无法使用索引。解决方案是将查询条件改为字符串形式。
 
-LIKE 查询的前缀通配符会导致索引失效，`WHERE name LIKE '%张%'` 无法使用索引。如果业务需要模糊搜索，可以考虑全文索引或 Elasticsearch。对于后缀通配符 `WHERE name LIKE '张%'`，索引仍然有效。
+LIKE 查询的前缀通配符会导致索引失效，`WHERE name LIKE '%张%'` 无法使用索引。如果业务需要模糊搜索，可以考虑全文索引或 ElasticSearch。对于后缀通配符 `WHERE name LIKE '张%'`，索引仍然有效。
 
 ### 索引设计建议
 

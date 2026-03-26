@@ -45,7 +45,7 @@ Prometheus 的问题：不支持集群（通过联邦实现）、不支持高可
 
 ### Grafana
 
-Grafana 是开源的可视化平台，支持多种数据源（Prometheus、Elasticsearch、InfluxDB 等）。
+Grafana 是开源的可视化平台，支持多种数据源（Prometheus、ElasticSearch、InfluxDB 等）。
 
 Grafana 的核心：Dashboard（仪表盘，多个 Panel）、Panel（面板，单个可视化）、Query（查询，从数据源获取数据）、Alert（告警，基于规则触发）。
 
