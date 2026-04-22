@@ -2,20 +2,20 @@
 
 Linux 内核 x86 启动流程全景
 
-  启动链路如下（从上电到用户空间）：
+启动链路如下（从上电到用户空间）：
 
-  Bootloader (GRUB/UEFI)
-    └─→ arch/x86/boot/header.S    _start            [16位实模式]
-        └─→ arch/x86/boot/main.c   main()            [实模式 C 代码]
-            └─→ arch/x86/boot/pm.c  go_to_protected_mode()
-                └─→ arch/x86/boot/pmjump.S            [切换到保护模式]
-                    └─→ arch/x86/boot/compressed/head_64.S  startup_32  [32位保护模式]
-                        └─→ startup_64                               [64位长模式]
-                            └─→ arch/x86/boot/compressed/misc.c  extract_kernel()  [解压]
-                                └─→ arch/x86/kernel/head_64.S  startup_64  [内核主体]
-                                    └─→ arch/x86/kernel/head64.c  x86_64_start_kernel()
-                                        └─→ init/main.c  start_kernel()  [架构无关初始化]
-                                            └─→ rest_init() → kernel_init (PID 1) → /sbin/init
+Bootloader (GRUB/UEFI)
+  └─→ arch/x86/boot/header.S    _start            [16位实模式]
+      └─→ arch/x86/boot/main.c   main()            [实模式 C 代码]
+          └─→ arch/x86/boot/pm.c  go_to_protected_mode()
+              └─→ arch/x86/boot/pmjump.S            [切换到保护模式]
+                  └─→ arch/x86/boot/compressed/head_64.S  startup_32  [32位保护模式]
+                      └─→ startup_64                               [64位长模式]
+                          └─→ arch/x86/boot/compressed/misc.c  extract_kernel()  [解压]
+                              └─→ arch/x86/kernel/head_64.S  startup_64  [内核主体]
+                                  └─→ arch/x86/kernel/head64.c  x86_64_start_kernel()
+                                      └─→ init/main.c  start_kernel()  [架构无关初始化]
+                                          └─→ rest_init() → kernel_init (PID 1) → /sbin/init
 
   四个阶段概要
 

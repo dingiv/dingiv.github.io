@@ -92,15 +92,15 @@ To maintain a consistent style across the site, follow these language rules when
 
 5. **Focus on practical application** - Emphasize the relationship between knowledge and actual engineering practice, including guidance for engineering and summaries of engineering experience.
 
-6. **No blank line after headings but one blank line before headings** - In markdown, do not leave blank lines between `#` headings and their content. Leave a blank line before headings， between the headings and the contents of the previous headings.
+6. **No blank line after headings but leave one blank line before headings** - In markdown, do not leave blank lines between `#` headings and their content. Leave a blank line before headings， between the headings and the contents of the previous headings.
    
    Example:
    ```
    ## Previous Header
-   some contents without blank line.
+   some contents without blank line after headings.
    <leave a blank line here>
    ## The Header
-   some contents without blank line.
+   some contents without blank line after headings.
 
    ...
 
