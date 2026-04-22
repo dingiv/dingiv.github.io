@@ -184,17 +184,17 @@ function quickSort(arr, left = 0, right = arr.length - 1) {
 
 function partition(arr, left, right) {
   const pivot = arr[right];
-  let i = left;
+  let pi = left;
   
-  for (let j = left; j < right; j++) {
-    if (arr[j] < pivot) {
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-      i++;
+  for (let i = left; i < right; i++) {
+    if (arr[i] < pivot) {
+      [arr[pi], arr[i]] = [arr[i], arr[pi]];
+      pi++;
     }
   }
   
-  [arr[i], arr[right]] = [arr[right], arr[i]];
-  return i;
+  [arr[pi], arr[right]] = [arr[right], arr[pi]];
+  return pi;
 }
 ```
 
@@ -220,19 +220,19 @@ function heapSort(arr) {
   
   // 构建最大堆
   for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-    heapify(arr, n, i);
+    sink(arr, n, i);
   }
   
   // 逐个提取元素
   for (let i = n - 1; i > 0; i--) {
     [arr[0], arr[i]] = [arr[i], arr[0]];
-    heapify(arr, i, 0);
+    sink(arr, i, 0);
   }
   
   return arr;
 }
 
-function heapify(arr, n, i) {
+function sink(arr, n, i) {
   let largest = i;
   const left = 2 * i + 1;
   const right = 2 * i + 2;
@@ -247,7 +247,7 @@ function heapify(arr, n, i) {
   
   if (largest !== i) {
     [arr[i], arr[largest]] = [arr[largest], arr[i]];
-    heapify(arr, n, largest);
+    sink(arr, n, largest);
   }
 }
 ```
