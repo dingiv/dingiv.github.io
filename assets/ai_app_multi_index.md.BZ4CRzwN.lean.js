@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as a}from"./chunks/framework.NjRSjnv-.js";const l=JSON.parse('{"title":"多模态","description":"","frontmatter":{"title":"多模态"},"headers":[],"relativePath":"ai/app/multi/index.md","filePath":"ai/app/multi/index.md"}'),i={name:"ai/app/multi/index.md"};function n(r,o,p,s,c,d){return t(),a("div")}const _=e(i,[["render",n]]);export{l as __pageData,_ as default};
