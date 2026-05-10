@@ -1,0 +1,6 @@
+可以的，我们顺便重新编辑一下 @src/kernel/linux/mm/ 和 @src/kernel/linux/power/ 文件夹中的内容        
+  提示                                                                                                                                                                                                                
+  1. 添加 e820 表，x86 平台的 acpi 扫描内存布局，bootloader 以 e820 表的形式告知 linux                                                                                                                                
+  2. 物理内存管理是在系统启动的非常早期的时候                                                                                                                                                                         
+  3. bootloader 会在 start_kernel 函数进入之前做一些准备工作，包括：加载内核，构造恒等页表，                                                                                                                          
+  3. 恒等映射，在内核启动的早期，在切换 cr3 的一瞬间，为了防止 CPU 迷路，而后        

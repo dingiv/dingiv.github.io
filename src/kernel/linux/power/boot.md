@@ -60,12 +60,16 @@ Boot Loader 根据 MBR 中的磁盘分区信息，找到活动分区（操作系
 
 常见的 Boot Loader 实现包括：
 
-- GRUB（广泛用于 Linux 系统）
+- GRUB（广泛用于 x86 平台）
+- UBoot（广泛用于 arm 嵌入式开发板）
 - LILO
 - NTLDR
 - BOOTMGR
 
 在 Linux 文件系统中，Boot Loader 通常位于`/boot`目录下。
+
+### boot_params 启动协议
+TODO: 
 
 ## 操作系统启动
 当 Boot Loader 将操作系统内核加载到内存并将控制权移交后，操作系统的启动过程正式开始。

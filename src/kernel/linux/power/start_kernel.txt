@@ -4,6 +4,7 @@ Linux 内核 x86 启动流程全景
 
 启动链路如下（从上电到用户空间）：
 
+```
 Bootloader (GRUB/UEFI)
   └─→ arch/x86/boot/header.S    _start            [16位实模式]
       └─→ arch/x86/boot/main.c   main()            [实模式 C 代码]
@@ -16,7 +17,7 @@ Bootloader (GRUB/UEFI)
                                   └─→ arch/x86/kernel/head64.c  x86_64_start_kernel()
                                       └─→ init/main.c  start_kernel()  [架构无关初始化]
                                           └─→ rest_init() → kernel_init (PID 1) → /sbin/init
-
+```
   四个阶段概要
 
   阶段1 — 实模式启动 (arch/x86/boot/)

@@ -14,10 +14,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.12.3",
     "markdown-it-mathjax3": "^4.3.2",
-    "vite": "^7.2.0",
-    "vitepress": "2.0.0-alpha.15",
-    "yaml": "^2.8.2"
+    "vite": "^7.3.3",
+    "vitepress": "2.0.0-alpha.17",
+    "yaml": "^2.8.4"
   }
 }
