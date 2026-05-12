@@ -1,8 +1,7 @@
 {
   "name": "my-blog",
-  "version": "1.0.8",
+  "version": "0.0.0",
   "description": "",
-  "main": "index.js",
   "private": "true",
   "type": "module",
   "scripts": {
@@ -12,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "@types/node": "^24.12.3",
     "markdown-it-mathjax3": "^4.3.2",
