@@ -1,0 +1,79 @@
+# 大模型应用开发 - 内容重构清单
+
+## Phase 1: 目录重构
+
+### 1.1 新建目录与桩文件
+- [ ] arch/ — 应用架构模式 (order: 5)
+  - [ ] arch/index.md — 架构模式概览（模型路由、级联降级、API 网关、语义缓存）
+  - [ ] arch/routing.md — 模型路由与降级（按复杂度选模型、fallback 链、小模型前置）
+  - [ ] arch/gateway.md — API 网关与缓存（LiteLLM、语义缓存、限流计费、版本管理）
+- [ ] data/ — 数据工程 (order: 8)
+  - [ ] data/index.md — 数据工程概览（文档解析→清洗→分块→索引的完整链路）
+  - [ ] data/parsing.md — 文档解析（PDF/Word/HTML/Markdown 的解析策略与工具）
+  - [ ] data/processing.md — 数据处理（清洗去噪、分块策略、多粒度索引、数据版本管理）
+- [ ] safety/ — 安全与防护 (order: 25)
+  - [ ] safety/index.md — 安全概览（LLM 应用的攻击面与防御体系）
+  - [ ] safety/injection.md — Prompt 注入防御（直接/间接注入、越狱攻击、防御策略）
+  - [ ] safety/content.md — 内容安全（输入输出过滤、PII 防护、有害内容检测、合规要求）
+  - [ ] safety/guardrails.md — 输出约束与工具安全（Guardrails 框架、工具权限沙箱、操作审计）
+- [ ] multimodal/ — 多模态 (order: 28)
+  - [ ] multimodal/index.md — 多模态概览（视觉/语音/多模态 RAG 的技术版图）
+  - [ ] multimodal/vision.md — 视觉理解（图像描述、文档 OCR、图表解析、视频理解）
+  - [ ] multimodal/audio.md — 语音交互（STT/TTS、实时语音 Agent、端到端语音模型）
+  - [ ] multimodal/generation.md — 媒体生成（从 multi/sd.md 迁移，扩展视频/音频生成）
+- [ ] ops/ — LLMOps (order: 45, 从 engine/llmops.md 提升)
+  - [ ] ops/index.md — LLMOps 概览（评估、测试、观测的生产闭环）
+  - [ ] ops/eval.md — 评估框架（LLM-as-Judge、评估数据集、评估指标体系）
+  - [ ] ops/test.md — 测试策略（Prompt 回归测试、RAG pipeline 测试、对抗测试）
+  - [ ] ops/monitor.md — 可观测性（全链路追踪、成本追踪、告警与故障排查）
+
+### 1.2 文件移动与重归类
+- [ ] case/ → agent/case/（案例分析归入 Agent 板块）
+- [ ] agent/tradition.md → app/automation.md（自动化脚本独立为顶层主题）
+- [ ] multi/sd.md 内容 → multimodal/generation.md（多模态扩展）
+- [ ] multi/ 目录删除（由 multimodal/ 替代）
+- [ ] engine/llmops.md → 拆分到 ops/ 各文件，engine/index.md 中删除 LLMOps 引用
+- [ ] api.md（Pkgs 第三方包）→ 重命名为 packages.md
+- [ ] api.md 新写为 LLM API 设计（OpenAI 协议、SSE 流式、Token 计费、版本管理）
+
+### 1.3 构建验证
+- [ ] pnpm build 验证目录结构正确
+
+## Phase 2: 新内容编写
+
+### 2.1 arch/ 应用架构模式
+- [ ] arch/index.md — 架构模式概览
+- [ ] arch/routing.md — 模型路由与降级
+- [ ] arch/gateway.md — API 网关与缓存
+
+### 2.2 data/ 数据工程
+- [ ] data/index.md — 数据工程概览
+- [ ] data/parsing.md — 文档解析
+- [ ] data/processing.md — 数据处理
+
+### 2.3 safety/ 安全与防护
+- [ ] safety/index.md — 安全概览
+- [ ] safety/injection.md — Prompt 注入防御
+- [ ] safety/content.md — 内容安全
+- [ ] safety/guardrails.md — 输出约束与工具安全
+
+### 2.4 multimodal/ 多模态
+- [ ] multimodal/index.md — 多模态概览
+- [ ] multimodal/vision.md — 视觉理解
+- [ ] multimodal/audio.md — 语音交互
+- [ ] multimodal/generation.md — 媒体生成
+
+### 2.5 ops/ LLMOps
+- [ ] ops/index.md — LLMOps 概览
+- [ ] ops/eval.md — 评估框架
+- [ ] ops/test.md — 测试策略
+- [ ] ops/monitor.md — 可观测性
+
+### 2.6 重写现有文件
+- [ ] api.md — 重写为 LLM API 设计（OpenAI 协议、SSE、计费、版本管理）
+- [ ] engine/index.md — 移除 LLMOps 段落，添加对 ops/ 的引用
+
+## Phase 3: 收尾
+- [ ] 全量 pnpm build 验证
+- [ ] 检查所有交叉引用链接正确性
+- [ ] 删除 todo.list
