@@ -9,7 +9,8 @@ order: 30
 
 ## 技术栈
 
-+ 推理引擎：Ollama、vLLM、TGI 等推理框架部署运行大模型，掌握量化（GPTQ/AWQ）、微调（LoRA/QLoRA）和参数调优
++ 推理引擎：vLLM、llama.cpp、TGI 等推理框架部署运行大模型，掌握量化（GPTQ/AWQ）、微调（LoRA/QLoRA）和参数调优
++ 垂直领域微调：
 + Embedding 模型：BGE、E5、GTE 等嵌入模型将文本映射为向量，理解对比学习训练原理和选型评估（MTEB）
 + 向量数据库：Milvus、pgvector 等向量数据库，为 RAG 应用提供语义检索能力，理解 HNSW 等索引算法
 + 提示词工程：理解提示词的表达方式对于模型生成的影响，掌握 CoT、Few-shot、Generated Knowledge 等设计模式
