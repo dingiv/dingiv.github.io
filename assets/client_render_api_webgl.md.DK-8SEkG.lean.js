@@ -1,0 +1,1 @@
+import{_ as e,b0 as t,aC as a}from"./chunks/framework.DMsx7SBw.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"client/render/api/webgl.md","filePath":"client/render/api/webgl.md"}'),r={name:"client/render/api/webgl.md"};function n(c,i,o,s,l,p){return t(),a("div")}const m=e(r,[["render",n]]);export{_ as __pageData,m as default};
