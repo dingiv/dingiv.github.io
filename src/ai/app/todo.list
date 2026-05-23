@@ -74,6 +74,36 @@
 - [ ] engine/index.md — 移除 LLMOps 段落，添加对 ops/ 的引用
 
 ## Phase 3: 收尾
-- [ ] 全量 pnpm build 验证
-- [ ] 检查所有交叉引用链接正确性
+- [x] 全量 pnpm build 验证
+- [x] 检查所有交叉引用链接正确性
 - [ ] 删除 todo.list
+
+## Phase 4: 内容补充（基于 2026 年最新技术栈分析）
+
+### 4.1 高优先级
+
+- [ ] agent/a2a.md — A2A 协议（Google 提出的 Agent-to-Agent 互操作协议，与 MCP 互补，解决 Agent↔Agent 协作问题）
+- [ ] prompt/context.md — Context Engineering（上下文工程，管理进入上下文窗口的全部信息：系统提示+工具定义+检索结果+历史对话+缓存策略，区别于传统提示词工程）
+- [ ] rag/agentic_rag.md — Agentic RAG（Agent 主动决定何时检索/检索什么/是否需要重试，涵盖 Self-RAG、Corrective RAG、Adaptive RAG 等模式）
+- [ ] arch/caching.md — Prompt Caching 与成本优化（Anthropic/OpenAI 原生 prompt caching、前缀缓存策略、与语义缓存的对比选型）
+- [ ] agent/deep_agent.md — 长时自治 Agent（Deep Agents 范式、自动上下文压缩、虚拟文件系统、子 Agent 生成、中断恢复与状态持久化）
+
+### 4.2 中优先级
+
+- [ ] prompt/thinking.md — Extended Thinking（Claude 3.7+ 引入的扩展思维模式，模型内部控制推理深度，区别于用户级 CoT 技巧）
+- [ ] langchain/multi_framework.md — 多 Agent 框架对比（CrewAI 角色扮演、AutoGen 多 Agent 对话、Semantic Kernel 企业级、与 LangChain 生态的横向对比选型）
+- [ ] engine/slm.md — 小模型与端侧部署（Phi-3/4、Gemma 2、Qwen2-0.5B 等小模型，WebGPU/Core ML 端侧推理，移动端 AI 应用）
+- [ ] arch/ai_native.md — AI Native 应用架构（Human-in-the-loop 模式、Agent-as-a-Service、多模型协作编排、AI Gateway 企业级治理）
+
+### 4.3 低优先级
+
+- [ ] prompt/compression.md — Prompt Compression（提示压缩技术，降低 token 消耗的工程手段）
+- [ ] ops/eval_v2.md — LLM 评估新范式（最新评估基准、LLM-as-Judge 改进、自动化红队测试标准化）
+- [ ] safety/ai_act.md — AI 安全法规进展（AI Act 执行细节、中国生成式 AI 管理办法、红队测试标准化）
+
+### 4.4 已有内容更新
+
+- [ ] agent/mcp.md — 补充 MCP 生态最新进展（OpenAI/Google 已支持、MCP Server 市场爆发、MCP 与 A2A 的关系定位）
+- [ ] prompt.md — 补充 Extended Thinking 与 Context Engineering 的交叉引用
+- [ ] frontend.md — 补充 Native Structured Output（OpenAI Structured Outputs、Anthropic tool_use 结构化输出，区别于 Zod 后处理校验）
+- [ ] index.md — 更新技术栈列表，添加 A2A、Prompt Caching、Context Engineering 等新条目

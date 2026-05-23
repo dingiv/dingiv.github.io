@@ -87,7 +87,6 @@ TCC 模式：Try-Confirm-Cancel 三阶段提交。
 
 ## 三高指标
 
-
 在分布式架构（如你正在搭建的 **K8s + AI 推理集群**）中，“三高”是评价一个系统是否达到“工业级”水准的核心指标。
 
 简单来说，三高指的是：**高可用 (High Availability)**、**高性能 (High Performance)**、**高并发 (High Concurrency)**。
