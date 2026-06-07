@@ -8,8 +8,10 @@
       "Bash(pnpm:*)",
       "Bash(ls:*)",
       "WebSearch",
-      "Bash(npm list *)",
-      "Bash(claude *)"
+      "Bash(claude *)",
+      "Skill(deep-research)",
+      "Bash(curl -sL *)",
+      "Bash(python3 -c *)"
     ]
   }
 }
