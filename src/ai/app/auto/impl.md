@@ -5,9 +5,9 @@ order: 20
 
 # 实现原理
 
-自动化技术按照不同的维度有多种分类方式。从自动化范式来看，自动化程序分为传统自动化脚本、低代码编排、 Agent 自动化。
+自动化技术按照不同的维度有多种分类方式。从自动化范式来看，自动化程序分为传统自动化脚本和 Agent 自动化。
 
-传统脚本的具体技术方案和工具介绍见 [传统自动化](/ai/app/auto/traditional)。Agent 自动化实现原理参考[大模型应用覆盖层技术栈](/ai/app/auto/overlay/)。
+传统脚本的具体技术方案和工具介绍见 [传统自动化](/ai/app/auto/traditional)。Agent 自动化实现原理参考[大模型应用覆盖层技术栈](/ai/app/overlay/)。
 
 ## 通用架构
 所有自动化系统本质上都在实现同一个闭环：感知环境状态，理解状态含义，生成行动计划，执行操作，再检查执行结果是否达成预期。这个感知-理解-决策-执行-反馈的循环，既是人类操作计算机时的认知过程，也是自动化程序的工作模型。
@@ -32,7 +32,14 @@ order: 20
 
 ## 已有实现
 
-从封装程度来看，自动化工具可以分为四类。成品软件面向垂直领域，开箱即用，如 Cursor 和 Claude Code 等 AI 编程工具，以及 n8n、Dify 等可视化编排平台。框架库位于中间层，如 LangChain 系列、transformers、AutoGen 等，提供半成品能力供开发者集成。全量脚本则是从零开始构建，灵活性最高但开发成本也最大。Python 自动化库（PyAutoGUI、Selenium、OpenCV）和编排引擎（n8n、Dify、ComfyUI、Coze）的详细介绍见 [传统自动化](/ai/app/auto/traditional)。
+从封装程度来看，自动化工具可以分为四类。
+
+|          | 传统自动化                  | agent                            |
+| -------- | --------------------------- | -------------------------------- |
+| 成品软件 | n8n、Dify                   | Cursor 和 Claude Code            |
+| 开发框架 | PyAutoGUI、Selenium、OpenCV | LangChain、transformers、AutoGen |
+
+成品软件面向垂直领域，开箱即用，如 Cursor 和 Claude Code 等 AI 编程工具，以及 n8n、Dify 等可视化编排平台。框架库位于中间层，如 LangChain 系列、transformers、AutoGen 等，提供半成品能力供开发者集成。全量脚本则是从零开始构建，灵活性最高但开发成本也最大。Python 自动化库（PyAutoGUI、Selenium、OpenCV）和编排引擎（n8n、Dify、ComfyUI、Coze）的详细介绍见 [传统自动化](/ai/app/auto/traditional)。
 
 ## Agent 自动化
 
