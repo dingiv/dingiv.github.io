@@ -58,3 +58,8 @@ agent in browser，一4浏览器插件形式存在，在所有的网页上开一
 d3，echarts，图表
 
 添加ai引擎的 调优，垂直领域微调，还有就是 内存offloading，显存不够，内存来凑，多级缓存算法
+
+
+Universal Baseboard
+
+容器的本质是空间隔离技术，复杂度封装
