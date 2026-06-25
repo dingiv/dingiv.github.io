@@ -2,14 +2,12 @@
 
 ## USB
 
-
 ## PCI
 
 ## NGFF
 M.2
 
 ## MIPI
-
 
 ## BTB
 board to board

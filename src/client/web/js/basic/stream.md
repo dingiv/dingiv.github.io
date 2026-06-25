@@ -1,6 +1,7 @@
 # Stream API
 
 ## ReadableStream
+
 ### 获得生产者
 1. 构造函数
    ```js
@@ -21,6 +22,7 @@
 
 
 ## WriteableStream：消费者
+
 ### 获得消费者
 + 构造函数
 ```js
@@ -36,6 +38,7 @@ writer=ws.getWriter()
 writer.ready.write()
 
 ## node:stream.Readable
+
 ### 获得生产者
 + 构造函数
 ```js
@@ -58,6 +61,7 @@ new Readable({
 生产者有静止状态、流动状态和关闭状态，初始为静止状态，在调用了pipe和被监听了data事件后变为流动状态
 
 ## node:stream.Writeable
+
 ### 获得消费者
 + 构造函数
 ```js

@@ -1,5 +1,2 @@
 # llama.cpp
-
-
-
 Ollama

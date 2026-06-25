@@ -4,13 +4,11 @@ order: 0
 ---
 
 # SQL 语法基础
-
 SQL（Structured Query Language）是关系数据库的标准查询语言，掌握 SQL 语法是数据库开发和运维的基础。本节介绍 DDL、DML、DQL 的核心语法，以及视图、存储过程、触发器的高级特性。
 
 ## DDL 数据定义语言
 
 ### CREATE 创建
-
 CREATE 语句用于创建数据库对象，包括数据库、表、索引、视图。创建数据库时可以指定字符集和排序规则，例如 `CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`。
 
 创建表时需要指定列名、数据类型、约束。常见约束包括 PRIMARY KEY 主键、NOT NULL 非空、UNIQUE 唯一、DEFAULT 默认值、AUTO_INCREMENT 自增。外键约束通过 FOREIGN KEY 定义，引用其他表的主键。
@@ -41,7 +39,6 @@ CREATE INDEX idx_order_user_status ON orders(user_id, status);
 ```
 
 ### ALTER 修改
-
 ALTER 语句用于修改已有表的结构，包括添加列、删除列、修改列、添加约束、删除约束。ALTER TABLE 是耗时操作，大表的结构变更可能需要数小时，建议在业务低峰期执行。
 
 ```sql
@@ -64,7 +61,6 @@ ALTER TABLE users DROP PRIMARY KEY;
 MySQL 5.6+ 支持 Online DDL，某些结构变更不锁表、不阻塞读写。Online DDL 通过 ALGORITHM 和 LOCK 子句控制，ALGORITHM=INPLACE 是原地变更，ALGORITHM=COPY 是复制表。LOCK=NONE 不锁表，LOCK=SHARED 共享锁，LOCK=EXCLUSIVE 排他锁。
 
 ### DROP 删除
-
 DROP 语句用于删除数据库对象，包括数据库、表、索引、视图。DROP 是危险操作，会永久删除数据和对象，无法直接恢复。执行 DROP 前应该确认，生产环境建议使用备份或删除保护。
 
 DROP DATABASE 删除数据库和所有表，DROP TABLE 删除表和数据，DROP INDEX 删除索引。DROP VIEW 删除视图。DROP TRIGGER 删除触发器。
@@ -85,7 +81,6 @@ TRUNCATE TABLE 是快速清空表的操作，比 DELETE 快得多，因为 TRUNC
 ## DML 数据操作语言
 
 ### INSERT 插入
-
 INSERT 语句用于插入数据，支持单行插入、多行插入、查询插入。单行插入使用 `INSERT INTO table VALUES (value1, value2)` 或 `INSERT INTO table (col1, col2) VALUES (value1, value2)`。多行插入使用 `INSERT INTO table VALUES (...), (...), (...)`。
 
 ```sql
@@ -117,7 +112,6 @@ REPLACE INTO users (id, username, email) VALUES (1, 'alice', 'new@example.com');
 ```
 
 ### UPDATE 更新
-
 UPDATE 语句用于更新已有数据，支持单表更新、多表更新。单表更新使用 `UPDATE table SET col1 = value1 WHERE condition`。多表更新使用 JOIN 关联多个表。
 
 ```sql
@@ -134,7 +128,6 @@ WHERE o.status = 'completed';
 UPDATE 支持 ORDER BY 和 LIMIT，可以控制更新顺序和数量。`UPDATE users SET status = 1 ORDER BY id LIMIT 100` 更新 100 条记录，按 ID 顺序更新。
 
 ### DELETE 删除
-
 DELETE 语句用于删除数据，支持单表删除、多表删除。单表删除使用 `DELETE FROM table WHERE condition`。多表删除使用 JOIN 关联多个表。
 
 ```sql
@@ -155,13 +148,11 @@ DELETE 是 DML 操作，可以回滚。TRUNCATE 是 DDL 操作，无法回滚。
 ## DQL 数据查询语言
 
 ### SELECT 基础
-
 SELECT 语句用于查询数据，基本语法是 `SELECT columns FROM table WHERE condition GROUP BY columns HAVING condition ORDER BY columns LIMIT offset, count`。
 
 SELECT * 返回所有列，生产环境应该明确列出需要的列，避免 SELECT *。SELECT DISTINCT 返回去重后的结果。SELECT 可以使用表达式和函数，例如 `SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM users`。
 
 ### WHERE 过滤
-
 WHERE 子句用于过滤行，支持比较运算符、逻辑运算符、范围查询、模糊匹配。比较运算符包括 =、!=、<>、>、<、>=、<=。逻辑运算符包括 AND、OR、NOT。范围查询使用 BETWEEN、IN。模糊匹配使用 LIKE、REGEXP。
 
 ```sql
@@ -181,7 +172,6 @@ SELECT * FROM users WHERE email REGEXP '^[a-z]+@example\\.com$';
 ```
 
 ### JOIN 连接
-
 JOIN 用于关联多个表，包括 INNER JOIN 内连接、LEFT JOIN 左连接、RIGHT JOIN 右连接、FULL OUTER JOIN 全连接（MySQL 不支持）。内连接返回匹配的行，左连接返回左表所有行和右表匹配的行，右连接返回右表所有行和左表匹配的行。
 
 ```sql
@@ -202,7 +192,6 @@ LEFT JOIN employees e2 ON e1.manager_id = e2.id;
 ```
 
 ### GROUP BY 分组
-
 GROUP BY 用于分组聚合，常见的聚合函数包括 COUNT、SUM、AVG、MIN、MAX。GROUP BY 后的 SELECT 只能包含分组列和聚合函数，包含其他列会导致错误或非确定结果。
 
 ```sql
@@ -228,11 +217,9 @@ HAVING count > 100;
 ```
 
 ### ORDER BY 排序
-
 ORDER BY 用于排序结果，支持 ASC 升序和 DESC 降序。可以按多个列排序，优先级从左到右。ORDER BY 可以使用表达式，例如 `ORDER BY score DESC, created_at ASC`。
 
 ### LIMIT 分页
-
 LIMIT 用于限制返回行数，`LIMIT count` 返回前 count 行，`LIMIT offset, count` 从第 offset 行开始返回 count 行。分页查询使用 `LIMIT (page-1)*pageSize, pageSize`。
 
 ```sql
@@ -246,7 +233,6 @@ LIMIT 10, 10; -- 第二页
 ## 视图
 
 ### CREATE VIEW 创建视图
-
 视图是虚拟表，不存储数据，数据来源于基表的查询结果。视图可以简化复杂查询，提供数据抽象，实现权限控制。创建视图使用 CREATE VIEW 语句。
 
 ```sql
@@ -261,13 +247,11 @@ GROUP BY u.id, u.username;
 视图可以嵌套，视图可以基于其他视图创建。但嵌套视图会影响性能，查询时需要展开所有视图。视图的限制包括：不能包含子查询、不能使用变量、不能使用临时表、某些视图不支持更新。
 
 ### 更新视图
-
 某些视图可以更新，更新视图会更新基表。可更新视图的条件包括：视图只包含一个基表、不包含 DISTINCT、GROUP BY、聚合函数、UNION。复杂视图通常是只读的，不能直接更新。
 
 ## 存储过程
 
 ### CREATE PROCEDURE 创建存储过程
-
 存储过程是预编译的 SQL 语句集合，可以接收参数、执行复杂逻辑、返回结果。存储过程的优势是减少网络往返、提高性能、封装业务逻辑。创建存储过程使用 CREATE PROCEDURE 语句。
 
 ```sql
@@ -318,7 +302,6 @@ DELIMITER ;
 ## 触发器
 
 ### CREATE TRIGGER 创建触发器
-
 触发器是在表上定义的自动执行的存储程序，当 INSERT、UPDATE、DELETE 操作发生时触发。触发器可以用于数据验证、自动更新、审计日志。创建触发器使用 CREATE TRIGGER 语句。
 
 ```sql
@@ -341,7 +324,6 @@ VALUES (OLD.id, OLD.username, NEW.username, 'UPDATE', CURRENT_TIMESTAMP);
 NEW 和 OLD 是触发器的特殊变量，NEW 表示新值（INSERT 和 UPDATE），OLD 表示旧值（UPDATE 和 DELETE）。DELETE 操作没有 NEW，INSERT 操作没有 OLD。
 
 ### 触发器限制
-
 触发器的限制包括：触发器不能调用事务控制语句（COMMIT、ROLLBACK）、触发器不能调用动态 SQL、触发器执行时间影响原操作的响应时间、触发器的错误会导致原操作失败。触发器的使用应该谨慎，过度使用会导致逻辑复杂、难以调试。
 
 SQL 语法是数据库开发和运维的基础，DDL 定义结构，DML 操作数据，DQL 查询数据。视图、存储过程、触发器提供了高级特性，但也增加了复杂度。掌握 SQL 语法需要理论知识和实践练习，推荐通过实际项目深入理解。

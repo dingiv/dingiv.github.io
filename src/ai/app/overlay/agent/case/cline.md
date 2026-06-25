@@ -2,6 +2,7 @@
 title: Cline
 order: 1
 ---
+
 # Cline 源码分析
 Cline 是 VS Code 中的 AI 编程助手插件，开源（TypeScript），代码结构清晰，是理解 Agent 应用工程实现的优秀案例。本文从源码层面分析其核心机制：Agent 循环、工具系统、会话管理，以及 View-Service-Model 三层架构如何在 AI 应用中落地。
 
@@ -65,6 +66,7 @@ ToolValidator 首先验证工具调用的合法性——参数是否完整、类
 参数签名通过 `toolCallSignature()` 函数计算：过滤掉元数据字段（如 `task_progress`），按 key 排序后 JSON 序列化。这确保了参数顺序不同但实质相同的调用被正确识别为重复。
 
 ## 会话管理
+
 ### 双重消息存储
 Cline 维护了两套平行的消息存储，分别服务于不同的消费者：
 

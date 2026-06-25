@@ -1,9 +1,7 @@
 # NuGet
-
 NuGet 是 .NET 的包管理器，类似于 Python 的 pip、Node.js 的 npm。NuGet 使得开发者可以轻松地发现、安装、更新和移除 .NET 项目中的依赖库。NuGet 包是编译好的代码 (DLL)、相关文件和元数据的压缩包，文件扩展名为 .nupkg。
 
 ## 包结构
-
 NuGet 包由多个文件组成，其中最重要的是 .nuspec 文件（包清单）和编译后的程序集。包清单文件描述了包的元数据，包括 ID、版本、作者、依赖关系等信息。
 
 ```
@@ -20,7 +18,6 @@ package.nupkg
 lib 文件夹包含针对不同框架版本的程序集，如 net461 (.NET Framework 4.6.1)、netstandard2.0 (.NET Standard)、net6.0 (.NET 6)。NuGet 会根据项目的目标框架选择合适的程序集版本。
 
 ## dotnet CLI
-
 dotnet CLI 是 .NET 的命令行工具，提供了创建、构建、运行、测试、发布项目等功能，同时也包含了包管理命令。
 
 ```bash
@@ -47,7 +44,6 @@ dotnet pack
 ```
 
 ## 项目文件
-
 .NET 项目使用 .csproj 文件描述项目配置，包括包引用、框架版本、编译选项等。现代 .NET Core/.NET 5+ 使用 SDK 风格的项目文件，大大简化了配置。
 
 ```xml
@@ -68,7 +64,6 @@ dotnet pack
 ItemGroup 中的 PackageReference 定义了项目依赖的 NuGet 包，Version 属性指定版本范围。版本号遵循语义化版本规范，如 1.2.3 表示主版本.次版本.补丁版本。
 
 ## 版本范围
-
 NuGet 支持多种版本范围指定方式：
 
 ```
@@ -83,7 +78,6 @@ NuGet 支持多种版本范围指定方式：
 最常用的是浮动版本 `*`，它会自动获取补丁版本或次版本更新。例如 `1.0.*` 会安装 1.0.x 的最新版本，`1.*` 会安装 1.x.x 的最新版本。
 
 ## 全局工具
-
 NuGet 支持全局安装 .NET 工具，这些工具可以在系统的任何位置运行。全局工具类似于 Node.js 的全局 npm 包。
 
 ```bash
@@ -101,7 +95,6 @@ dotnet tool list --global
 ```
 
 ## 本地工具
-
 .NET Core 3.0 引入了本地工具，工具安装到项目目录而非全局。本地工具通过 manifest 文件管理，每个项目可以有自己的一组工具。
 
 ```bash
@@ -116,7 +109,6 @@ dotnet dotnet-format
 ```
 
 ## 私有源
-
 除了官方的 nuget.org，企业可以搭建私有 NuGet 源来管理内部包。Azure Artifacts、MyGet、Sonatype Nexus 都提供了私有 NuGet 源的功能。
 
 ```bash
@@ -134,7 +126,6 @@ dotnet nuget disable source nuget.org
 ```
 
 ## 包发布
-
 发布 NuGet 包需要先创建 .nuspec 文件或使用项目文件中的属性，然后使用 dotnet pack 命令打包。发布可以使用 dotnet nuget push 或 NuGet.exe。
 
 ```bash
@@ -149,7 +140,6 @@ dotnet nuget push MyPackage.1.0.0.nupkg --source https://company.com/nuget/v3/in
 ```
 
 ## 多目标框架
-
 现代项目可以同时支持多个目标框架，如 .NET Framework 和 .NET Core/.NET 5+。项目文件中使用 TargetFrameworks 属性（复数）指定多个目标。
 
 ```xml

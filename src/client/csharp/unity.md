@@ -1,9 +1,7 @@
 # Unity
-
 Unity 是流行的游戏引擎，使用 C# 作为脚本语言。Unity 的 C# 开发与传统 .NET 开发有一些区别，Unity 封装了游戏开发的常见模式，如游戏循环、组件系统、事件系统等。理解 Unity 的 C# 脚本系统是游戏开发的基础。
 
 ## MonoBehaviour
-
 MonoBehaviour 是 Unity 脚本的基类，所有游戏脚本都继承自它。MonoBehaviour 提供了生命周期方法，这些方法由 Unity 引擎在特定时机自动调用。
 
 ```csharp
@@ -67,7 +65,6 @@ public class PlayerController : MonoBehaviour
 生命周期方法的调用顺序是：Awake → Start → Update/LateUpdate → OnDisable → OnDestroy。Awake 适合初始化内部状态，Start 适合初始化依赖于其他组件的引用。
 
 ## 协程
-
 协程 (Coroutine) 是 Unity 的异步执行机制，允许代码在多个帧中分散执行。协程通过 IEnumerator 返回类型和 yield return 语句实现。
 
 ```csharp
@@ -111,7 +108,6 @@ public class CoroutineExample : MonoBehaviour
 常用的 yield 语句包括 WaitForSeconds（等待秒数）、WaitForEndOfFrame（等待帧结束）、WaitUntil（等待条件）、WaitWhile（等待条件不成立）。
 
 ## 组件系统
-
 Unity 采用组件化架构，游戏对象由多个组件组成。Transform 是每个游戏对象必备的组件，管理位置、旋转、缩放。其他组件包括 Renderer（渲染）、Collider（碰撞）、Rigidbody（物理）、Animator（动画）等。
 
 ```csharp
@@ -156,7 +152,6 @@ public class ComponentExample : MonoBehaviour
 组件可以通过 Inspector 面板配置，也可以在运行时动态添加和移除。GetComponent 是开销较大的操作，应该在 Start 或 Awake 中缓存组件引用。
 
 ## 输入处理
-
 Unity 的输入系统通过 Input 类获取键盘、鼠标、手柄等输入。
 
 ```csharp
@@ -195,7 +190,6 @@ dotnet add package Unity.InputSystem
 ```
 
 ## 物理系统
-
 Unity 的物理引擎处理碰撞检测和刚体模拟。Rigidbody 组件赋予物理属性，Collider 组件定义碰撞形状。
 
 ```csharp
@@ -249,7 +243,6 @@ public class PhysicsExample : MonoBehaviour
 ForceMode.Impulse 应用瞬时力（如爆炸），ForceMode.Force 应用持续力（如发动机）。触发器 (Trigger) 只检测碰撞不产生物理反应，适合拾取物品、检测区域等。
 
 ## 预制体
-
 Prefab (预制体) 是 Unity 的可复用游戏对象模板。Prefab 可以包含任意组件和子对象，修改 Prefab 会影响所有实例。
 
 ```csharp
@@ -272,7 +265,6 @@ public class PrefabExample : MonoBehaviour
 ```
 
 ## 单例模式
-
 单例模式在 Unity 中很常见，用于管理全局状态和游戏管理器。
 
 ```csharp
@@ -320,7 +312,6 @@ public class GameManager : MonoBehaviour
 DontDestroyOnLoad 使对象在场景切换时不被销毁，适合用于全局管理器。
 
 ## 对象池
-
 对象池是优化性能的常用技术，避免频繁创建和销毁对象（如子弹、敌人）。
 
 ```csharp
@@ -352,7 +343,6 @@ public class BulletPool : MonoBehaviour
 ```
 
 ## 脚本执行顺序
-
 Unity 允许控制脚本的执行顺序，通过 Project Settings → Script Execution Order 配置。
 
 ```csharp

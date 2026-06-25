@@ -68,7 +68,6 @@ target = F(related_factor_1, related_factor_2, ..., related_factor_n)
 - target：标签/目标值（输出）。
 
 ### 示例
-
 西瓜数据集（周志华《机器学习》经典例子）
 
 | 编号 | 色泽 | 根蒂 | 敲声 | 纹理 | 脐部 | 触感 | 密度  | 含糖率 | 好瓜 |

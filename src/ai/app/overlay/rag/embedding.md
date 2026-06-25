@@ -4,11 +4,9 @@ order: 13
 ---
 
 # Embedding 模型
-
 Embedding 模型是将文本映射到高维向量空间的编码器，是 RAG、语义搜索、推荐系统等应用的基石。它的质量直接决定了检索的准确性——如果 Embedding 不能准确捕捉语义相似性，后续的重排序和生成再精巧也无济于事。理解 Embedding 模型的原理和选型，是构建高质量 RAG 系统的第一步。
 
 ## 模型架构
-
 当代 Embedding 模型主要基于 Transformer 编码器架构，以 BERT 为代表。BERT 通过双向注意力机制理解上下文，将变长文本编码为固定维度的稠密向量。对于整句或段落的 Embedding，通常取 BERT 最后一层所有 token 向量的平均值（Mean Pooling）或 CLS token 的向量。
 
 与生成式模型（GPT 系列）不同，BERT 类编码器在训练时能看到完整的输入序列，因此更适合理解语义相似性。但纯粹使用 CLS token 或平均池化的 BERT 在语义匹配任务上表现一般，因为预训练的 MLM（Masked Language Modeling）目标只关注 token 级别的预测，不直接优化句子级别的语义表示。
@@ -18,7 +16,6 @@ Embedding 模型是将文本映射到高维向量空间的编码器，是 RAG、
 SimCSE 是早期的对比学习方法，将同一句话输入两次（第二次做 dropout 作为数据增强），作为正样本对训练。后来的模型普遍采用有监督的对比学习：Instructor 用任务指令（如"表示这段文本用于检索"）引导模型生成不同场景下的 Embedding；E5 系列通过大量弱监督数据（问答对、标题-正文对）训练，覆盖广泛的语义匹配场景；BGE 系列在此基础上增加了检索场景的负样本挖掘（Hard Negatives Mining），进一步提升了区分能力。
 
 ## 模型选型
-
 选择 Embedding 模型需要考虑语言支持、向量维度、推理性能、部署成本和精度。
 
 OpenAI 的 `text-embedding-3-small`（1536 维）和 `text-embedding-3-large`（3072 维）是闭源方案的代表，质量稳定但需要 API 调用，数据不能出境的场景不适用。`text-embedding-3` 支持维度裁剪（Matryoshka Representation Learning），可以在不重新训练的情况下将 3072 维裁剪到任意更小的维度，方便在精度和存储之间权衡。
@@ -28,7 +25,6 @@ OpenAI 的 `text-embedding-3-small`（1536 维）和 `text-embedding-3-large`（
 推理性能方面，模型大小直接影响延迟和吞吐。768 维的模型（如 BGE-base, GTE-base）适合高并发场景，单次编码延迟在毫秒级。1024 维及以上的模型（如 BGE-large, E5-large）精度更高但延迟翻倍。对于部署在 CPU 或边缘设备的场景，可以用 ONNX Runtime 或 TensorRT 加速推理，或者使用量化后的模型（INT8 量化几乎不损失精度，推理速度提升 2-3 倍）。
 
 ## 评估 Embedding
-
 评估 Embedding 模型质量的标准方法是 MTEB（Massive Text Embedding Benchmark），它涵盖分类、聚类、检索、语义相似度、文本匹配等多个任务类型，用多个数据集的平均分排名。MTEB 排行榜（huggingface.co/spaces/mteb/leaderboard）是选型的首选参考。
 
 但 MTEB 的排名不能完全替代实际业务评估。MTEB 的数据集以英文为主，中文检索任务的表现可能差异较大。更重要的是，MTEB 评估的是通用场景，特定领域（医疗、法律、金融）的术语和语义关系可能需要领域微调才能达到最佳效果。工程实践中，建议用 MTEB 缩短候选范围，再用自己的标注数据集做最终评估。
@@ -36,7 +32,6 @@ OpenAI 的 `text-embedding-3-small`（1536 维）和 `text-embedding-3-large`（
 自建评估数据集的方法：准备 100-500 个 (query, 正例文档, 负例文档) 三元组，用 Embedding 模型编码后计算 query 与正例/负例的余弦相似度，统计命中率（Recall@K）和区分度（正例相似度 > 负例相似度的比例）。Recall@1 超过 80%、Recall@5 超过 95% 通常说明 Embedding 质量足够。
 
 ## 微调策略
-
 通用 Embedding 模型在特定领域上可能不够精准。微调可以让模型学习领域内的术语、缩写和语义关系，显著提升检索精度。微调数据通常需要数千到数万条 (query, 正例文档) 对，不需要负例（对比学习框架中同 batch 内的其他样本自动作为负例）。
 
 微调方式取决于数据和场景。全参数微调在数据充足（>10 万条）时效果最好，但计算成本高。LoRA 微调冻结基础模型，只训练低秩适配器，数据需求低（>1000 条），是性价比最高的选择。对比学习微调（如 BGE 的训练流程）需要构建正负样本对，负样本的质量至关重要——随机负样本太简单，需要用 BM25 或已有 Embedding 模型筛选 Hard Negatives（与 query 语义相关但不是正确答案的文档），这样才能训练模型区分细微的语义差异。

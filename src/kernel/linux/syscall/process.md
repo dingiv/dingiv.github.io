@@ -40,7 +40,6 @@ pid_t waitpid(pid_t pid, int *status, int options);
 ```
 
 ## exit 和 kill
-
 ```c
 void exit(int status);
 
@@ -50,7 +49,6 @@ int kill(pid_t pid, int sig);
 ```
 
 ## mount
-
 ```c
 
 ```

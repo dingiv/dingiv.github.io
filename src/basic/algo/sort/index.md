@@ -50,7 +50,6 @@ function bubbleSort(arr) {
 ```
 
 ### 选择排序（Selection Sort）
-
 **特点**：
 - 不稳定排序
 - 原地排序
@@ -82,7 +81,6 @@ function selectionSort(arr) {
 ```
 
 ### 插入排序（Insertion Sort）
-
 **特点**：
 - 稳定排序
 - 原地排序
@@ -156,7 +154,6 @@ function merge(left, right) {
 ```
 
 ### 快速排序（Quick Sort）
-
 **特点**：
 - 不稳定排序
 - 原地排序
@@ -199,7 +196,6 @@ function partition(arr, left, right) {
 ```
 
 ### 堆排序（Heap Sort）
-
 **特点**：
 - 不稳定排序
 - 原地排序
@@ -253,11 +249,9 @@ function sink(arr, n, i) {
 ```
 
 ## 非比较排序
-
 非比较排序不通过比较元素的大小关系来进行排序，通常可以达到线性时间复杂度。
 
 ### 计数排序（Counting Sort）
-
 **特点**：
 - 稳定排序
 - 非原地排序
@@ -299,7 +293,6 @@ function countingSort(arr) {
 ```
 
 ### 桶排序（Bucket Sort）
-
 **特点**：
 - 稳定排序
 - 非原地排序
@@ -345,7 +338,6 @@ function bucketSort(arr, bucketSize = 5) {
 ```
 
 ### 基数排序（Radix Sort）
-
 **特点**：
 - 稳定排序
 - 非原地排序
@@ -385,7 +377,6 @@ function getDigit(num, place) {
 ```
 
 ## 排序算法的应用
-
 1. **数据预处理**：排序是许多算法的基础步骤
 2. **查找优化**：排序后的数据可以使用二分查找
 3. **去重**：排序后可以方便地去除重复元素
@@ -393,7 +384,6 @@ function getDigit(num, place) {
 5. **数据展示**：排序后的数据更易于展示和理解
 
 ## 排序算法的优化
-
 1. **混合排序**：结合多种排序算法的优点
 2. **并行排序**：利用多核处理器进行并行排序
 3. **外部排序**：处理大于内存的数据集

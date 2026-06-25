@@ -17,7 +17,6 @@ order: 0
 - Java：老牌 Web 服务器开发语言，深入学习以理解面向对象编程
 
 ### 业余/非专业路径
-
 `Python -> HTML/CSS/JavaScript`
 
 - Python：以简洁易学、功能强大著称的高级语言，适合快速实现想法与自动化工作

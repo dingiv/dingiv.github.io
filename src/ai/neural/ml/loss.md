@@ -25,7 +25,6 @@ $$
 其中 $m$ 是样本数量，$\theta$ 代表所有模型参数。
 
 ### 核心作用
-
 1. **评估模型性能**：定量衡量模型预测的准确程度
 2. **指导参数更新**：通过计算梯度，指示参数调整的方向和幅度
 3. **优化目标**：优化算法（如梯度下降）通过最小化损失函数来训练模型
@@ -34,7 +33,6 @@ $$
 ## 回归任务损失函数
 
 ### 均方误差（MSE - Mean Squared Error）
-
 **公式**：
 $$
 MSE = \frac{1}{m} \sum_{i=1}^{m} (y_i - \hat{y_i})^2
@@ -69,7 +67,6 @@ print(f"MSE Loss: {loss:.4f}")  # 0.3750
 ```
 
 ### 平均绝对误差（MAE - Mean Absolute Error）
-
 **公式**：
 $$
 MAE = \frac{1}{m} \sum_{i=1}^{m} |y_i - \hat{y_i}|
@@ -99,7 +96,6 @@ print(f"MAE Loss: {loss:.4f}")  # 0.5000
 ```
 
 ### Huber 损失
-
 **公式**：
 $$
 L_\delta(y, \hat{y}) = \begin{cases}
@@ -119,7 +115,6 @@ $$
 - 数据中存在少量异常值但希望保持较快收敛
 
 ### 平均平方对数误差（MSLE）
-
 **公式**：
 $$
 MSLE = \frac{1}{m} \sum_{i=1}^{m} (\log(y_i + 1) - \log(\hat{y_i} + 1))^2
@@ -138,7 +133,6 @@ $$
 ## 分类任务损失函数
 
 ### 二分类交叉熵损失（Binary Cross-Entropy）
-
 **公式**：
 $$
 BCE = -\frac{1}{m} \sum_{i=1}^{m} [y_i \log(\hat{y_i}) + (1-y_i) \log(1-\hat{y_i})]
@@ -174,7 +168,6 @@ print(f"BCE Loss: {loss:.4f}")  # 0.1625
 ```
 
 ### 多分类交叉熵损失（Categorical Cross-Entropy）
-
 **公式**：
 $$
 CCE = -\frac{1}{m} \sum_{i=1}^{m} \sum_{c=1}^{C} y_{i,c} \log(\hat{y_{i,c}})
@@ -210,7 +203,6 @@ print(f"CCE Loss: {loss:.4f}")  # 0.3677
 ```
 
 ### 合页损失（Hinge Loss）
-
 **公式**：
 $$
 L_{hinge} = \frac{1}{m} \sum_{i=1}^{m} \max(0, 1 - y_i \cdot \hat{y_i})
@@ -230,7 +222,6 @@ $$
 - 需要最大间隔分类器
 
 ### Focal Loss
-
 **公式**：
 $$
 FL(p_t) = -\alpha_t (1-p_t)^\gamma \log(p_t)
@@ -257,7 +248,6 @@ $$
 ## 特殊任务损失函数
 
 ### Dice Loss
-
 **公式**：
 $$
 Dice Loss = 1 - \frac{2|X \cap Y|}{|X| + |Y|} = 1 - \frac{2\sum_{i} p_i g_i}{\sum_{i} p_i + \sum_{i} g_i}
@@ -276,7 +266,6 @@ $$
 - 小目标检测
 
 ### IoU Loss / GIoU Loss
-
 **IoU 公式**：
 $$
 IoU = \frac{|A \cap B|}{|A \cup B|}
@@ -300,7 +289,6 @@ $$
 - 边界框回归
 
 ### Triplet Loss
-
 **公式**：
 $$
 L = \max(d(a, p) - d(a, n) + margin, 0)
@@ -329,7 +317,6 @@ J_{total} = J_{loss} + \lambda R(\theta)
 $$
 
 ### L1 正则化（Lasso）
-
 $$
 R(\theta) = \sum_{i} |\theta_i|
 $$
@@ -340,7 +327,6 @@ $$
 - 不可导（在零点）
 
 ### L2 正则化（Ridge）
-
 $$
 R(\theta) = \sum_{i} \theta_i^2
 $$
@@ -351,7 +337,6 @@ $$
 - 等价于参数的高斯先验
 
 ### Elastic Net
-
 $$
 R(\theta) = \alpha \sum_{i} |\theta_i| + \beta \sum_{i} \theta_i^2
 $$
@@ -359,7 +344,6 @@ $$
 **特点**：结合 L1 和 L2 的优点，平衡稀疏性和稳定性。
 
 ## 损失函数选择指南
-
 | 任务类型         | 推荐损失函数                     | 关键考量因素                |
 | ---------------- | -------------------------------- | --------------------------- |
 | 回归             | MSE（标准）/ Huber（有异常值）   | 是否存在异常值              |

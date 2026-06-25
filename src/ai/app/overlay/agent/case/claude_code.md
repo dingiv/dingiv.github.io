@@ -2,6 +2,7 @@
 title: Claude Code
 order: 2
 ---
+
 # Claude Code 源码分析
 Claude Code 是 Anthropic 官方的 CLI 编程工具，基于 Claude Agent SDK 构建，代表了 Agent 应用的另一种工程范式。与 Cline 的 IDE 插件形态不同，Claude Code 运行在终端中，这使得它在架构上更轻量、更面向流式处理，同时在安全性和可扩展性上有独特的设计。
 
@@ -41,6 +42,7 @@ Claude Code 的 Agent 循环体现在 `query()` 异步生成器中。QueryEngine
 一个值得注意的设计是 **Structured Output** 支持。当用户通过 API 指定了 `jsonSchema` 参数时，Claude Code 会注册一个特殊的 `SyntheticOutputTool`，LLM 通过调用这个工具来输出符合 Schema 的结构化数据。这比让 LLM 直接输出 JSON 更可靠——工具调用的参数天然是结构化的，模型在生成工具参数时的格式遵从性远高于自由文本输出。
 
 ## 工具系统
+
 ### 工具规模与分类
 Claude Code 注册了约 50 个内置工具，数量远超 Cline 的 20 个。这种差异反映了产品定位的不同——CLI 工具需要更丰富的自包含能力，而 IDE 插件可以借助 IDE 已有的功能。
 
@@ -89,6 +91,7 @@ Claude Code 的权限模型比 Cline 更精细，设计了多种权限模式：
 **Hook 系统**：Claude Code 支持 Hooks——在工具执行前后运行的 shell 脚本。Pre-tool hooks 可以在工具执行前注入额外的校验逻辑，Post-tool hooks 可以在工具执行后触发通知或日志。这个机制让团队能在不修改 Claude Code 源码的情况下扩展安全策略。
 
 ## 会话管理
+
 ### CLAUDE.md 上下文注入
 Claude Code 的标志性特性是 CLAUDE.md 文件系统。三层配置文件定义了不同范围的上下文：
 

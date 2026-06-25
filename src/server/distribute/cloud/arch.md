@@ -8,5 +8,4 @@ order: 0
 
 
 ## 典型架构
-
 ![](./arch.dio.svg)

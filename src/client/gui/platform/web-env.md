@@ -3,7 +3,6 @@
 ## 小程序
 
 ## 浏览器插件
-
 ![alt text](../images/crx-1.png)
 
 ![alt text](../images/crx-2.png)

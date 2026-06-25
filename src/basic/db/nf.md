@@ -135,7 +135,6 @@ CREATE TABLE orders (
 ```
 
 ## 数据库设计步骤
-
 1. **需求分析**
    - 确定数据需求
    - 识别实体和关系
@@ -157,7 +156,6 @@ CREATE TABLE orders (
    - 优化查询性能
 
 ## 设计工具
-
 1. **ER图工具**
    - MySQL Workbench
    - draw.io
@@ -169,7 +167,6 @@ CREATE TABLE orders (
    - Navicat Data Modeler
 
 ## 最佳实践
-
 1. **命名规范**
    - 使用有意义的表名和字段名
    - 保持命名一致性

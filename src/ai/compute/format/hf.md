@@ -12,7 +12,6 @@ HF 风格模型格式（Hugging Face pretrained model directory format）是由 
 当你下载一个 Llama-3 或 Qwen 模型时，通常会看到以下文件：
 
 ### 权重文件（真正的数据）
-
 | 文件                               | 说明                                      |
 | ---------------------------------- | ----------------------------------------- |
 | `model.safetensors`                | 单文件模型的权重（推荐格式）              |
@@ -21,7 +20,6 @@ HF 风格模型格式（Hugging Face pretrained model directory format）是由 
 | `pytorch_model.bin`                | 旧格式（pickle，不推荐）                  |
 
 ### 配置文件（模型元数据）
-
 | 文件                       | 说明                                                                                                |
 | -------------------------- | --------------------------------------------------------------------------------------------------- |
 | `config.json`              | **最关键的文件**，定义模型架构（层数、隐藏层维度、注意力头数等）。AI 引擎通过读取它来实例化模型类。 |
@@ -29,7 +27,6 @@ HF 风格模型格式（Hugging Face pretrained model directory format）是由 
 | `preprocessor_config.json` | 多模态模型的预处理配置（如图像/音频处理）                                                           |
 
 ### Tokenizer 文件（文本接口）
-
 | 文件                      | 说明                     |
 | ------------------------- | ------------------------ |
 | `tokenizer.json`          | 统一的分词器格式（推荐） |
@@ -38,7 +35,6 @@ HF 风格模型格式（Hugging Face pretrained model directory format）是由 
 | `tokenizer.model`         | SentencePiece 二进制词典 |
 
 ### 其他文件
-
 | 文件                  | 说明                           |
 | --------------------- | ------------------------------ |
 | `adapter_config.json` | PEFT/LoRA 适配器配置           |
@@ -82,7 +78,6 @@ SafeTensors 采用 **Header + Data** 的二进制结构：
 ```
 
 ### 与旧格式对比
-
 | 特性         | Pickle (.bin/.pt)        | SafeTensors                       |
 | ------------ | ------------------------ | --------------------------------- |
 | 反序列化速度 | 慢（需要 Python 解释器） | 极快（纯磁盘 IO/mmap）            |
@@ -91,7 +86,6 @@ SafeTensors 采用 **Header + Data** 的二进制结构：
 | 跨语言支持   | 难（强绑定 Python）      | 易（C/C++/Rust 均有轻量级解析库） |
 
 ### 使用方式
-
 ```python
 from safetensors.torch import save_file, load_file
 
@@ -107,7 +101,6 @@ SafeTensors 已成为 Hugging Face 模型分发的标准格式。自 2023 年起
 **Safetensors 是 AI 领域的 ELF 文件格式**——它规范了权重的排布，实现了高性能、高安全性的模型加载。
 
 ## transformers.py
-
 transformers 是 Hugging Face 推出的大模型加载库，它本质上是一个**模型格式规范**。深度学习框架（如 PyTorch、TensorFlow）提供底层算子和自动微分能力，但如何定义模型架构、如何加载权重、如何做推理，这些都需要开发者自己编写大量样板代码。transformers 库把这些工作标准化——模型定义、权重加载、推理接口全部统一，开发者只需几行代码就能使用预训练模型。
 
 在 transformers 出现之前，复现一篇论文的模型是极其痛苦的过程。论文作者通常只会发布训练好的权重文件，以及一段可能在特定框架版本上才能运行的代码。模型结构定义分散在各个 GitHub 仓库，API 风格五花八门，权重文件格式互不兼容。想要对比不同模型的效果，需要花费大量时间在环境配置和代码调试上。transformers 库通过统一的接口和规范的模型格式，将模型复现成本从数天降低到数分钟。

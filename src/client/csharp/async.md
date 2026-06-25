@@ -1,9 +1,7 @@
 # 异步编程
-
 异步编程是 C# 的核心特性之一，使得程序可以在等待耗时操作完成时执行其他工作，提高应用程序的响应性和吞吐量。C# 5.0 引入了 async 和 await 关键字，彻底改变了异步编程的方式。
 
 ## 异步模式演进
-
 .NET 中的异步编程经历了三种模式的演进。早期使用 APM (Asynchronous Programming Model)，基于 IAsyncResult 接口的 Begin/End 模式。后来使用 EAP (Event-based Asynchronous Pattern)，基于事件的异步模式。现在使用 TAP (Task-based Asynchronous Pattern)，基于任务的异步模式。
 
 ```csharp
@@ -30,7 +28,6 @@ async Task DownloadAsync()
 ```
 
 ## Task 和 `Task<T>`
-
 Task 表示一个异步操作，可以返回值 (`Task<T>`) 或不返回值 (Task)。Task 本质上是对 Future 或 Promise 概念的实现，代表了尚未完成的操作。
 
 ```csharp
@@ -58,7 +55,6 @@ int firstResult = await await Task.WhenAny(task5, task6);
 ```
 
 ## async 和 await
-
 async 关键字标记一个方法为异步方法，await 关键字等待异步操作完成。async 方法必须有返回类型 `Task、Task<T>、ValueTask、ValueTask<T>` 或 void (仅用于事件处理器)。
 
 ```cs
@@ -114,7 +110,6 @@ class ProcessAsyncStateMachine : IAsyncStateMachine
 ```
 
 ## ValueTask
-
 ValueTask 是值类型的 Task，用于避免异步操作已经完成时的内存分配。对于高频调用的异步方法，使用 ValueTask 可以减少 GC 压力。
 
 ```csharp
@@ -133,7 +128,6 @@ int value = await GetValueAsync();
 ```
 
 ## 异步流
-
 C# 8.0 引入了异步流，支持 `IAsyncEnumerable<T>` 接口，允许异步地枚举数据序列。
 
 ```csharp
@@ -155,7 +149,6 @@ await foreach (var item in GenerateSequenceAsync())
 ```
 
 ## 取消异步操作
-
 CancellationToken 用于取消异步操作。调用方创建 CancellationTokenSource，将 Token 传递给异步方法，当需要取消时调用 Cancel()。
 
 ```csharp
@@ -186,7 +179,6 @@ catch (OperationCanceledException)
 ```
 
 ## 异步最佳实践
-
 异步编程有一些需要注意的地方。避免使用 async void（除非是事件处理器），async void 方法的异常无法被捕获，会导致应用程序崩溃。
 
 ```csharp
@@ -241,7 +233,6 @@ async Task ProcessAsync()
 对于应用程序代码（如 ASP.NET Core Controller），不需要 ConfigureAwait(false)，因为 ASP.NET Core 不使用同步上下文。
 
 ## 异步 LINQ
-
 System.Interactive.Async 提供了异步 LINQ 操作符，允许对异步流进行类似 LINQ 的操作。
 
 ```bash

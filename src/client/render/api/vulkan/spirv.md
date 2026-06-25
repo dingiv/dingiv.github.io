@@ -1,6 +1,5 @@
 # SPIR-V
 
-
 ## SPIR-V
 SPIR-V（Standard Portable Intermediate Representation）是 Khronos 制定的跨平台中间表示，服务于 Vulkan、OpenGL 和 OpenCL 生态。着色器源代码（GLSL、HLSL、WGSL）先编译为 SPIR-V 二进制，驱动再将 SPIR-V 转换为 GPU 机器码。这种分层设计降低了驱动复杂度，也使得着色器可以跨应用复用。
 

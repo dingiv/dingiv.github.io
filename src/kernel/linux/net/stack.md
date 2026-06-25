@@ -1,5 +1,4 @@
 # 协议栈
-
 sk_buff：Linux 网络的核心载体
 
 所有网络数据在内核中都封装为 struct sk_buff（skb）。
@@ -19,13 +18,11 @@ skb 是一个高度优化的包描述符：
 数据路径本质上是 skb 在不同子系统之间移动。
 
 ## 防火墙
-
 netfilter 框架
 
 ## 路由子系统
 
 ## 邻居子系统
-
 路由与邻居子系统
 
 Linux 路由查找基于 FIB（Forwarding Information Base）。

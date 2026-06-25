@@ -10,23 +10,19 @@ order: 0
 ## 选择性
 
 ## 继承性
-
 某些 CSS 属性会自动从父元素传递到子元素，而无需在子元素中显式定义。这种行为被称为继承。继承属性通常与文本和字体相关。
 
 ### 常见的自动继承的属性：
-
 - 文本相关属性：color, font-family, font-size, font-style, font-variant, font-weight, line-height, text-align, text-indent, text-transform, visibility, white-space, word-spacing, letter-spacing
 - 列表属性：list-style-type, list-style-position, list-style-image
 - 表格属性：border-collapse, border-spacing, caption-side, empty-cells, table-layout
 
 ### 常见的不继承的属性：
-
 - 盒模型属性：margin, padding, border, width, height
 - 布局属性：position, top, right, bottom, left, z-index, display, float, clear
 - 背景属性：background-color, background-image, background-position, background-repeat, background-size
 
 ### 显式控制继承性
-
 使用全局 CSS 常量 inherit、initial、unset 来对相应的属性进行设置即可。
 
 - inherit。要继承

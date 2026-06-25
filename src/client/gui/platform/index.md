@@ -38,7 +38,6 @@ order: 5
 近年来 Tauri 这种轻量方案开始崛起，用系统自带的 WebView 而不是打包整个 Chromium，体积能压到 10 MB 以内。不过生态还没 Electron 成熟，想找个现成的组件可能得自己动手。对于大多数项目来说，Electron 依然是最稳妥的选择——慢点就慢点吧，好用就行。
 
 ## 移动客户端程序
-
 Dart 语言和 Flutter 框架已经成为了移动端平台的实际霸主。
 
 移动端的故事比桌面端复杂些。iOS 和 Android 各自为政，原生开发得写两套代码，成本直接翻倍。React Native 曾经是跨平台的首选，用 JavaScript 写 iOS 和 Android 应用，但性能和体验总觉得差点意思。

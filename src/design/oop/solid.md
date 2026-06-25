@@ -15,7 +15,6 @@ SOLID 原则是面向对象设计中最经典的五条指导原则，由 Robert 
 | D    | Dependency Inversion Principle  | 依赖倒置原则 | 高层模块不依赖低层模块，都依赖抽象   | 业务逻辑直接 new 具体数据库/第三方类  |
 
 ## 单一职责原则 (SRP)
-
 单一职责原则不是"一个类只能有一个方法"，而是一个类只服务于一个变化原因或一个业务角色。2026 年最常见的违反场景是一个 Controller 同时干了参数校验、业务逻辑、数据库操作、发邮件、记录日志、格式化响应等工作，应该拆成 Service、Validator、Notifier、Formatter 等独立模块。
 
 ```typescript
@@ -75,7 +74,6 @@ class UserService {
 ```
 
 ## 开闭原则 (OCP)
-
 软件设计的终极目标是让新需求主要靠新增代码实现，而不是改旧代码。现代最常见的做法包括策略模式加插件式扩展、事件总线、规则引擎、配置驱动、装饰器模式和模板方法。典型的违反表现是大量 if-else 判断类型来决定行为，每次加新类型都要改核心类。
 
 ```typescript
@@ -133,7 +131,6 @@ class PaymentService {
 ```
 
 ## 里氏替换原则 (LSP)
-
 子类必须遵守父类的契约，前置条件不能变强，后置条件不能变弱，不变量保持不变。Java 和 TypeScript 中最容易踩的坑包括：子类抛出父类没声明的受检异常、子类方法前置条件变严格（父类允许 null 而子类不允许）、子类返回值类型收窄（父类返回 Collection 而子类返回 List）。
 
 ```typescript
@@ -208,7 +205,6 @@ class Square {
 ```
 
 ## 接口隔离原则 (ISP)
-
 宁可多个小接口，也不要一个胖接口。现代最典型的反例是一个超级大的 UserService 接口包含登录、注册、重置密码、权限管理、积分操作、订单查询等多个职责，应该拆成 AuthService、ProfileService、PointService 等。这样做的好处是实现类代码量减少，测试时更容易 mock。
 
 ```typescript
@@ -276,7 +272,6 @@ class UserServiceImpl implements AuthService, PointsService, OrderService {
 ```
 
 ## 依赖倒置原则 (DIP)
-
 这是最核心的一条原则，其他几条很多时候都是为它服务的。高层（业务）不依赖低层（基础设施），都依赖抽象。现代写法几乎被所有框架默认采用，包括通过构造函数或 Setter 注入接口（依赖注入）、使用 IoC 容器（Spring、NestJS、DI in .NET 等）自动解析依赖。典型的违反表现是在 Service 里直接 new JdbcTemplate、new RedisTemplate 或 new HttpClient。
 
 ```typescript
@@ -338,5 +333,4 @@ const testService = new UserService(new MockDatabase());
 ```
 
 ## 具体做法
-
 数据封装要求对数据进行封装，限制数据的访问权限，特定数据只能由特定方法进行修改和管理。划分模块时将代码根据业务逻辑和功能拆分成一个个小的模块，尽量保证功能的单一性，不将不同功能的代码混合到一起。不同的业务逻辑之间存在依赖，他们的依赖关系应该形成一个单向无环图，最好是一棵树。模块之间进行依赖时应当依赖接口而非实现类，少用继承多用实现。模块的运行时依赖不应当由其自己获取，而应当由外界进行注入。

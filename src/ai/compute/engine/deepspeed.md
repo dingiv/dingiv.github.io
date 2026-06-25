@@ -3,7 +3,6 @@ title: DeepSpeed
 ---
 
 # DeepSpeed
-
 DeepSpeed 是微软开发的分布式训练优化库，通过 ZeRO（Zero Redundancy Optimizer）技术突破显存瓶颈，使得在有限 GPU 资源上训练大模型成为可能。DeepSpeed 的核心思想是：**消除数据并行中的冗余存储**，将优化器状态、梯度和参数分片到不同设备，从而将显存占用从 $O(2)$ 降至 $O(1)$。
 
 ## 核心卖点

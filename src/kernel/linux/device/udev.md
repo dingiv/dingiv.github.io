@@ -58,7 +58,6 @@ SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:11:22:33:44:5
 或者在内核启动参数中添加 `net.ifnames=0` 来禁用可预测命名。
 
 ## udevadm 工具
-
 udevadm 是 udev 的管理工具，提供了调试和信息查询功能。`udevadm info` 可以查询设备的属性信息：
 ```bash
 # 查询 sda 设备的所有属性

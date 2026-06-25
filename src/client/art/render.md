@@ -3,9 +3,6 @@
 
 ## Blender
 
-
-
 ## Cycles
-
 
 ## EEVEE

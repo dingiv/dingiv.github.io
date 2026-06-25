@@ -4,15 +4,12 @@ order: 20
 ---
 
 # Git
-
 Git 是分布式版本控制系统，是现代软件工程的基础设施。Git 记录代码的所有变更历史，支持多人协作开发，提供分支管理、代码审查、版本回退等功能。
 
 ## 约定式提交
-
 约定式提交（Conventional Commits）规范提交信息格式，使提交历史清晰易读。
 
 ### 提交类型
-
 feat：新功能、新特性
 
 fix：修改 bug
@@ -40,7 +37,6 @@ release：发布新版本
 workflow：工作流相关文件修改
 
 ### 提交格式
-
 ```
 <type>(<scope>): <subject>
 
@@ -67,7 +63,6 @@ Closes #123
 ## Git 分支管理
 
 ### Git Flow
-
 Git Flow 是经典的分支管理策略，适合有明确发布周期的项目。
 
 main：主分支，只包含稳定发布版本
@@ -81,7 +76,6 @@ release：发布分支，从 develop 分支，准备发布时使用
 hotfix：修复分支，从 main 分支，紧急修复使用
 
 ### GitHub Flow
-
 GitHub Flow 是简化的分支管理策略，适合持续部署项目。
 
 main：主分支，始终可部署
@@ -89,15 +83,12 @@ main：主分支，始终可部署
 feature：功能分支，从 main 分支，通过 PR 合并到 main
 
 ### Trunk Based Development
-
 基于主干的开发，所有开发在主分支进行，频繁发布。
 
 ## Git Hook
-
 Git Hook 是 Git 在特定事件触发的脚本，可用于代码检查、自动测试、格式化等。
 
 ### 常用 Hook
-
 pre-commit：提交前触发，可用于代码格式检查、运行测试
 
 commit-msg：提交信息编辑后触发，可用于验证提交格式
@@ -105,7 +96,6 @@ commit-msg：提交信息编辑后触发，可用于验证提交格式
 pre-push：推送前触发，可用于运行完整测试套件
 
 ### Husky
-
 Husky 是 Git Hook 管理工具，简化 Hook 配置。
 
 ```json
@@ -120,7 +110,6 @@ Husky 是 Git Hook 管理工具，简化 Hook 配置。
 ```
 
 ## Git 最佳实践
-
 频繁提交：小步快跑，每次提交包含一个完整的逻辑单元
 
 清晰提交：提交信息准确描述变更内容，便于历史追溯

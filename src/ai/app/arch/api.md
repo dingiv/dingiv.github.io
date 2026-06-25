@@ -2,6 +2,7 @@
 title: API 设计
 order: 35
 ---
+
 # LLM API 设计
 LLM 应用的 API 层是连接前端/客户端与模型服务的桥梁。与传统的 REST API 不同，LLM API 需要处理流式传输、Token 计费、多模型代理等特殊需求。OpenAI 的 Chat Completions API 已经成为事实标准，几乎所有主流模型服务商和推理框架都兼容这一协议。
 

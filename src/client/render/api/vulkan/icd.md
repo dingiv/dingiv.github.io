@@ -1,5 +1,4 @@
 # ICD
-
 libvulkan.so 实际上是 Vulkan Loader（由 Khronos 维护）。它本身不包含任何渲染逻辑，而是一个“集线器”。如果一个 GPU 厂商（比如华为、高通或你自己写一个远程 GPU 驱动）想让 Loader 找到自己，必须遵循 ICD（Installable Client Driver） 加载机制。
 
 1. 核心机制：JSON 清单文件 (Manifest File)

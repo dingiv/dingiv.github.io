@@ -121,7 +121,6 @@ int futex(int *uaddr, int op, int val, const struct timespec *timeout, int *uadd
 
 
 ## 使用对比表
-
 | 原语       | 用于      | 粒度 | 需要内核支持   | 适合场景           |
 | ---------- | --------- | ---- | -------------- | ------------------ |
 | `mutex`    | 线程      | 中等 | 否（用户空间） | 常规临界区保护     |

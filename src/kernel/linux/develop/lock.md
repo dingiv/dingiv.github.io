@@ -139,7 +139,6 @@ up_write(&my_rwsem);
 原子操作是不可分割的操作，在 SMP 系统中保证操作的原子性。
 
 ### 原子变量
-
 ```c
 #include <linux/atomic.h>
 
@@ -155,7 +154,6 @@ int val = atomic_read(&counter); // 读取值
 ```
 
 ### 原子位操作
-
 ```c
 #include <linux/bitops.h>
 
@@ -169,11 +167,9 @@ test_and_clear_bit(0, &flags);  // 测试并清除位
 ```
 
 ## RCU（Read-Copy Update）
-
 RCU 是一种无锁同步机制，适用于读多写少的场景。
 
 ### 基本使用
-
 ```c
 #include <linux/rcupdate.h>
 
@@ -197,7 +193,6 @@ kfree(old_data);
 ```
 
 ### RCU 的特点
-
 **优点：**
 
 - 读者无锁，性能极高
@@ -211,7 +206,6 @@ kfree(old_data);
 - 实现复杂
 
 ## 顺序锁
-
 顺序锁是一种乐观锁机制，适用于读多写少的场景。
 
 ```c
@@ -233,7 +227,6 @@ write_sequnlock(&my_seqlock);
 ```
 
 ## 锁的选择
-
 1. 根据使用场景选择
 - 中断上下文：使用自旋锁或原子操作
 - 进程上下文：使用互斥锁或信号量
@@ -242,20 +235,17 @@ write_sequnlock(&my_seqlock);
 - 长时间持有：使用互斥锁
 
 ### 2. 性能考虑
-
 ```
 // 性能从高到低排序
 原子操作 > 自旋锁 > RCU > 读写锁 > 互斥锁 > 信号量
 ```
 
 ### 3. 避免死锁
-
 - 按固定顺序获取多个锁
 - 使用 trylock 避免阻塞
 - 设置锁的超时时间
 
 ### 4. 实际示例
-
 ```c
 // 共享计数器示例
 struct shared_counter {
@@ -287,7 +277,6 @@ void inc_mutex(struct shared_counter *sc) {
 ## 调试和性能分析
 
 ### 锁竞争检测
-
 ```c
 // 启用锁竞争检测
 CONFIG_LOCKDEP=y
@@ -298,7 +287,6 @@ echo 1 > /proc/sys/kernel/lock_stat
 ```
 
 ### 性能监控
-
 ```c
 // 查看锁统计信息
 cat /proc/lock_stat

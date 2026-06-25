@@ -144,7 +144,6 @@ struct super_block {
 对于不同的超级块，通过访问其文件系统，由文件系统来控制数据在磁盘中的文件目录组织形式，不过，文件系统也不会直接访问磁盘驱动，而是通过更下层的模块——块设备子系统来访问。
 
 ## 文件操作
-
 ```c
 // 简化的文件打开流程
 int do_open(struct file *file, const char *pathname, int flags, umode_t mode)

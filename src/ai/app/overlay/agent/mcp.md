@@ -16,7 +16,6 @@ MCP Server 可以暴露三种核心能力：Tools（可调用的函数）、Reso
 一次完整的工具调用流程：用户在 Claude 中提问 → Claude 分析可用工具列表 → 决定调用 `get_weather` 并生成参数 → Client 通过 JSON-RPC 向 Server 发送 `tools/call` 请求 → Server 执行逻辑并返回结果 → Client 将结果反馈给 Claude → Claude 基于结果生成自然语言回答。整个过程对用户透明，用户只看到最终的回答和工具调用的摘要。
 
 ## 用 FastMCP 构建本地 Server
-
 Python 生态下，`mcp` 官方 SDK 提供了 FastMCP 类，可以用装饰器快速定义工具。FastMCP 会自动从函数签名和 docstring 生成 JSON Schema，省去手动编写工具定义的繁琐。
 
 ```python
@@ -55,7 +54,6 @@ mcp.run(transport='stdio')
 stdio 模式下有一个关键注意点：绝不能向 stdout 写入任何非 JSON-RPC 内容。`print()` 函数会破坏 JSON-RPC 消息流，导致协议解析失败。日志输出应该使用 `logging` 模块（默认写入 stderr），或者写入文件。
 
 ## 更完整的 Server 示例
-
 实际工程中，MCP Server 通常暴露多个工具，并需要处理错误、超时和参数校验。以下是一个同时暴露文件操作和系统信息查询的 Server：
 
 ```python
@@ -141,7 +139,6 @@ if __name__ == "__main__":
 这个 Server 暴露了三个工具：文件列表、文件读取、Git 状态查询。每个工具都做了参数校验和错误处理，返回结构化的文本结果供 LLM 解析。工具粒度按业务语义划分，而非按底层 API 划分——LLM 理解"列出文件"比理解"调用 os.listdir"更容易做出正确决策。
 
 ## 接入 Claude Code
-
 Claude Code 通过配置文件注册 MCP Server。在项目根目录的 `.claude/settings.json` 中添加：
 
 ```json
@@ -173,7 +170,6 @@ Claude Code 通过配置文件注册 MCP Server。在项目根目录的 `.claude
 这要求 Server 已经打包发布到 PyPI，或者通过 `--from` 参数指定本地路径。配置完成后重启 Claude Code，新工具会出现在可用工具列表中。可以通过 `/mcp` 命令查看已连接的 Server 状态。
 
 ## 接入 Claude Desktop
-
 Claude Desktop 的配置文件位于 `~/Library/Application Support/Claude/claude_desktop_config.json`（macOS）或 `%APPDATA%\Claude\claude_desktop_config.json`（Windows）。配置格式与 Claude Code 类似：
 
 ```json
@@ -190,7 +186,6 @@ Claude Desktop 的配置文件位于 `~/Library/Application Support/Claude/claud
 配置完成后重启 Claude Desktop，对话界面会出现工具图标，点击可以查看已加载的工具列表。直接向 Claude 提问触发工具调用，如"北京今天天气怎么样"，Claude 会自动调用 `get_weather` 工具获取实时数据。
 
 ## 接入 Cline
-
 Cline（原 Claude Dev）是 VS Code 中的 AI 编程助手插件，同样支持 MCP。在 VS Code 设置中搜索 `cline.mcpServers`，或直接编辑 `settings.json`：
 
 ```json
@@ -207,7 +202,6 @@ Cline（原 Claude Dev）是 VS Code 中的 AI 编程助手插件，同样支持
 Cline 的 MCP 配置与其他客户端格式一致，但配置入口在 VS Code 的设置文件而非独立配置文件。配置后在 Cline 的对话面板中可以看到新加载的工具。Cline 的特点是面向代码开发场景，因此文件操作、Git 操作类的 MCP Server 与它的契合度最高。
 
 ## 接入 Cursor
-
 Cursor 从 0.40+ 版本开始支持 MCP。配置入口在 Settings → MCP，或者编辑 `.cursor/mcp.json` 文件：
 
 ```json

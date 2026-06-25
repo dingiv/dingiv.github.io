@@ -21,7 +21,6 @@ tailwind 是 css 原子化框架，以 css 后处理器的形式实现，为 css
 - 注：Utilities 更加松散，为一些基础类，Components 是成块的逻辑块，并且 Component 中的类一般依赖于已经定义好的 Utilities，通过@apply 衍生基础类
 
 ## 基本语法
-
 ```
 Modifier:class
 ```
