@@ -18,7 +18,8 @@
       "mcp__open-websearch-brave__fetchWebContent",
       "mcp__open-websearch-duckduckgo__fetchWebContent",
       "Bash(bash *)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "WebFetch(domain:en.wikipedia.org)"
     ]
   }
 }

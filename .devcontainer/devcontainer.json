@@ -9,7 +9,7 @@
 		"ghcr.io/devcontainers/features/rust:1": {}
 	},
 	"mounts": [
-		"type=bind,source=/home/jiugui5209/Public,target=/home/tmp/"
+		"type=bind,source=${localEnv:HOME}/Public,target=/home/tmp/"
 	]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
