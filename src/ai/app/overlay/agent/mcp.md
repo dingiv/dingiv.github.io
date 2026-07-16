@@ -216,3 +216,15 @@ Cursor 从 0.40+ 版本开始支持 MCP。配置入口在 Settings → MCP，或
 ```
 
 Cursor 的 MCP 工具会集成到 Agent 模式中，在 @ 符号触发的上下文菜单中选择 MCP 工具。由于 Cursor 本身已经有强大的代码索引和编辑能力，MCP Server 更适合提供 Cursor 不擅长的能力：外部 API 调用、数据库查询、自定义业务逻辑等。
+
+## 生态进展
+MCP 在 2025-2026 年间经历了从单一方推动到行业广泛接受的快速演变。
+
+Anthropic 最初推出 MCP 时，它主要是 Claude 生态中的工具调用协议。但到 2025 年下半年，OpenAI 和 Google 先后宣布了对 MCP 的支持——OpenAI 在 ChatGPT 和 Assistants API 中集成了 MCP 客户端能力，Google 在 Gemini 和 Agent Development Kit 中提供了 MCP 兼容层。至此，MCP 从"Anthropic 的协议"升级为"行业的通用标准"。
+
+MCP Server 市场随之爆发。从最初社区贡献的几十个参考实现（如 filesystem、postgres、slack），扩展到数千个覆盖各类服务和工具的生产级 Server。数据库类（Postgres、MySQL、MongoDB、Neo4j）、云服务类（AWS、GCP、Kubernetes）、SaaS 工具类（Slack、Notion、GitHub、Jira）都已出现稳定的第三方 MCP Server 实现。这个生态的繁荣反过来强化了 MCP 的标准化价值——开发者只需要学习一种协议，就可以让自己的工具在所有主流 AI 平台中使用。
+
+MCP 与 A2A（Google 提出的 Agent-to-Agent 协议）的关系是互补而非竞争。MCP 定义的是 Agent↔Tool 的接口——一个 Agent 如何发现和调用外部工具。A2A 定义的是 Agent↔Agent 的接口——多个 Agent 之间如何相互发现、委托任务和同步状态。在实际系统中，一个 Agent 可能同时使用 MCP（调用数据查询、API 调用等工具）和 A2A（将子任务委托给其他专业的 Agent）。两者的标准化共同构成了 Agent 生态系统的基础设施层。
+
+MCP 的未来演进方向包括：多模态工具支持（不仅传递文本，还支持图像、音频、视频作为工具输入输出）、流式工具调用（工具结果边生成边返回，而非等待完整结果）、以及安全沙箱的标准化（约束工具的运行环境，防止恶意工具越权操作）。这些能力一旦标准化，将推动 MCP 从"开发者工具协议"向"企业级 Agent 基础设施"的升级。
+

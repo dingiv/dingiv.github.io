@@ -72,8 +72,48 @@ async function submitMessage(message) {
 
 生成式 UI 的挑战是组件设计和状态管理。每个可被 AI 调用的组件都需要清晰的用途和参数定义，类似工具调用的 JSON Schema。组件应该自包含，不依赖外部状态，因为 AI 无法理解复杂的前端状态管理。组件交互的结果（用户点击股票卡片的"买入"按钮）需要传递给 AI，让 AI 知道发生了什么，继续对话流程。
 
+## Native Structured Output
+与 Zod 后处理校验不同，OpenAI 和 Anthropic 从 API 层面提供了原生的结构化输出能力——模型在生成时就被约束输出符合指定 JSON Schema 的内容，而非先生成文本再事后解析。这是从"概率性输出"向"确定性结构"的一个重要转变。
+
+OpenAI 的 Structured Outputs 通过 `response_format` 参数指定 JSON Schema，模型在推理过程中强制生成的 token 序列符合 Schema 约束。关键细节是，这个约束是在模型推理时通过受限解码（Constrained Decoding）实现的——不符合 Schema 的 token 的概率被直接置零，模型只能从合法的 token 中选择。这意味着结构化输出不仅格式更可靠，而且在生成速度上有优势（无效 token 被跳过）。
+
+```typescript
+const response = await openai.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: '列出 3 本关于 AI 的书籍' }],
+  response_format: {
+    type: 'json_schema',
+    json_schema: {
+      name: 'book_list',
+      schema: {
+        type: 'object',
+        properties: {
+          books: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                title: { type: 'string' },
+                author: { type: 'string' },
+                year: { type: 'number' }
+              },
+              required: ['title', 'author', 'year']
+            }
+          }
+        },
+        required: ['books']
+      }
+    }
+  }
+})
+```
+
+Anthropic 的 tool_use 机制天然具备类似效果——当模型决定调用某个工具时，它生成的参数 JSON 必须符合工具定义的 `input_schema`，否则 API 层面会拒绝调用。与 OpenAI 的方案不同，Anthropic 采用"工具调用即结构化输出"的路径，将结构化输出的能力隐含在 Function Calling 的机制中。
+
+Native Structured Output 与 Zod 后处理校验不是替代关系而是互补。Zod 校验仍有用——因为受限解码约束的是 JSON 结构而非内容的语义正确性，模型可能输出符合 Schema 但内容不合逻辑的数据（如年份为负数）。将 Native Structured Output 作为第一道防线（保证结构正确），Zod 作为第二道防线（保证语义合理），是生产环境中的最佳实践。
+
 ## 结构化数据校验
-AI 返回的是字符串，但前端组件需要结构化数据。Zod 是运行时类型校验库，可以定义 Schema 并解析数据，确保 AI 返回的 JSON 符合前端预期。这在复杂场景（表格、图表、表单）尤为重要，格式错误的输入会导致渲染崩溃或安全漏洞。
+Zod 是运行时类型校验库，通过定义 Schema 解析 AI 返回的 JSON，确保符合前端组件的数据类型预期。这在复杂场景（表格、图表、表单）尤为重要，格式错误的输入会导致渲染崩溃或安全漏洞。
 
 ```typescript
 import { z } from 'zod';

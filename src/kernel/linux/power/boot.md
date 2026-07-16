@@ -71,31 +71,72 @@ Boot Loader 根据 MBR 中的磁盘分区信息，找到活动分区（操作系
 ### boot_params 启动协议
 TODO: 
 
-## 操作系统启动
-当 Boot Loader 将操作系统内核加载到内存并将控制权移交后，操作系统的启动过程正式开始。
+## 操作系统启动：从汇编到 C
+当 Boot Loader 将内核镜像加载到内存并移交控制权后，内核的启动流程正式展开。整个流程可以划分为四个阶段，从 16 位实模式逐步过渡到 64 位长模式，最终进入架构无关的通用内核初始化。
 
-linux 第一行代码是与体系结构相关的汇编代码，位于 `arch` 文件夹中，主要执行硬件初始化工作和 C 语言运行时初始化工作，以屏蔽不同的硬件结构来启动 C 语言的能力，接着解压和加载内核镜像，跳转执行内核代码。
-> + 验证 Bootloader 环境：检查 boot_params，确保协议兼容。
-> + 设置初始栈和清零 BSS：提供栈和初始化全局变量。
-> + 切换到保护模式：初始化 GDT，禁用中断。
-> + 调用早期 C 代码：解析硬件信息，准备跳转。
-> + 解压内核镜像：解压 vmlinuz，设置 vmlinux 入口。
-> + 切换到长模式：启用 64 位，设置页表。
-> + 初始化 64 位环境：设置 GDT、IDT、栈。
-> + SMP 初始化：唤醒多核。
-> + 调用 x86_64_start_kernel（在 x86 上）：进入 C，调用 start_kernel 函数
+### 阶段一：实模式启动 (`arch/x86/boot/`)
+内核入口 `_start` 位于 `arch/x86/boot/header.S:246`，Boot Loader 跳转到这里时 CPU 还处于 16 位实模式。`header.S` 中定义了与引导程序之间的协议头（`hdr`），包含启动参数、载荷位置等关键信息，由 `setup.ld` 链接脚本约束整个 setup 段不超过 32KB。
 
-`init/main.c/start_kernel` 函数是内核主体逻辑的入口函数，在该函数中会启动核心的管理子系统，包括进程管理、内存管理、文件系统、设备驱动等。这些子系统为上层应用提供了统一的接口和服务，屏蔽了底层硬件的复杂性。各个子系统的初始化大致遵循如下先后顺序（简化版）：
-1. 早期内核初始化（init_task、锁调试）。
-2. 内存管理初始化（物理内存检测、页表建立、内存分配器初始化）
-3. 中断系统初始化（设置中断向量表、注册 ISR、初始化中断控制器）
-4. 定时器/时钟子系统初始化（初始化系统定时器，为后续调度和时间管理做准备）
-5. 调度器和进程管理初始化（初始化调度器、创建内核线程、进程表等）
-6. 设备驱动和文件系统初始化（初始化块设备、字符设备、挂载根文件系统等）
-7. **显式使能中断**（如执行 sti 指令，允许 CPU 响应中断）
-8. 启动用户空间第一个进程（如 init 或 systemd）
+实模式主函数 `main()` 位于 `arch/x86/boot/main.c:133`，负责三件事：通过 BIOS E820 中断检测物理内存布局、设置视频模式、检测 CPU 特性。之后 `go_to_protected_mode()`（`pm.c:103`）开启 A20 地址线、设置 GDT/IDT、切换到 32 位保护模式。这一步的标志性动作是通过 `pmjump.S` 执行一次远跳转，CS 寄存器被加载为保护模式代码段选择子，CPU 正式进入保护模式。
 
-## [一号进程启动](../develop/systemd)
-接下来，内核会启动第一个用户空间进程（在 Linux 系统中通常是 init 或 systemd），该进程负责进一步启动系统服务和用户环境。
+### 阶段二：解压 stub (`arch/x86/boot/compressed/`)
+进入保护模式后，执行流到达 `head_64.S:82` 的 `startup_32`。这个 32 位入口负责建立早期的页表结构，启用长模式（64 位）。随后 `startup_64`（行 278）作为 64 位入口，完成自定位、处理 5 级分页和 SEV 加密等初始化工作。
 
-一号进程（PID 1）在 Linux 操作系统中具有极其特殊的地位。它是用户空间启动的第一个进程，由内核直接创建，并且始终拥有进程号 1。由于其特殊的启动顺序和地位，一号进程承担着整个系统用户空间初始化的重任，负责启动系统服务、守护进程以及用户登录环境，决定了系统的运行模式和服务框架。
+重定位完成后，调用 `extract_kernel()`（`misc.c:407`）执行内核解压。这个函数先通过 KASLR 随机化内核加载地址，然后根据压缩格式（gzip/xz/zstd）解压内核镜像，最后解析 ELF 格式将其加载到目标内存位置。解压完成后跳转到内核主体的入口。
+
+bzImage 的构建过程反映了这个阶段的产物组织方式：
+- 内核源码编译为 `vmlinux`（未压缩 ELF）
+- strip 得到 `vmlinux.bin`，压缩为 `vmlinux.bin.gz`
+- 通过 `piggy.S` 将压缩数据嵌入，与解压 stub 链接为 `compressed/vmlinux`
+- `objcopy` 提取为 `vmlinux.bin`，与实模式 setup.bin 合并，最终生成 `bzImage`
+
+### 阶段三：内核主体入口 (`arch/x86/kernel/`)
+解压完成后，执行流到达 `arch/x86/kernel/head_64.S:38` 的 `startup_64`——这是内核本体的第一个入口。BSP（启动 CPU）在此设置 GDT/IDT、修正页表、配置 CR4/EFER 等控制寄存器。`common_startup_64`（行 198）是 BSP 和 AP（应用处理器）的共用路径，负责配置 per-CPU 栈和 APIC ID 查找。
+
+`initial_code`（行 479）是一个函数指针，指向 `x86_64_start_kernel()`——内核执行的第一个 C 函数。这个函数（`arch/x86/kernel/head64.c:222`）清理早期页表、初始化 KASAN、拷贝启动参数、加载 CPU 微码，最后调用 `start_kernel()` 进入架构无关的通用初始化。
+
+### 阶段四：通用内核初始化 (`init/main.c`)
+`start_kernel()`（`init/main.c:1008`）是内核主体逻辑的入口。它按严格的顺序启动各个核心子系统：
+
+1. `setup_arch()`：ACPI 解析、E820 内存映射建立、SMP 初始化等架构相关设置
+2. `trap_init()`：中断和异常处理框架
+3. `sched_init()`：调度器初始化
+4. `console_init()`：控制台可用（此后内核可以通过 printk 输出日志）
+5. 其他子系统：定时器、RCU、cgroup、VFS 等依次初始化
+
+所有子系统初始化完成后，`rest_init()`（行 714）创建 PID 1（`kernel_init`，最终执行 `/sbin/init`）和 PID 2（`kthreadd`，内核线程守护者），BSP 自身退化为 idle 进程。至此，内核完成全部初始化，用户空间的第一个进程开始运行。
+
+### 早期内存管理的建立
+在 `start_kernel()` 之前，CPU 已经有了可用的页表——但这些早期页表只映射了内核镜像本身（约几十 MB），仅够内核勉强执行。`start_kernel()` 中的内存初始化子系统需要从零构建完整的内存管理基础设施。
+
+第一步是摸清家底。`setup_arch()` 通过 BIOS 提供的 E820 表获取物理内存分布，调用 `e820__memblock_setup()` 填充 memblock 早期分配器，此后 `memblock_alloc()` 可用。接着 `init_mem_mapping()` 为全部物理 RAM 建立直接映射页表（替换早期临时页表），最后将 `swapper_pg_dir` 加载到 CR3。
+
+第二步是建立 zone/node 结构。`free_area_init()` 将物理内存划分为 ZONE_DMA（ISA DMA 用）、ZONE_DMA32（32 位设备 DMA 用）和 ZONE_NORMAL（普通内存）三个区域。同时通过 `sparse_init()` 分配每个内存 section 的 `struct page` 数组（vmemmap），由 `memmap_init()` 逐个初始化每个 `struct page`。
+
+第三步是启动伙伴分配器。`mm_core_init()` 调用 `memblock_free_all()` 将 memblock 中记录的空闲页全部移交给伙伴系统——这是最关键的转变：从"记录哪些物理页可用"的早期分配器切换到"按 2^n 页框管理"的伙伴系统。此后 `alloc_pages()` 和 `__get_free_pages()` 可用。紧接着 `kmem_cache_init()` 启动 SLUB 分配器（`kmalloc()` 可用），`vmalloc_init()` 启动 vmalloc 分配器。
+
+早期页表与 `start_kernel()` 建立的页表之间存在本质差距：
+
+| 维度 | 早期页表 | start_kernel 建立的页表 |
+| ---- | -------- | ----------------------- |
+| 映射范围 | 仅内核镜像（约几十 MB） | 所有物理 RAM |
+| 分配能力 | 无，全靠 brk 预留缓冲区 | memblock → buddy → slab 三级 |
+| zone 概念 | 无 | DMA/DMA32/NORMAL 分区 |
+| struct page | 无 | 每个物理页都有元数据 |
+| NUMA 感知 | 无 | 按节点组织内存 |
+
+简单来说，早期页表是让内核能跑起来的脚手架，`start_kernel()` 要在此基础上建立起整栋内存管理的大厦。
+
+### CR3 切换时间线
+从 Boot Loader 到 `start_kernel()`，CR3 寄存器经历了多次切换，每一次都对应着页表结构的重大变化：
+
+1. 解压器 `startup_32` 在汇编中手动构建 4GB 恒等映射的三级页表（L4→L3→L2，用 2MB 大页），写入 CR3
+2. `initialize_identity_mappings()` 读取当前 CR3，复用或新建顶层页表，映射内核映像和命令行等区域
+3. 内核本体 `startup_64` 调用 `__startup_64()` 修正 `early_top_pgt`（处理 KASLR 偏移），写入 CR3 切换到修正后的页表
+4. `x86_64_start_kernel()` 调用 `reset_early_page_tables()` 清理早期页表中的恒等映射，构建 `init_top_pgt`（即最终的 `swapper_pg_dir`）
+5. `start_kernel()` 中 `init_mem_mapping()` 为全部物理内存建立完整直接映射，最终加载到 CR3
+
+关键的静态页表数据结构定义在 `head_64.S` 中：`early_top_pgt` 是启动过渡 PGD（仅 entry[511] 非零，指向 `level3_kernel_pgt`），`init_top_pgt` 是最终运行时 PGD（初始全零，逐步填充），`level2_kernel_pgt` 用 2MB 大页映射内核的 text+data+bss 段。最初的 PGD 由解压器汇编代码从零构建，内核本体的 `early_top_pgt` 则在编译时静态定义、启动时由 `__startup_64()` 做 KASLR 修正后加载。
+
+## 一号进程启动
+内核初始化的最后一步是 `rest_init()` 创建 PID 1。这个进程在 Linux 系统中具有极其特殊的地位——它是用户空间启动的第一个进程，由内核直接创建，始终拥有进程号 1。PID 1 负责启动系统服务、守护进程以及用户登录环境，决定了系统的运行模式和服务框架。在现代 Linux 发行版中，PID 1 通常是 systemd，它通过单元文件管理所有系统服务的启动顺序和依赖关系。

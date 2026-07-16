@@ -15,4 +15,25 @@ order: 30
 短短 3 年，AI 大模型应用技术以野蛮姿态生长，新技术层出不穷，不断加入到已有的技术体系中，逐步形成了一个完整的结构体系。
 
 ## 新组件
-大模型开发技术引入了新的组件——模型推理服务组件。目前市面上使用最多的组件就是 vLLM，
+大模型应用在传统 Web 架构的基础上引入了三个新角色，它们分别对应模型服务、知识检索和自主行动三个核心能力。
+
+模型推理引擎负责将大模型作为服务暴露给上层应用。vLLM 是目前最主流的选择，它基于 PagedAttention 算法管理 KV Cache 显存，将显存利用率从 20-30% 提升到接近 80%，且完全兼容 OpenAI API 协议，可以无缝替换 OpenAI 端点。其他值得关注的引擎包括 SGLang（前缀缓存和结构化生成方面有创新）、llama.cpp（专注于消费级硬件上的量化推理）、TGI（HuggingFace 官方方案，生态集成好）。推理引擎的选型考量因素包括：支持的最大上下文长度、连续批处理能力（Continuous Batching）、量化方案（AWQ/GPTQ/FP8）、投机解码（Speculative Decoding）加速等。
+
+向量数据库是 RAG 架构的核心基础设施，Milvus 是其中的代表性产品。它提供毫秒级的十亿级向量检索能力，支持 HNSW、IVF、DiskANN 等多种索引类型，原生支持分布式部署和流批一体写入。除 Milvus 外，Qdrant、Weaviate、pgvector 等方案各有侧重——pgvector 的 PostgreSQL 原生集成使其在已有 PG 基础设施的团队中部署成本极低。向量库的选型需要综合考虑索引算法与硬件资源的匹配、分布式扩展的复杂度、以及过滤查询（标量 + 向量的混合搜索，即 Hybrid Search）的效率。
+
+Agent 智能体将大模型从"问答机"升级为"行动者"。它赋予模型调用外部工具（Function Calling）、规划任务步骤（Plan & Execute）、维护对话状态（Session Management）的能力。Agent 的核心技术组件包括工具定义与调用协议（JSON Schema → 外部 API 的桥接）、记忆系统（短期对话记忆 + 长期知识记忆）、以及安全护栏（防止越权操作、注入攻击、无意义循环）。Agent 框架的选择——LangGraph（有状态工作流编排）、CrewAI（多 Agent 角色协作）、AutoGen（微软的多 Agent 对话框架）——取决于业务场景的复杂度。
+
+这三个新组件并非独立运行，它们在架构的多个层面与传统技术栈交织：推理引擎与 GPU 硬件和模型训练链路对接，向量数据库与数据工程和 Embedding 模型对接，Agent 与会话管理和前端 UI 对接。理解这些组件的技术原理和工程边界，是构建生产级大模型应用的前提。
+
+## 内容结构
+大模型应用开发的知识体系按层级组织：
+
+- 架构层（arch）：API 设计、模型网关、智能路由、AI Native 架构模式
+- 推理引擎层（engine）：vLLM、Ollama、量化推理、垂直领域微调、LLMOps
+- 框架库层（lib）：LangChain、LlamaIndex 等开发框架的工程化使用
+- 覆盖层（overlay）：叠加在前后端基础技术栈之上的 AI 处理层
+  - Agent：工具调用、ReAct 循环、MCP 协议、A2A 协议、Deep Agent
+  - RAG：Embedding、向量检索、GraphRAG、数据工程、Agentic RAG
+  - Session：提示词工程、上下文管理、会话记忆
+  - Ops：评估框架、可观测性工具、A/B 测试
+  - UI：流式渲染、生成式 UI、结构化输出、浏览器端推理
