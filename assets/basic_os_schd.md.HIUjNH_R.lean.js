@@ -1,0 +1,1 @@
+import{H as e,V as t,et as n,j as r}from"./chunks/framework.C_EfTa_6.js";var i=JSON.parse(`{"title":"调度","description":"","frontmatter":{},"headers":[],"relativePath":"basic/os/schd.md","filePath":"basic/os/schd.md"}`),a={name:`basic/os/schd.md`};function o(r,i,a,o,s,c){return n(),t(`div`,null,[...i[0]||=[e("",10)]])}var s=r(a,[[`render`,o]]);export{i as __pageData,s as default};

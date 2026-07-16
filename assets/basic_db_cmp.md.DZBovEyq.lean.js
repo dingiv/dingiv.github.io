@@ -1,0 +1,1 @@
+import{H as e,V as t,et as n,j as r}from"./chunks/framework.C_EfTa_6.js";var i=JSON.parse(`{"title":"SQL","description":"","frontmatter":{},"headers":[],"relativePath":"basic/db/cmp.md","filePath":"basic/db/cmp.md"}`),a={name:`basic/db/cmp.md`};function o(r,i,a,o,s,c){return n(),t(`div`,null,[...i[0]||=[e("",44)]])}var s=r(a,[[`render`,o]]);export{i as __pageData,s as default};

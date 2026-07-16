@@ -1,0 +1,1 @@
+import{H as e,V as t,et as n,j as r}from"./chunks/framework.C_EfTa_6.js";var i=JSON.parse(`{"title":"内存管理","description":"","frontmatter":{},"headers":[],"relativePath":"basic/os/mm.md","filePath":"basic/os/mm.md"}`),a={name:`basic/os/mm.md`};function o(r,i,a,o,s,c){return n(),t(`div`,null,[...i[0]||=[e("",14)]])}var s=r(a,[[`render`,o]]);export{i as __pageData,s as default};

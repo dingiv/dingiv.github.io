@@ -1,0 +1,1 @@
+import{H as e,V as t,et as n,j as r}from"./chunks/framework.C_EfTa_6.js";var i=JSON.parse(`{"title":"范式","description":"","frontmatter":{},"headers":[],"relativePath":"basic/db/nf.md","filePath":"basic/db/nf.md"}`),a={name:`basic/db/nf.md`};function o(r,i,a,o,s,c){return n(),t(`div`,null,[...i[0]||=[e("",27)]])}var s=r(a,[[`render`,o]]);export{i as __pageData,s as default};

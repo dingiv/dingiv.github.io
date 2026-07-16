@@ -1,0 +1,1 @@
+import{H as e,V as t,et as n,j as r}from"./chunks/framework.C_EfTa_6.js";var i=JSON.parse(`{"title":"IO","description":"","frontmatter":{},"headers":[],"relativePath":"design/fp/io.md","filePath":"design/fp/io.md"}`),a={name:`design/fp/io.md`};function o(r,i,a,o,s,c){return n(),t(`div`,null,[...i[0]||=[e("",20)]])}var s=r(a,[[`render`,o]]);export{i as __pageData,s as default};

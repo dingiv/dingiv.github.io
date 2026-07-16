@@ -1,0 +1,1 @@
+import{V as e,et as t,j as n}from"./chunks/framework.C_EfTa_6.js";var r=JSON.parse(`{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"client/render/api/webgl.md","filePath":"client/render/api/webgl.md"}`),i={name:`client/render/api/webgl.md`};function a(n,r,i,a,o,s){return t(),e(`div`)}var o=n(i,[[`render`,a]]);export{r as __pageData,o as default};
