@@ -8,6 +8,7 @@
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
+    "my_hello": "node scripts/patched/bin/hello.js",
     "lint": "tsx scripts/lint.ts"
   },
   "keywords": [],
@@ -18,7 +19,7 @@
     "markdown-it-mathjax3": "^4.3.2",
     "tsx": "^4.23.1",
     "vite": "^7.3.3",
-    "vitepress": "2.0.0-alpha.17",
+    "vitepress": "workspace:*",
     "yaml": "^2.8.4"
   }
 }
