@@ -15,11 +15,9 @@ jobs:
       contents: write
 
     steps:
-      # 检出博客源码
       - name: Checkout blog
         uses: actions/checkout@v4
 
-      # 检出自定义 VitePress fork
       - name: Checkout VitePress fork
         uses: actions/checkout@v4
         with:
@@ -27,32 +25,30 @@ jobs:
           ref: div
           path: vitepress
 
-      # 安装 pnpm
+      - name: Clean fork .git
+        run: rm -rf vitepress/.git
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 11
 
-      # 设置 Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: pnpm
 
-      # 安装所有依赖（workspace 会处理 vitepress）
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --no-frozen-lockfile --ignore-scripts
+        env:
+          CI: true
 
-      # 构建 VitePress fork
       - name: Build VitePress fork
         run: cd vitepress && pnpm build
 
-      # 构建博客
       - name: Build blog
         run: pnpm exec vitepress build
 
-      # 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
