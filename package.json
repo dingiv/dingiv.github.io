@@ -22,5 +22,8 @@
     "vite": "^7.3.3",
     "vitepress": "workspace:*",
     "yaml": "^2.8.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
   }
 }
