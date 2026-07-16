@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vitepress dev",
+    "prebuild": "cd vitepress && pnpm run build",
     "build": "vitepress build",
     "preview": "vitepress preview",
     "my_hello": "node scripts/patched/bin/hello.js",

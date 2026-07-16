@@ -3,41 +3,58 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master  # 当推送到 main 分支时触发
+      - master
   pull_request:
     branches:
-      - master  # 当合并到 main 分支时触发
+      - master
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest  # 使用 Ubuntu 环境
+    runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      # 检出代码
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # 检出博客源码
+      - name: Checkout blog
+        uses: actions/checkout@v4
 
-      # 设置 Node.js 环境
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # 检出自定义 VitePress fork
+      - name: Checkout VitePress fork
+        uses: actions/checkout@v4
         with:
-          node-version: '20'  # 指定 Node.js 版本
+          repository: dingiv/vitepress
+          ref: div
+          path: vitepress
 
-      # 安装依赖
+      # 安装 pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      # 设置 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      # 安装所有依赖（workspace 会处理 vitepress）
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --no-frozen-lockfile
 
-      # 构建项目
-      - name: Build the project
-        run: npm run build
+      # 构建 VitePress fork
+      - name: Build VitePress fork
+        run: cd vitepress && pnpm build
+
+      # 构建博客
+      - name: Build blog
+        run: pnpm exec vitepress build
 
       # 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs  # 指定发布目录为 docs
-
-
+          publish_dir: docs
