@@ -58,3 +58,19 @@ vLLM 使用专门优化的 PagedAttention Kernel（通常由 Triton 或 CUTLASS 
 
 ### INT8 量化
 KV Cache 量化是降低显存占用的有效手段。将 FP16 的 KV Cache 量化为 INT8 可将显存减半，配合 INT8 算子可实现接近原始精度的性能。量化策略包括静态量化（使用固定 scale）和动态量化（根据激活值动态调整 scale）。动态量化精度更高但需要额外的量化计算开销。
+
+### TurboQuant：极致低位量化
+
+TurboQuant 是 Google Research 提出的 KV Cache 极致压缩技术，将 KV Cache 压缩到 3-4 bit 且精度损失极小。
+
+核心思想是通过旋转（rotation）预处理，将 KV 向量中的异常值（outlier channels）的能量分散到所有通道，使得量化误差均匀分布而非集中在少数通道上。传统直接量化 3-4 bit 会在异常值通道上产生巨大误差，旋转后各通道数值范围相近，量化变得可行。
+
+具体流程：将 Key 和 Value 矩阵乘以一个随机正交旋转矩阵（random orthogonal matrix），在旋转后的空间中执行 3-4 bit 量化。推理时，注意力计算可以在量化空间中直接进行——不需要反量化为 FP16——从而同时获得显存节省和计算加速。旋转矩阵本身是固定的，不引入运行时开销。
+
+效果：KV Cache 显存占用压缩 4-6 倍（16 bit → 3-4 bit），相同显存下可支持 4-6 倍长的上下文（如 8K → 32K+），注意力计算速度因低精度而提升。精度损失极小——Perplexity 退化通常在 0.1 以内。
+
+### PolarQuant 与 QJL
+
+PolarQuant 是 TurboQuant 底层的数学技术。它通过极坐标分解（Polar Decomposition）将旋转矩阵分解为正交分量和缩放分量，进一步降低量化误差。QJL（Quasi-Johnson-Lindenstrauss）是一种更高效的随机投影方法，用稀疏随机矩阵替代密集正交矩阵，投影计算开销降低约 10 倍。
+
+这些技术共同构成了 KV Cache 压缩的完整方案：旋转分散异常值 → 均匀量化 → 在量化空间中直接计算注意力。llama.cpp 的某些分支（如 BeeLlama）已经集成了这些技术，使得 27B-35B 的模型可以在消费级 24GB 显卡上以较长上下文运行。

@@ -1,24 +1,24 @@
 ---
-title: 投机采样
+title: 投机解码
 order: 30
 ---
 
-# 投机采样
-投机采样（Speculative Decoding，也叫投机推理）是一种通过小模型辅助大模型加速生成的技术。它的核心思想是：让一个小而快的 draft model（草稿模型）快速生成多个 token，然后由大模型并行验证，若验证通过则保留，否则回退重新生成。
+# 投机解码
+投机解码（Speculative Decoding，也叫投机推理）是一种通过小模型辅助大模型加速生成的技术。它的核心思想是：让一个小而快的 draft model（草稿模型）快速生成多个 token，然后由大模型并行验证，若验证通过则保留，否则回退重新生成。
 
 ## 原理
-大模型的生成是自回归的：每个 token 的生成都依赖于之前所有 token。这意味着生成 100 个 token 需要 100 次 forward pass，计算量巨大。投机采样通过引入 draft model 来加速这个过程。
+大模型的生成是自回归的：每个 token 的生成都依赖于之前所有 token。这意味着生成 100 个 token 需要 100 次 forward pass，计算量巨大。投机解码通过引入 draft model 来加速这个过程。
 
-投机采样分为两个阶段：
+投机解码分为两个阶段：
 
 1. **Draft 阶段**：draft model 快速生成 $k$ 个 token（如 $k=8$）。draft model 通常很小（如 1B 参数），推理速度是大模型的 5-10 倍。
 
 2. **Verify 阶段**：将这 $k$ 个 token 和原始 prompt 一起输入大模型，并行计算所有 token 的概率。如果大模型的概率高于 draft model 的预测，则接受这 $k$ 个 token；否则回退到第一个不匹配的 token，由大模型重新生成。
 
-投机采样的收益来自两个方面：一是 draft model 的快速生成（小模型推理快），二是大模型的并行验证（一次 forward pass 验证多个 token）。当 draft model 的准确率较高时（如 >80%），大部分 token 都会通过验证，实际加速比可达 2-3 倍。
+投机解码的收益来自两个方面：一是 draft model 的快速生成（小模型推理快），二是大模型的并行验证（一次 forward pass 验证多个 token）。当 draft model 的准确率较高时（如 >80%），大部分 token 都会通过验证，实际加速比可达 2-3 倍。
 
 ## 实现细节
-投机采样的关键挑战是**如何选择 draft model**。draft model 需要满足两个条件：一是与大模型的分布一致（否则验证通过率低），二是推理速度足够快（否则无法加速）。常见的 draft model 选择包括：
+投机解码的关键挑战是**如何选择 draft model**。draft model 需要满足两个条件：一是与大模型的分布一致（否则验证通过率低），二是推理速度足够快（否则无法加速）。常见的 draft model 选择包括：
 
 1. **同一模型的小版本**：如用 Llama-2-7B 作为 Llama-2-70B 的 draft model
 2. **蒸馏模型**：通过知识蒸馏专门训练的 draft model，与大模型行为对齐
@@ -27,7 +27,7 @@ order: 30
 验证阶段的实现有两种方式：并行采样和串行采样。并行采样是一次性计算所有候选 token 的概率，然后与 draft model 的概率比较。串行采样是逐个 token 验证，遇到不匹配就停止。并行采样的 GPU 利用率更高，但需要更多显存（需要存储所有候选 token 的 KV Cache）。
 
 ## 验证机制
-投机采样的验证有两种主要方法：
+投机解码的验证有两种主要方法：
 
 1. **概率匹配**：比较 draft model 和大模型在候选 token 上的概率分布。如果大模型的概率高于 draft model，则接受；否则拒绝。这是最原始的验证方法，简单但可能过于保守。
 
@@ -36,14 +36,14 @@ order: 30
 当前主流框架（如 vLLM、TGI）使用概率匹配的变种：计算候选序列的对数概率比值（logits ratio），如果比值高于阈值则接受。这平衡了加速比和输出质量。
 
 ## 性能分析
-投机采样的加速比取决于三个因素：draft model 的准确率、speculation length（$k$ 的大小）、大模型的计算效率。
+投机解码的加速比取决于三个因素：draft model 的准确率、speculation length（$k$ 的大小）、大模型的计算效率。
 
 理论上，最大加速比为 $1 + k \times \text{speed\_ratio}$，其中 $\text{speed\_ratio}$ 是 draft model 相比大模型的速度比（如 5 倍）。但实际加速比受限于验证通过率（acceptance rate），如果验证通过率只有 50%，实际加速比会减半。
 
 draft model 的选择至关重要。如果 draft model 与大模型分布差异过大，验证通过率会很低，不仅无法加速，反而会增加计算开销。理想的 draft model 应该是大模型的蒸馏版本，通过知识蒸馏学习大模型的行为。
 
 ## 使用方式
-vLLM 原生支持投机采样：
+vLLM 原生支持投机解码：
 
 ```python
 from vllm import LLM, SamplingParams
@@ -58,7 +58,7 @@ llm = LLM(
 output = llm.generate("Hello, world", SamplingParams(max_tokens=100))
 ```
 
-TGI 也支持投机采样，通过 `--speculative-decoding` 参数启用：
+TGI 也支持投机解码，通过 `--speculative-decoding` 参数启用：
 
 ```bash
 model=meta-llama/Llama-2-70b
@@ -73,8 +73,38 @@ docker run --gpus all -p 8080:80 \
 ```
 
 ## 局限性
-投机采样的局限性在于需要额外的 draft model，这增加了部署复杂度。同时，draft model 需要与主模型保持分布一致，这增加了维护成本。对于频繁变化的模型（如定期重新训练），draft model 也需要同步更新。
+投机解码的局限性在于需要额外的 draft model，这增加了部署复杂度。同时，draft model 需要与主模型保持分布一致，这增加了维护成本。对于频繁变化的模型（如定期重新训练），draft model 也需要同步更新。
 
-另一个局限是对于输出质量要求极高的场景（如数学计算、代码生成），投机采样可能降低输出质量。因为 draft model 的错误会通过验证传播到大模型，虽然概率不高，但仍可能发生。
+另一个局限是对于输出质量要求极高的场景（如数学计算、代码生成），投机解码可能降低输出质量。因为 draft model 的错误会通过验证传播到大模型，虽然概率不高，但仍可能发生。
 
-对于这些场景，可以考虑使用更保守的验证策略（如降低阈值、减少 speculation length），或者完全禁用投机采样。
+对于这些场景，可以考虑使用更保守的验证策略（如降低阈值、减少 speculation length），或者完全禁用投机解码。
+
+## DFlash：扩散式块投机
+
+DFlash 是 2025-2026 年投机解码领域的重要进展。传统投机方法（EAGLE、Medusa）依赖自回归 draft model，逐 token 生成候选序列——这个过程本身也是串行的。DFlash 用一个轻量级扩散模型（block diffusion）一次性并行生成一整块 tokens（如 8-16 个），然后让大模型并行验证整块。
+
+扩散模型的特点是可以在任意位置"填充"——给定上下文后，扩散过程直接从噪声出发，逐步去噪得到候选 token 块。这完全消除了 draft model 的串行瓶颈。在大模型验证阶段，候选块的每个 token 使用特殊设计的 ancestor-only attention mask，使整块可以在一次 forward pass 中并行验证。
+
+DFlash 在 Qwen、Llama 等模型上实现 2-6 倍的无损加速。加速比取决于生成任务的特征——代码生成等结构化输出场景中 draft 质量更高，加速比也更显著。
+
+## DDTree：树状扩散验证
+
+DDTree（Diffusion Draft Tree）是 DFlash 的扩展。DFlash 一次扩散生成一条候选链（chain），大模型按链验证；DDTree 利用同一次扩散输出中每个位置的概率分布，构建一棵候选树（draft tree），包含多条可能的分支路径。
+
+树状结构的关键价值在于：大模型一次 forward pass 可以并行验证整棵树上的所有分支，而不是只验证一条路径。候选树通过 best-first heap 算法生成，在固定节点预算下选择最有希望的路径分支。验证时使用 tree attention mask，各分支节点只关注其祖先节点，保持线性复杂度。
+
+DDTree 在 DFlash 基础上将有效接受长度（acceptance length）进一步提升 1.5-2 倍，总加速可达 6-8 倍，且保持无损。特别适合代码生成、长上下文推理等对输出质量要求高的场景。
+
+## QuantSpec：自投机量化
+
+QuantSpec（Apple, 2025）结合了自投机解码和分层量化。传统投机需要一个独立的 draft model，增加部署复杂度。自投机解码使用主模型本身作为 draft——通过减少层数或降低精度来获得更快的 draft pass。
+
+QuantSpec 的做法：主模型本身经过 4-bit 权重和 KV Cache 量化后作为 draft model。draft pass 用 4-bit 精度快速生成候选 tokens，验证 pass 用完整精度验证。因为 draft 和 target 共享同一套权重（仅精度不同），分布一致性极好，验证通过率高。
+
+4-bit 量化的 draft model 推理速度提高了约 4 倍，加上自投机避免独立 draft model 的显存开销，QuantSpec 在长上下文场景下特别有优势——节省的显存可以容纳更长的 KV Cache。
+
+## Diff-LLM：扩散语言模型
+
+在投机解码之外，扩散模型直接作为语言模型是一个更激进的方向。传统自回归 LLM 逐 token 生成，扩散语言模型（如 LLaDA、dLLM）通过迭代去噪过程并行生成全部 tokens。理论上可以实现完全并行的生成，推理延迟与序列长度无关。
+
+目前扩散 LLM 的生成质量尚未达到自回归模型的水平，但在某些场景（如短文本补全、代码填充）中已展现出竞争力。DFlash 可以视为扩散模型在"辅助生成"角色上的成功应用——不需要替换主模型，仅用扩散做高效 draft。未来如果扩散 LLM 质量进一步提升，"直接用扩散生成"可能成为新的推理范式。
