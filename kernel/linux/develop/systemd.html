@@ -27,7 +27,7 @@
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">systemctl</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> disable</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> nginx.service</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    # 取消开机自启</span></span></code></pre></div><p>systemd 支持服务的自动重启、资源限制（如内存、CPU 限额）、日志集成、依赖管理等高级功能。管理员可以通过 <code>systemctl</code> 轻松管理系统和用户服务。</p><h2 id="日志管理" tabindex="-1">日志管理 <a class="header-anchor" href="#日志管理" aria-label="Permalink to “日志管理”">​</a></h2><p>systemd 集成了 journald 日志服务，统一收集内核日志、服务日志和用户日志。日志以二进制格式存储，支持高效检索和过滤。通过 <code>journalctl</code> 命令可以方便地查看、筛选和分析日志。例如：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">journalctl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -u</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> nginx.service</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    # 查看 nginx 服务日志</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">journalctl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -b</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">                 # 查看本次启动以来的所有日志</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">journalctl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --since</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;1 hour ago&quot;</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">  # 查看最近一小时日志</span></span></code></pre></div><p>journald 还支持日志持久化、日志轮转、远程日志收集等功能，极大提升了系统运维的可观测性。它会定期读取内核日志，并将内核日志输出到位置 <code>/var/log/syslog</code> 文件中；同时它也向用户态的程序提供了一个 <code>syslog</code> 函数接口，用户态程序可以选择使用这个函数来使用提供的日志打印系统和服务。syslog 函数会将日志消息发送给 systemd-journald 守护进程，具体的日志管理由它完成。</p><p>一般的内核日志，使用 <code>printk</code> 函数打印日志或者驱动可使用 <code>dev_printk</code>（自动携带设备信息）；而用户态日志需要自行实现日志系统或者可使用 systemd-journald 服务提供的接口。</p><h2 id="特殊性" tabindex="-1">特殊性 <a class="header-anchor" href="#特殊性" aria-label="Permalink to “特殊性”">​</a></h2><p>在 Linux 系统中，一号进程（PID 1）具有极其特殊和重要的地位。它是内核启动后创建的第一个用户空间进程，通常由 systemd 担任。作为系统的根进程，一号进程承担着初始化用户空间环境、启动和管理所有系统服务、维护系统运行级别等核心职责。</p><p>一号进程还有一个关键作用：它是所有孤儿进程的“收养者”。当系统中其他进程的父进程意外终止时，这些进程会被内核自动转交给一号进程，由其负责资源回收和善后处理。这一机制保证了系统中不会出现无人管理的僵尸进程，维护了进程表的整洁和系统的稳定性。</p><p>此外，一号进程的健壮性直接关系到系统的稳定运行。如果一号进程崩溃或退出，内核会认为系统处于不可恢复的状态，通常会触发内核 panic 或自动重启。因此，systemd 作为一号进程，其健壮性和可靠性对整个 Linux 系统的持续运行至关重要。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/develop/struct/linked" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>链表</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/power/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>电源管理</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -41,6 +41,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -100,7 +101,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -112,8 +113,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -464,7 +464,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -523,6 +522,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

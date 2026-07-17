@@ -48,7 +48,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">RETURN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> friend</span></span></code></pre></div><p>多跳查询可以指定跳数限制，避免遍历整个图。使用 <code>*1..3</code> 表示 1 到 3 跳，使用 <code>*..3</code> 表示最多 3 跳。跳数限制不仅限制遍历深度，也限制返回结果数量，避免结果集过大。</p><div class="language-cypher"><button title="Copy Code" class="copy"></button><span class="lang">cypher</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 查询最多 3 跳的朋友</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">MATCH</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (person:Person </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">{</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">name</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &#39;Alice&#39;</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">}</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">-</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">[:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">KNOWS</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">..3</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">]</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(friend)</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">RETURN</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> DISTINCT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> friend</span></span></code></pre></div><h3 id="内存管理" tabindex="-1">内存管理 <a class="header-anchor" href="#内存管理" aria-label="Permalink to “内存管理”">​</a></h3><p>图遍历可能产生大量中间结果，需要注意内存管理。DISTINCT 去重会占用内存，如果结果集很大可能内存溢出。LIMIT 限制结果数量，可以减少内存占用。子查询可以分批处理，避免一次性加载所有数据。</p><p>Neo4j 的内存管理包括堆内存和页面缓存。堆内存用于执行引擎、事务管理、网络通信，页面缓存用于缓存数据文件。堆内存建议不超过 31GB，页面缓存应该尽可能大，建议剩余内存全部用作页面缓存。</p><h2 id="分布式图数据库" tabindex="-1">分布式图数据库 <a class="header-anchor" href="#分布式图数据库" aria-label="Permalink to “分布式图数据库”">​</a></h2><h3 id="neo4j-fabric" tabindex="-1">Neo4j Fabric <a class="header-anchor" href="#neo4j-fabric" aria-label="Permalink to “Neo4j Fabric”">​</a></h3><p>Neo4j Fabric 是分布式查询功能，允许跨越多个数据库执行查询。Fabric 包含一个主数据库和多个辅助数据库，主数据库协调查询，辅助数据库存储数据。查询可以指定在哪个数据库执行，也可以跨库关联。</p><p>Fabric 的优势是透明分布式，用户使用 Cypher 查询，不需要关心数据分布。Fabric 支持数据分片，按节点属性分片到不同数据库。Fabric 支持读写分离，读操作可以路由到只读副本。</p><h3 id="janusgraph" tabindex="-1">JanusGraph <a class="header-anchor" href="#janusgraph" aria-label="Permalink to “JanusGraph”">​</a></h3><p>JanusGraph 是分布式图数据库，后端存储支持 Cassandra、HBase、Bigtable，索引后端支持 ElasticSearch、Lucene。JanusGraph 将图数据存储在分布式数据库中，利用分布式数据库的可扩展性。索引存储在 ElasticSearch 中，支持全局索引和属性查询。</p><p>JanusGraph 的数据模型也是标签属性图，支持 Gremlin 查询语言。Gremlin 是图遍历语言，类似于函数式编程，可以表达复杂的图遍历。JanusGraph 支持多机多副本，数据自动分区和复制，适合超大规模图数据。</p><h3 id="amazon-neptune" tabindex="-1">Amazon Neptune <a class="header-anchor" href="#amazon-neptune" aria-label="Permalink to “Amazon Neptune”">​</a></h3><p>Neptune 是 AWS 的托管图数据库服务，支持属性图和 RDF 图。Neptune 支持 Gremlin 和 SPARQL 查询语言，可以用于社交网络、推荐引擎、欺诈检测、知识图谱。Neptune 是完全托管的服务，自动处理备份、恢复、监控、扩容。</p><p>Neptune 的架构是分布式的，支持读写分离和多可用区部署。写入由主节点处理，读取由副本节点处理。数据跨可用区复制，单个可用区故障不影响服务。Neptune 支持快照备份，可以恢复到任意时间点。</p><h2 id="应用场景" tabindex="-1">应用场景 <a class="header-anchor" href="#应用场景" aria-label="Permalink to “应用场景”">​</a></h2><h3 id="社交网络" tabindex="-1">社交网络 <a class="header-anchor" href="#社交网络" aria-label="Permalink to “社交网络”">​</a></h3><p>社交网络是图数据库的典型应用，用户是节点，关系是边。查询包括朋友的朋友、共同好友、最短路径、连通分量。这些查询在关系数据库中需要多次 JOIN，性能差。在图数据库中直接遍历关系，性能好。</p><p>社交网络的图数据规模大，可能达到数十亿节点和边。需要考虑分布式图数据库或图计算框架。对于小规模社交网络，Neo4j 单机足够。对于大规模社交网络，需要考虑 JanusGraph 或 Neptune。</p><h3 id="推荐系统" tabindex="-1">推荐系统 <a class="header-anchor" href="#推荐系统" aria-label="Permalink to “推荐系统”">​</a></h3><p>推荐系统使用图数据库发现用户和商品的关联，实现个性化推荐。用户节点和商品节点通过购买、浏览、评分等关系连接。查询包括用户的购买商品的相关商品、相似用户购买的商品、商品的热门路径。</p><p>推荐系统的图数据通常是二部图，两种类型的节点通过关系连接。图遍历可以找到多条路径，通过权重和评分排序结果。推荐系统通常结合机器学习，图数据库提供特征和候选集。</p><h3 id="欺诈检测" tabindex="-1">欺诈检测 <a class="header-anchor" href="#欺诈检测" aria-label="Permalink to “欺诈检测”">​</a></h3><p>欺诈检测使用图数据库发现欺诈模式，例如循环转账、洗钱、身份盗用。金融交易构建交易图，节点是账户和交易，边是转账关系。欺诈模式表现为特定的图结构，例如短时间多跳转账、多个账户共同收款。</p><p>图数据库可以快速检测这些模式，实时告警。欺诈检测的挑战是数据量大、实时性要求高、欺诈模式多变。图数据库的高效遍历和模式匹配能够满足这些需求。</p><p>图数据库是处理关系数据的有力工具，在社交、推荐、风控等领域有广泛应用。选择图数据库需要考虑数据规模、查询复杂度、实时性要求、团队能力。对于小规模和原型阶段，Neo4j 是好的选择。对于大规模和生产环境，需要考虑分布式图数据库或图计算框架。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/server/db/engine/fulltext" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>全文检索</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/server/db/engine/vector" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>向量</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -62,6 +62,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -121,7 +122,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -133,8 +134,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -485,7 +485,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -544,6 +543,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

@@ -37,7 +37,7 @@
 <span class="line"><span></span></span>
 <span class="line"><span>当实际情况偏离框架预设时，槽位可以填入异常值。</span></span>
 <span class="line"><span>比如&quot;外卖&quot;场景中，&quot;座位&quot;槽位为空，&quot;付款&quot;先于&quot;用餐&quot;。</span></span></code></pre></div><p>框架理论的精妙之处在于默认值和异常处理机制。默认值表示典型情况下的期望值——餐厅通常有菜单，所以&quot;菜单&quot;槽位的默认值为&quot;有&quot;。当遇到特殊场景时，只需覆盖特定槽位的值，其他槽位自动继承默认值。这减少了知识编码的工作量，同时为处理非典型情况提供了结构化的框架。</p><p>框架与面向对象编程中的类有很强的对应关系：框架对应类，槽位对应属性，框架间的继承关系对应类的继承层次。这种对应并非巧合——面向对象范式的很多设计思想都可以追溯到框架理论对知识表示的探索。</p><h2 id="本体论与描述逻辑" tabindex="-1">本体论与描述逻辑 <a class="header-anchor" href="#本体论与描述逻辑" aria-label="Permalink to “本体论与描述逻辑”">​</a></h2><p>本体论（Ontology）在 AI 领域指对特定领域概念及其关系的明确定义。与语义网络不同，本体论使用严格的形式化语言定义概念的层次结构、属性约束和关系类型，消除了语义歧义。OWL（Web Ontology Language）是 W3C 制定的本体标准语言，支持定义类、属性、个体以及它们之间的复杂约束。</p><p>描述逻辑（Description Logic，DL）是 OWL 的数学基础，是一阶逻辑的可判定子集。描述逻辑的核心设计理念是在表达能力和推理复杂度之间取得精确的平衡。表达能力越强的描述逻辑，推理的计算复杂度越高。OWL 2 的不同子语言（OWL 2 EL、OWL 2 QL、OWL 2 RL）对应不同复杂度级别的描述逻辑，允许用户根据应用需求选择合适的表达力。</p><p>描述逻辑的基本构造块是概念（concept，对应类）和角色（role，对应属性）。复杂概念通过构造算子从简单概念组合而成。比如 <code>Person ⊓ ∃hasChild.Student</code> 表示&quot;有一个学生孩子的所有人&quot;，其中 ⊓ 是交集算子，∃ 是存在量词算子。推理任务包括概念可满足性（判断一个概念是否可能为空）、概念包含（判断一个概念是否是另一个的子集）、实例检查（判断一个个体是否属于某概念）等。</p><h2 id="知识图谱" tabindex="-1">知识图谱 <a class="header-anchor" href="#知识图谱" aria-label="Permalink to “知识图谱”">​</a></h2><p>知识图谱（Knowledge Graph）是语义网络和本体论在工业界的现代化实现。以 RDF 三元组（主语-谓词-宾语）为基本数据单元，比如 <code>(Einstein, birthPlace, Germany)</code> 表示&quot;爱因斯坦出生在德国&quot;。大规模知识图谱如 Wikidata、DBpedia 包含数十亿条三元组，覆盖了人类知识的广泛领域。</p><p>知识图谱与大语言模型的结合是当前 AI 工程的前沿方向。大模型通过参数记忆了大量世界知识，但存在幻觉问题——它可能以很高置信度生成错误的事实。知识图谱作为外部知识源可以为大模型提供事实校验，检索增强生成（RAG）技术本质上就是用知识图谱（或向量数据库）的检索结果约束大模型的生成范围。</p><p>Google 的 Knowledge Graph 从 2012 年开始在搜索结果中展示结构化知识面板，这标志着知识图谱从学术概念进入了大众视野。国内的百度、阿里也构建了自己的大规模知识图谱，用于智能搜索、推荐系统和智能问答。知识图谱的构建仍然是工程难题：从非结构化文本中抽取三元组需要高精度的命名实体识别和关系抽取模型，跨源知识融合需要解决实体对齐和冲突消解问题。</p><h2 id="表示方法的选择" tabindex="-1">表示方法的选择 <a class="header-anchor" href="#表示方法的选择" aria-label="Permalink to “表示方法的选择”">​</a></h2><p>不同的知识表示方法并非互相替代，而是适用于不同场景。产生式规则适合编码专家经验，在业务规则引擎中广泛使用；语义网络和本体论适合构建领域知识体系，在医疗、金融等领域用于标准化知识管理；框架理论适合表示场景化的知识，在自然语言理解中用于上下文建模；知识图谱适合大规模事实存储和检索，是现代智能系统的知识基础设施。</p><p>在实际工程中，往往需要组合多种表示方法。一个智能问答系统可能用知识图谱存储事实，用本体论定义概念层次，用产生式规则处理业务逻辑。理解各种表示方法的优劣和适用范围，是设计知识系统的基础能力。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/symbol/logic" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>数理逻辑基础</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/symbol/reasoning" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>推理引擎与搜索</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -51,6 +51,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -110,7 +111,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -122,8 +123,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -474,7 +474,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -533,6 +532,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

@@ -105,7 +105,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        console.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">`${</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">message</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">lineNum</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">}:${</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">message</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">linePos</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">}: ${</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">message</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">message</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">}`</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>WebGPU 的绑定组（BindGroup）机制将资源绑定到着色器。<code>@group(N) @binding(M)</code> 对应 <code>device.createBindGroupLayout()</code> 和 <code>device.createBindGroup()</code>。绑定组在创建管线时指定，允许在运行时动态切换资源（如不同的纹理、缓冲区）。这种设计比 OpenGL 的全局绑定更灵活，也更容易优化（驱动可提前验证资源类型）。</p><h2 id="性能优化" tabindex="-1">性能优化 <a class="header-anchor" href="#性能优化" aria-label="Permalink to “性能优化”">​</a></h2><p>WGSL 的性能优化原则与其他着色语言类似，但有一些 WebGPU 特定的考虑。减少分支是关键，WebGPU 的实现可能在 GPU 上将 WGSL 转换为 SPIR-V 或 DXIL，分支发散仍会导致性能损失。使用 <code>select()</code>（三元运算符）代替简单的 if-else，编译器可将其编译为条件移动（无分支）。纹理采样是昂贵的操作，尽量减少采样次数，或使用 mipmap 减少内存访问。</p><p>WebGPU 的 <code>timestamp-query</code> 可测量着色器执行时间。<code>device.createQuerySet({ type: &quot;timestamp&quot;, count: 2 })</code> 创建查询集，在编码命令时插入 <code>writeTimestamp</code>，渲染后读取查询结果。这种性能分析比 WebGL 的 <code>EXT_disjoint_timer_query</code> 更精确，也更容易使用。</p><p>计算着色器的优化关注内存访问模式。合并访问（coalescing）可减少内存事务，工作组内线程应访问连续的内存地址。<code>workgroupBarrier()</code> 同步工作组内线程，但不应过度使用（同步有开销）。使用 <code>var&lt;workgroup&gt;</code> 共享内存减少全局内存访问，但要注意同步正确性（避免数据竞争）。</p><h2 id="与-glsl-hlsl-的差异" tabindex="-1">与 GLSL/HLSL 的差异 <a class="header-anchor" href="#与-glsl-hlsl-的差异" aria-label="Permalink to “与 GLSL/HLSL 的差异”">​</a></h2><p>WGSL 与 GLSL/HLSL 的语法类似，但有一些重要差异。WGSL 使用 <code>vec3&lt;f32&gt;</code> 类型标注语法，GLSL 使用 <code>vec3</code>（隐式 float），HLSL 使用 <code>float3</code>。WGSL 的矩阵是列主序（column-major），与 GLSL 一致，但语法是 <code>mat4x4&lt;f32&gt;</code>（注意行列顺序）。WGSL 的 <code>textureSample()</code> 需要纹理和采样器两个参数，GLSL 的 <code>texture()</code> 只需纹理（采样器隐式绑定）。</p><p>WGSL 的属性系统更明确，<code>@location</code>、<code>@builtin</code>、<code>@group</code>、<code>@binding</code> 是显式标注，GLSL 使用全局变量和 layout 限定符。WGSL 的结构体成员访问用点（<code>struct.member</code>），GLSL 也用点，HLSL 也用点（基本一致）。WGSL 的函数调用参数类型必须匹配，不支持隐式转换，GLSL/HLSL 有一些隐式转换（如 float 到 vec3）。</p><p>工具链方面，<code>naga</code>（Rust 编写的库）可将 WGSL 转换为 SPIR-V、GLSL、MSL，实现跨平台着色器。<code>wgpu</code>（Rust 实现的 WebGPU）使用 naga 作为着色器后端，支持 Windows、macOS、Linux、Android。WebGPU 的 polyfill（<code>webgpu.hxx</code>）可将 WebGPU 调用转换为 WebGL，在不支持 WebGPU 的浏览器中运行，但性能会降低。</p><h2 id="调试与工具" tabindex="-1">调试与工具 <a class="header-anchor" href="#调试与工具" aria-label="Permalink to “调试与工具”">​</a></h2><p>WGSL 的调试比 GLSL/HLSL 更困难，因为 WebGPU 仍处于快速发展阶段。Chrome DevTools 的 WebGPU Inspector 可查看管线状态、资源绑定、着色器代码。RenderDoc 支持 WebGPU 捕获，可分析着色器输入输出。<code>wgsl-analyzer</code>（VSCode 插件）提供语法高亮、类型检查、错误提示。</p><p>WGSL 的编译错误信息通常包含行号和列号，错误描述比 GLSL 更详细。常见的错误包括：类型不匹配（<code>cannot add vec3&lt;f32&gt; and vec3&lt;i32&gt;</code>）、对齐错误（<code>struct member has misaligned offset</code>）、资源绑定冲突（<code>@binding(0) already used</code>）。这些错误在着色器编译时检测，不会导致 GPU 崩溃，体现了 WGSL 的安全设计。</p><p>未来的 WGSL 发展包括更好的 IDE 支持、更多内置函数、更高效的编译器。WebGPU 也将新增特性（间接绘制、射线追踪、网格着色器），WGSL 会相应扩展。WGSL 有望成为 Web 图形编程的标准语言，取代 WebGL 时代的 GLSL，为 Web 应用提供接近原生的图形性能。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/render/api/directx" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>DirectX</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/render/api/vulkan/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Vulkan</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -119,6 +119,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -178,7 +179,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -190,8 +191,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -542,7 +542,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -601,6 +600,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

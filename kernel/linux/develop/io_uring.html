@@ -169,7 +169,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">params.flags </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> IORING_SETUP_SQPOLL;</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">params.sq_thread_idle </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">  // 空闲 2ms 后休眠</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">io_uring_queue_init_params</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(QUEUE_DEPTH, </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">ring</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">params</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></div><h2 id="支持的操作类型" tabindex="-1">支持的操作类型 <a class="header-anchor" href="#支持的操作类型" aria-label="Permalink to “支持的操作类型”">​</a></h2><p>io_uring 最初只支持文件读写，但随着版本迭代，操作类型不断扩展，已经覆盖了绝大多数系统 I/O 场景：</p><ul><li>文件 I/O：<code>IORING_OP_READ</code>、<code>IORING_OP_WRITE</code>、<code>IORING_OP_READV</code>、<code>IORING_OP_WRITEV</code>、<code>IORING_OP_FSYNC</code>、<code>IORING_OP_FDATASYNC</code></li><li>网络 I/O：<code>IORING_OP_RECV</code>、<code>IORING_OP_SEND</code>、<code>IORING_OP_ACCEPT</code>、<code>IORING_OP_CONNECT</code>、<code>IORING_OP_RECVMSG</code>、<code>IORING_OP_SENDMSG</code></li><li>文件操作：<code>IORING_OP_OPENAT</code>、<code>IORING_OP_CLOSE</code>、<code>IORING_OP_STATX</code>、<code>IORING_OP_UNLINK</code>、<code>IORING_OP_RENAME</code></li><li>缓冲区管理：<code>IORING_OP_PROVIDE_BUFFERS</code>、<code>IORING_OP_REMOVE_BUFFERS</code></li><li>事件通知：<code>IORING_OP_POLL_ADD</code>、<code>IORING_OP_POLL_REMOVE</code></li><li>超时与取消：<code>IORING_OP_TIMEOUT</code>、<code>IORING_OP_TIMEOUT_REMOVE</code>、<code>IORING_OP_ASYNC_CANCEL</code></li><li>进程管理：<code>IORING_OP_WAITID</code>、<code>IORING_OP_SIGNAL</code></li><li>高级特性：<code>IORING_OP_SPLICE</code>、<code>IORING_OP_TEE</code>、<code>IORING_OP_SHUTDOWN</code>、<code>IORING_OP_SOCKET</code></li></ul><p>这意味着 io_uring 已经不再局限于&quot;异步文件 I/O&quot;，而是一个通用的异步操作框架，理论上任何需要系统调用的操作都可以通过 io_uring 异步提交。</p><h2 id="与传统方案对比" tabindex="-1">与传统方案对比 <a class="header-anchor" href="#与传统方案对比" aria-label="Permalink to “与传统方案对比”">​</a></h2><h3 id="系统调用开销" tabindex="-1">系统调用开销 <a class="header-anchor" href="#系统调用开销" aria-label="Permalink to “系统调用开销”">​</a></h3><p>传统同步 I/O 或 epoll 模型中，每个 I/O 操作至少对应一次系统调用（read/write），在高并发下系统调用次数与 I/O 次数成正比。io_uring 通过共享内存批量提交和收割，可以将数百个 I/O 操作压缩到少数几次系统调用中完成。在 SQ Polling 模式下，甚至可以实现零系统调用。</p><h3 id="上下文切换" tabindex="-1">上下文切换 <a class="header-anchor" href="#上下文切换" aria-label="Permalink to “上下文切换”">​</a></h3><p>epoll 模型下，每次 read/write 都涉及用户态到内核态的切换。虽然单次切换的开销在微秒级别，但在每秒百万级 I/O 的场景下，累积开销不容忽视。io_uring 的批量处理模式显著减少了上下文切换次数，SQ Polling 模式更是将提交路径完全留在用户态。</p><h3 id="内核态拷贝" tabindex="-1">内核态拷贝 <a class="header-anchor" href="#内核态拷贝" aria-label="Permalink to “内核态拷贝”">​</a></h3><p>传统 I/O 路径中，数据需要从内核缓冲区拷贝到用户缓冲区（反之亦然）。io_uring 的固定缓冲区和 provided buffers 机制允许内核直接 DMA 到用户预注册的缓冲区，在支持零拷贝的场景下（如网络到存储的转发）可以完全消除内存拷贝。</p><h3 id="编程复杂度" tabindex="-1">编程复杂度 <a class="header-anchor" href="#编程复杂度" aria-label="Permalink to “编程复杂度”">​</a></h3><p>epoll 的异步是&quot;半异步&quot;的，应用需要维护状态机处理 EAGAIN，在读写未完成时重新注册等待事件。io_uring 是真正的异步，提交请求后只需等待 CQE，无需处理中间状态，编程模型更简洁。对于复杂的 I/O 流水线，链式请求将依赖关系交给内核管理，进一步降低了应用层的复杂度。</p><h2 id="工程实践" tabindex="-1">工程实践 <a class="header-anchor" href="#工程实践" aria-label="Permalink to “工程实践”">​</a></h2><h3 id="性能调优" tabindex="-1">性能调优 <a class="header-anchor" href="#性能调优" aria-label="Permalink to “性能调优”">​</a></h3><p>在实际部署中，队列深度的选择需要根据负载特征调整。过小的队列会导致 SQE 分配失败（需要频繁调用 <code>io_uring_enter</code> 刷出已提交的请求），过大的队列则浪费内存。一般建议从 256 或 1024 开始，根据实际 I/O 并发度调整。SQ 和 CQ 的深度可以分别通过 <code>sq_entries</code> 和 <code>cq_entries</code> 参数独立设置，CQ 深度通常需要大于 SQ 深度（因为链式请求和某些操作可能产生多个 CQE）。</p><p>对于延迟敏感型应用，开启 SQ Polling 并绑定到专用 CPU 核是常见的优化手段。对于吞吐量敏感型应用，关闭 SQ Polling 以节省 CPU 资源，依靠批量提交和收割来摊薄系统调用开销。固定文件和固定缓冲区的注册是一次性开销，在文件和缓冲区被反复使用的场景下（如数据库 page I/O、网络 buffer pool）收益显著。</p><h3 id="错误处理" tabindex="-1">错误处理 <a class="header-anchor" href="#错误处理" aria-label="Permalink to “错误处理”">​</a></h3><p>io_uring 的错误通过 CQE 的 <code>res</code> 字段返回，负值表示错误码（与 errno 值相同，如 <code>-EINVAL</code>、<code>-EAGAIN</code> 等）。需要注意的是，io_uring 在提交阶段几乎不做参数校验，大多数错误在执行阶段才暴露。因此应用代码必须检查每个 CQE 的返回值，特别是对于批量提交的场景，不能假设所有请求都会成功。</p><p>对于 <code>EAGAIN</code> 类错误（如非阻塞 socket 当前无数据），可以通过注册 <code>IORING_OP_POLL_ADD</code> 先等待事件就绪，然后再提交实际的 I/O 操作，避免用户态忙轮询。</p><h3 id="内核版本兼容" tabindex="-1">内核版本兼容 <a class="header-anchor" href="#内核版本兼容" aria-label="Permalink to “内核版本兼容”">​</a></h3><p>io_uring 从 Linux 5.1 开始引入，核心功能在 5.10 左右趋于稳定。许多高级特性（如 provided buffers、registered ring buffers、socket 操作支持等）在 5.19 和 6.x 系列中才逐步完善。如果需要使用最新特性，建议至少使用 6.1 以上的内核版本。在编写兼容多版本内核的代码时，需要通过 <code>io_uring_params.features</code> 检查内核支持的功能标志，按需降级处理。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/develop/ctx" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>内核上下文</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/develop/kbuild" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>linux 内核构建系统</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -183,6 +183,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -242,7 +243,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -254,8 +255,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -606,7 +606,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -665,6 +664,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

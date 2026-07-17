@@ -32,7 +32,7 @@
 <span class="line"><span>                    ↓ partitionToolCalls</span></span>
 <span class="line"><span>并发安全组: [ReadFile, ReadFile, Grep, ReadFile]  → 并行执行</span></span>
 <span class="line"><span>非并发安全组: [Bash]                                → 独占执行</span></span></code></pre></div><p>这种设计的工程价值在于减少 Agent 循环的端到端延迟。传统的 Agent 循环是&quot;LLM 生成 → 等待完成 → 执行工具 → 下一步&quot;，而 Claude Code 实现了&quot;LLM 生成 → 流式解析 → 立即执行 → 下一步&quot;，将 LLM 生成和工具执行的时间重叠。</p><h3 id="工具发现与搜索" tabindex="-1">工具发现与搜索 <a class="header-anchor" href="#工具发现与搜索" aria-label="Permalink to “工具发现与搜索”">​</a></h3><p>一个有趣的特性是 <code>ToolSearchTool</code>——让 LLM 在大量工具中搜索合适的工具。当注册的工具数量超过模型的处理能力时（模型的 tool_choice 在几十个工具时性能下降），<code>ToolSearchTool</code> 提供了一个元工具，LLM 可以通过关键词搜索找到需要的工具，而不是每次都加载全部工具定义。</p><h2 id="权限与安全系统" tabindex="-1">权限与安全系统 <a class="header-anchor" href="#权限与安全系统" aria-label="Permalink to “权限与安全系统”">​</a></h2><p>Claude Code 的权限模型比 Cline 更精细，设计了多种权限模式：</p><p><strong>Plan Mode</strong>（计划模式）：Agent 只能读取文件和规划任务，不能执行任何写操作。适合需要先审查计划再执行的场景。</p><p><strong>Auto-accept Mode</strong>（自动接受模式）：Agent 可以自动执行所有操作，包括写文件和运行命令。适合自动化场景，但需要信任 Agent 的判断。</p><p><strong>Default Mode</strong>（默认模式）：Agent 需要用户确认高风险操作。系统根据操作的风险等级自动判断是否需要确认——读文件自动通过，写文件需要首次确认，删除操作始终需要确认。</p><p>权限判断通过 <code>canUseTool</code> 回调函数实现。QueryEngine 在创建时注入这个回调，每次工具执行前都会调用。回调返回 <code>allow</code>（允许执行）、<code>deny</code>（拒绝执行）或 <code>ask</code>（需要用户确认）。这种回调模式与 Cline 的 AutoApprove 机制本质上相同，但 Claude Code 的实现更注重流式集成——权限提示不会阻塞整个响应流，而是只暂停等待确认的那个工具。</p><p><strong>沙箱执行</strong>：BashTool 在沙箱环境中执行命令，限制了可访问的文件系统范围和操作权限。沙箱配置可以通过环境变量和设置文件调整。</p><p><strong>Hook 系统</strong>：Claude Code 支持 Hooks——在工具执行前后运行的 shell 脚本。Pre-tool hooks 可以在工具执行前注入额外的校验逻辑，Post-tool hooks 可以在工具执行后触发通知或日志。这个机制让团队能在不修改 Claude Code 源码的情况下扩展安全策略。</p><h2 id="会话管理" tabindex="-1">会话管理 <a class="header-anchor" href="#会话管理" aria-label="Permalink to “会话管理”">​</a></h2><h3 id="claude-md-上下文注入" tabindex="-1">CLAUDE.md 上下文注入 <a class="header-anchor" href="#claude-md-上下文注入" aria-label="Permalink to “CLAUDE.md 上下文注入”">​</a></h3><p>Claude Code 的标志性特性是 CLAUDE.md 文件系统。三层配置文件定义了不同范围的上下文：</p><p><code>~/.claude/CLAUDE.md</code>（用户级）：跨所有项目共享的个人偏好，如&quot;使用中文回复&quot;、&quot;偏好函数式编程风格&quot;。<code>项目根目录/CLAUDE.md</code>（项目级）：团队共享的项目规范，如&quot;使用 pnpm 管理&quot;、&quot;测试框架是 Vitest&quot;。<code>项目根目录/.claude/settings.local.json</code>（本地级）：个人的本地配置，不入 Git。</p><p>这些文件的内容在 <code>fetchSystemPromptParts()</code> 中被读取并拼接为 system prompt 的一部分。每次 Agent 循环开始时都会重新加载，确保使用最新的配置。</p><h3 id="上下文压缩" tabindex="-1">上下文压缩 <a class="header-anchor" href="#上下文压缩" aria-label="Permalink to “上下文压缩”">​</a></h3><p>Claude Code 实现了多层次的上下文压缩机制。当对话历史接近上下文窗口上限时，自动触发压缩——将旧消息总结为更紧凑的表示，保留关键信息（任务目标、已完成步骤、重要决策），丢弃冗余的中间过程。</p><p>压缩的触发时机通过 <code>calculateTokenWarningState()</code> 和 <code>getAutoCompactThreshold()</code> 计算。<code>AutoCompactTrackingState</code> 跟踪压缩状态，防止频繁触发。压缩产生的 <code>compact_boundary</code> 消息标记了压缩边界，后续处理可以识别哪些消息是压缩后的摘要。</p><h3 id="消息持久化" tabindex="-1">消息持久化 <a class="header-anchor" href="#消息持久化" aria-label="Permalink to “消息持久化”">​</a></h3><p>Claude Code 通过 <code>recordTranscript()</code> 实现消息持久化，支持会话恢复（<code>--resume</code>）。持久化的粒度很精细：用户消息在进入查询循环前就持久化（确保即使中途崩溃也能恢复），助手消息采用 fire-and-forget 策略（不阻塞生成器迭代）。这种差异化策略在可靠性和性能之间取得了平衡。</p><h3 id="内存系统" tabindex="-1">内存系统 <a class="header-anchor" href="#内存系统" aria-label="Permalink to “内存系统”">​</a></h3><p>Claude Code 实现了一个基于文件的内存系统（<code>memdir/</code>），允许 Agent 在会话之间持久化信息。内存文件存储在 <code>~/.claude/projects/&lt;project-hash&gt;/memory/</code> 目录下，<code>MEMORY.md</code> 作为索引文件。Agent 可以通过 <code>loadMemoryPrompt()</code> 加载内存内容，这些内容作为 system prompt 的一部分注入。</p><h2 id="工程启示" tabindex="-1">工程启示 <a class="header-anchor" href="#工程启示" aria-label="Permalink to “工程启示”">​</a></h2><p>对比 Cline 和 Claude Code，可以看到同一 Agent 理论在不同产品形态下的工程差异：</p><p><strong>流式处理深度不同</strong>。Cline 的流式处理主要在 UI 展示层面——让用户更快看到响应。Claude Code 的流式处理深入到工具执行层面——在 LLM 还在生成响应时就启动工具执行，实现了生成和执行的时间重叠。</p><p><strong>工具粒度不同</strong>。Cline 的工具数量较少但每个工具更&quot;重&quot;（如 <code>write_to_file</code> 是全量写入），Claude Code 的工具数量更多但每个更&quot;轻&quot;（如 <code>FileEditTool</code> 只做精确的字符串替换）。更多但更轻的工具给 LLM 更精细的控制力，但也增加了选择复杂度——<code>ToolSearchTool</code> 的存在就是为了缓解这个问题。</p><p><strong>安全模型不同</strong>。Cline 的安全主要依赖 AutoApprove 白名单，Claude Code 的安全是多层级的——权限模式、沙箱、Hook 系统、canUseTool 回调。CLI 环境下的操作风险更高（一个 <code>rm -rf</code> 可能比在 IDE 中更致命），因此需要更精细的安全控制。</p><p><strong>配置系统不同</strong>。Cline 的配置主要通过 VS Code 的设置系统管理，Claude Code 的配置通过 CLAUDE.md 文件系统管理。文件式的配置可以随 Git 提交和分享，这对团队协作更有利。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/overlay/agent/case/cline" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>Cline</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/overlay/agent/safety/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>安全防护</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -46,6 +46,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -105,7 +106,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -117,8 +118,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -469,7 +469,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -528,6 +527,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

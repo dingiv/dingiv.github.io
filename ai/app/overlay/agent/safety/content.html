@@ -51,7 +51,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pii_type, pattern </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> PII_PATTERNS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.items():</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        text </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> re.sub(pattern, </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">f</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">{</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pii_type</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">}</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">_REDACTED]&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, text)</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> text</span></span></code></pre></div><p>正则匹配的局限在于无法处理上下文相关的 PII（如&quot;我的名字叫张三，电话是...&quot;中的名字）。更精确的方案是使用 NER（命名实体识别）模型，如 SpaCy 的 <code>zh_core_web_trf</code> 模型，能识别文本中的人名、地名、组织名等实体。</p><p>脱敏策略有两种：阻断（检测到 PII 时拒绝输出）和替换（将 PII 替换为占位符后再输出）。阻断更安全但用户体验差，替换更灵活但需要确保占位符不影响后续的 LLM 理解。</p><h2 id="合规要求" tabindex="-1">合规要求 <a class="header-anchor" href="#合规要求" aria-label="Permalink to “合规要求”">​</a></h2><h3 id="数据安全法" tabindex="-1">数据安全法 <a class="header-anchor" href="#数据安全法" aria-label="Permalink to “数据安全法”">​</a></h3><p>中国的数据安全法和个人信息保护法对 AI 应用提出了明确要求：用户数据的最小化收集、明确同意原则、数据本地化存储、用户有权删除个人数据。LLM 应用需要确保对话记录的加密存储、定期清理、以及用户的数据删除请求能在规定时间内完成。</p><h3 id="gdpr" tabindex="-1">GDPR <a class="header-anchor" href="#gdpr" aria-label="Permalink to “GDPR”">​</a></h3><p>如果应用面向欧盟用户，需要遵守 GDPR。关键要求包括：数据处理的合法基础（通常是用户同意或合同必要）、数据最小化原则（只收集必要数据）、被遗忘权（用户要求删除数据时必须完全清除）、数据可携权（用户可以导出自己的数据）。</p><p>LLM 应用的特殊性在于模型本身可能&quot;记住&quot;了训练数据中的个人信息。如果用户要求删除特定信息，需要评估该信息是否已被模型内化——如果模型能通过提示词提取出该信息，即使删除了数据库中的记录也不算完全合规。这个问题目前没有完美的技术解决方案，只能通过数据脱敏、模型微调和输出过滤的组合来缓解。</p><h3 id="ai-安全法规" tabindex="-1">AI 安全法规 <a class="header-anchor" href="#ai-安全法规" aria-label="Permalink to “AI 安全法规”">​</a></h3><p>欧盟 AI 法案（AI Act）根据风险等级对 AI 系统分类管理。高风险应用（医疗诊断、司法辅助、招聘筛选）需要通过合规评估，包括数据治理、模型透明性、人类监督、准确性和鲁棒性。低风险应用（聊天机器人、推荐系统）需要告知用户正在与 AI 交互。</p><h2 id="安全运营" tabindex="-1">安全运营 <a class="header-anchor" href="#安全运营" aria-label="Permalink to “安全运营”">​</a></h2><p>内容安全不是一次性的开发任务，而是持续的运营工作。新的攻击手法和边界 case 不断出现，安全策略需要持续迭代。</p><p><strong>安全日志</strong>：记录所有被拦截的输入和输出，分类统计攻击类型和频率。安全日志是发现新攻击模式和优化过滤规则的依据。</p><p><strong>用户反馈机制</strong>：在应用中提供举报按钮，让用户标记不当输出。用户反馈是发现模型安全隐患的重要信号源。</p><p><strong>定期审计</strong>：季度性的安全审计，评估防御措施的有效性，更新过滤规则和分类模型，检查合规要求的满足情况。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/overlay/agent/safety/injection" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>Prompt 注入</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/overlay/agent/safety/guardrails" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Guardrails</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -65,6 +65,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -124,7 +125,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -136,8 +137,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -488,7 +488,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -547,6 +546,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

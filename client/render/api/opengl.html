@@ -121,7 +121,7 @@
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    imageStore</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(uOutput, pos, color);</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><h2 id="调试与性能" tabindex="-1">调试与性能 <a class="header-anchor" href="#调试与性能" aria-label="Permalink to “调试与性能”">​</a></h2><p>GLSL 的调试比 CPU 代码困难，没有打印语句和断点。常用方法包括：输出颜色作为调试信息（将变量值映射到 RGB 颜色，通过视觉观察验证）、使用 RenderDoc 捕获帧并检查着色器输入输出、利用 <code>gl_FragColor</code> 输出中间计算结果。NVIDIA Nsight 和 AMD Radeon GPU Profiler 提供高级调试功能，可单步执行着色器、检查变量值。</p><p>性能优化应基于实际测量。RenderDoc 的 Pipeline Statistics 可查看顶点/片段着色器的调用次数，判断是否有过度的几何处理。GPU 时间戳可测量着色器的执行时间，识别瓶颈。常见优化包括：减少分支（分支导致 warp 发散）、使用内置函数（mix 比 if-else 高效）、减少纹理采样（mipmap 线性滤波有开销）、使用早期深度测试（在片段着色器前执行深度测试）。</p><p>GLSL 的编译由驱动在运行时完成，首次加载着色器可能卡顿。解决方案包括：预编译着色器为二进制（使用 <code>glGetProgramBinary</code> 保存编译结果）、缓存编译结果（应用启动时加载）、使用 SPIR-V（Vulkan 的中间表示，OpenGL 4.6+ 支持）。WebGL 2.0 支持并行编译，异步加载着色器减少阻塞。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/render/api/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>标准接口</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/render/api/directx" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>DirectX</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -135,6 +135,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -194,7 +195,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -206,8 +207,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -558,7 +558,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -617,6 +616,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

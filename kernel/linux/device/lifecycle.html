@@ -44,7 +44,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    .probe </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> my_probe,</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    .remove </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> my_remove,</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></div><p>platform 总线的 match 函数会将设备的 <code>compatible</code> 与驱动的 <code>of_match_table</code> 逐条比较，命中则触发 probe。probe 函数通过 <code>platform_get_resource</code> 获取寄存器地址，通过 <code>platform_get_irq</code> 获取中断号，通过 <code>of_iomap</code> 将物理地址映射为内核虚拟地址，完成硬件初始化。</p><h3 id="平台设备的加载时序" tabindex="-1">平台设备的加载时序 <a class="header-anchor" href="#平台设备的加载时序" aria-label="Permalink to “平台设备的加载时序”">​</a></h3><p>平台设备的注册发生在内核启动的非常早期。<code>start_kernel</code> → <code>rest_init</code> → <code>kernel_init</code> → <code>kernel_init_freeable</code> 调用链中，<code>do_basic_setup</code> 会调用 <code>driver_init</code> 和各子系统的 initcall。设备树的解析和 platform_device 的创建发生在 <code>of_platform_default_populate_init</code>（设备树平台）或 <code>acpi_init</code>（ACPI 平台），它们都是 <code>arch_initcall</code> 级别，比大多数模块驱动的 <code>module_init</code> 更早执行。</p><p>这意味着在内核模块加载阶段（<code>do_initcalls</code> 的后期），平台设备已经全部注册到 platform 总线上了。当平台驱动注册时，它会立即在已有的平台设备列表中查找匹配项并触发 probe。因此平台设备的生命周期可以概括为：设备树/ACPI 描述 → 内核解析创建 platform_device → 平台驱动注册 → match → probe → 就绪。</p><h2 id="热插拔设备生命周期" tabindex="-1">热插拔设备生命周期 <a class="header-anchor" href="#热插拔设备生命周期" aria-label="Permalink to “热插拔设备生命周期”">​</a></h2><p>支持热插拔的总线（如 USB、PCIe 热插拔、Thunderbolt）允许设备在系统运行期间动态插入和移除。热插拔设备的生命周期与启动时的静态枚举有所不同，它需要内核在运行时响应硬件事件。</p><h3 id="设备插入" tabindex="-1">设备插入 <a class="header-anchor" href="#设备插入" aria-label="Permalink to “设备插入”">​</a></h3><p>当用户将一个 USB 设备插入端口时，硬件层面的信号变化通过以下路径传递到内核：USB 集线器检测到端口电平变化 → 集线器向主机控制器（xHCI）发送状态变化通知 → 主机控制器触发硬件中断 → 内核中断处理程序调度 USB 核心层的轮询线程（kthread） → USB 核心发现新设备并开始枚举。</p><p>USB 枚举过程与启动时一致：分配设备地址、读取描述符、根据 VID/PID 或设备类查找匹配驱动、调用 probe。整个枚举过程是异步的，不会阻塞中断处理程序。枚举完成后，内核通过 netlink 向用户空间的 udev 发送 uevent 事件，udev 根据规则创建 <code>/dev</code> 节点、加载固件、设置权限等。</p><p>PCIe 热插拔的流程类似，但检测机制不同。PCIe 热插拔槽通过 PCIe 插槽的 <code>Presence Detect</code> 和 <code>Power Fault</code> 引脚检测设备插入。主板上的热插拔控制器（如 ACPI 的 PCI 热插拔事件、Thunderbolt 控制器）向内核发送通知，内核 PCI 热插拔子系统（<code>pciehp</code> 驱动）处理该事件，对热插拔槽执行链路重新训练、配置空间扫描、资源分配，然后为新发现的 PCI 设备走正常的 match → probe 流程。</p><h3 id="设备移除" tabindex="-1">设备移除 <a class="header-anchor" href="#设备移除" aria-label="Permalink to “设备移除”">​</a></h3><p>设备移除是设备插入的逆过程。当 USB 设备被拔出时，集线器检测到端口断开，通知主机控制器，内核 USB 核心收到事件后执行以下步骤：首先调用驱动的 <code>disconnect</code> 函数，驱动在此释放所有资源（取消 urb、释放内存、注销中断等）；然后将设备从 USB 核心的设备列表中移除；最后通过 netlink 通知 udev 清理 <code>/dev</code> 节点。</p><p>PCIe 设备热移除的流程类似：<code>pciehp</code> 驱动检测到设备拔出，通知 PCI 核心层，PCI 核心层调用驱动的 <code>remove</code> 函数，释放资源，注销设备。对于正在使用中的设备（如正在执行 I/O 的 NVMe 硬盘），内核需要先等待进行中的 I/O 完成（或超时取消），然后才执行移除。</p><h3 id="用户空间的通知链" tabindex="-1">用户空间的通知链 <a class="header-anchor" href="#用户空间的通知链" aria-label="Permalink to “用户空间的通知链”">​</a></h3><p>热插拔事件从内核传递到用户空间依赖 <strong>uevent 机制</strong>。内核在设备添加或移除时，通过 kobject_uevent 发送事件到 netlink 套接字（<code>NETLINK_KOBJECT_UEVENT</code>）。用户空间的 udevd 守护进程监听该套接字，收到事件后根据 <code>/etc/udev/rules.d/</code> 中的规则执行动作。常见的动作包括：创建设备节点（<code>mknod</code>）、设置权限（<code>chmod/chown</code>）、创建符号链接、加载内核模块（<code>modprobe</code>）、执行自定义脚本等。</p><p>uevent 事件携带设备的属性信息（如 <code>DEVTYPE</code>、<code>DRIVER</code>、<code>MODALIAS</code> 等），udev 规则可以基于这些属性进行匹配。<code>MODALIAS</code> 属性特别重要，它是驱动自动加载的关键：当 uevent 中包含 <code>MODALIAS=pci:v00008088d00001234sv0000...</code> 时，udev 会调用 modprobe 加载对应的驱动模块，实现驱动的按需加载。</p><h2 id="生命周期全景" tabindex="-1">生命周期全景 <a class="header-anchor" href="#生命周期全景" aria-label="Permalink to “生命周期全景”">​</a></h2><p>从内核启动到设备可用，整个生命周期可以归纳为以下阶段：</p><ol><li><strong>基础设施准备</strong>：<code>start_kernel</code> 中 <code>driver_init</code> 注册虚拟总线（platform_bus），<code>do_basic_setup</code> 中各总线子系统注册 <code>bus_type</code>（pci_bus_type、usb_bus_type 等）。</li><li><strong>总线控制器初始化</strong>：通过 ACPI/设备树发现总线控制器硬件，总线控制器驱动的 probe 函数完成控制器硬件初始化。</li><li><strong>设备枚举</strong>：总线控制器就绪后，内核扫描总线发现设备，为每个设备创建 <code>struct device</code>（PCI 为 <code>pci_dev</code>，USB 为 <code>usb_device</code> + <code>usb_interface</code>）。</li><li><strong>平台设备注册</strong>：设备树/ACPI 解析创建 <code>platform_device</code>，注册到 platform_bus_type。</li><li><strong>驱动匹配与绑定</strong>：总线 match 函数将设备与驱动配对，调用 probe 完成硬件初始化。</li><li><strong>用户空间就绪</strong>：udev 收到 uevent，创建 <code>/dev</code> 节点，设备可被应用层使用。</li><li><strong>运行时热插拔</strong>：设备插入时重复枚举→匹配→probe 流程；设备移除时执行 disconnect/remove 清理资源。</li></ol><p>需要注意的是，上述流程是理想化的简化。实际中存在很多边界情况：驱动以内核模块形式延迟加载、设备在 probe 期间失败需要回退、多驱动竞争同一设备、设备树中的设备被 <code>status = &quot;disabled&quot;</code> 禁用后通过运行时修改 overlay 重新启用等。但核心的驱动绑定机制（match → probe/remove）贯穿所有场景，是理解设备生命周期的关键线索。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/device/driver/usb" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>USB 驱动</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/net/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>网络实现</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -58,6 +58,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -117,7 +118,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -129,8 +130,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -481,7 +481,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -540,6 +539,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

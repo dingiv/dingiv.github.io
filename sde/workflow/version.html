@@ -34,7 +34,7 @@
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold;">## Fixed</span></span>
 <span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 修复登录超时问题</span></span>
 <span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 修复导出文件名编码问题</span></span></code></pre></div><h3 id="工具支持" tabindex="-1">工具支持 <a class="header-anchor" href="#工具支持" aria-label="Permalink to “工具支持”">​</a></h3><p>conventional-changelog：根据 Git 提交记录自动生成变更日志。</p><p>release-drafter：GitHub Action，自动生成和更新 CHANGELOG。</p><h2 id="依赖管理" tabindex="-1">依赖管理 <a class="header-anchor" href="#依赖管理" aria-label="Permalink to “依赖管理”">​</a></h2><p>依赖管理是版本管理的重要部分，依赖冲突和版本漂移是常见问题。</p><h3 id="依赖版本规则" tabindex="-1">依赖版本规则 <a class="header-anchor" href="#依赖版本规则" aria-label="Permalink to “依赖版本规则”">​</a></h3><p>精确版本：1.2.3，只使用该版本。</p><p>范围版本：^1.2.3（兼容 1.x.x）、~1.2.3（兼容 1.2.x）、&gt;=1.2.3（大于等于）。</p><p>通配符：1.2.x、1.x、*。</p><h3 id="版本锁定" tabindex="-1">版本锁定 <a class="header-anchor" href="#版本锁定" aria-label="Permalink to “版本锁定”">​</a></h3><p>package-lock.json（npm）、yarn.lock（yarn）：锁定精确版本，确保可重复构建。</p><p>go.sum（Go）：记录依赖的校验和，确保依赖完整。</p><p>Cargo.lock（Rust）：锁定精确版本。</p><h3 id="依赖更新策略" tabindex="-1">依赖更新策略 <a class="header-anchor" href="#依赖更新策略" aria-label="Permalink to “依赖更新策略”">​</a></h3><p>自动化更新：使用 Dependabot、Renovate 自动创建依赖更新 PR。</p><p>安全更新：安全漏洞相关的依赖更新优先处理。</p><p>定期更新：每个迭代安排时间更新依赖，避免落后太多。</p><p>测试覆盖：依赖更新后运行测试，确保兼容性。</p><h2 id="发布流程" tabindex="-1">发布流程 <a class="header-anchor" href="#发布流程" aria-label="Permalink to “发布流程”">​</a></h2><h3 id="版本规划" tabindex="-1">版本规划 <a class="header-anchor" href="#版本规划" aria-label="Permalink to “版本规划”">​</a></h3><p>版本路线图：规划未来几个版本的大致内容，不承诺具体时间。</p><p>里程碑：使用 GitHub Milestone 或 GitLab Milestone 追踪版本进度。</p><p>冻结范围：版本发布前冻结功能范围，避免范围蔓延。</p><h3 id="发布检查清单" tabindex="-1">发布检查清单 <a class="header-anchor" href="#发布检查清单" aria-label="Permalink to “发布检查清单”">​</a></h3><p>测试通过：所有测试用例通过，包括单元测试、集成测试、端到端测试。</p><p>文档更新：更新用户文档、API 文档、变更日志。</p><p>性能回归：运行性能测试，确保没有性能退化。</p><p>安全扫描：扫描依赖漏洞，确保无已知高危漏洞。</p><p>回滚准备：准备好回滚方案，确保发布失败能快速恢复。</p><h3 id="发布策略" tabindex="-1">发布策略 <a class="header-anchor" href="#发布策略" aria-label="Permalink to “发布策略”">​</a></h3><p>滚动发布：逐步将新版本发布给用户，先小范围后大范围。</p><p>功能开关：通过配置控制新功能，出现问题可快速关闭。</p><p>灰度发布：根据用户特征分流，降低风险。</p><p>金丝雀发布：先发布给少量用户，观察指标正常后全量发布。</p><h2 id="git-分支管理" tabindex="-1">Git 分支管理 <a class="header-anchor" href="#git-分支管理" aria-label="Permalink to “Git 分支管理”">​</a></h2><h3 id="git-flow" tabindex="-1">Git Flow <a class="header-anchor" href="#git-flow" aria-label="Permalink to “Git Flow”">​</a></h3><p>Git Flow 是经典的分支管理策略，适合有明确发布周期的项目。</p><p>main：主分支，只包含稳定发布版本。</p><p>develop：开发分支，集成所有功能开发。</p><p>feature：功能分支，从 develop 分支，完成后合并回 develop。</p><p>release：发布分支，从 develop 分支，准备发布时使用，完成后合并到 main 和 develop。</p><p>hotfix：修复分支，从 main 分支，紧急修复使用，完成后合并到 main 和 develop。</p><h3 id="github-flow" tabindex="-1">GitHub Flow <a class="header-anchor" href="#github-flow" aria-label="Permalink to “GitHub Flow”">​</a></h3><p>GitHub Flow 是简化的分支管理策略，适合持续部署项目。</p><p>main：主分支，始终可部署。</p><p>feature：功能分支，从 main 分支，通过 PR 合并到 main。</p><p>部署：main 分支合并后自动部署到生产环境。</p><h3 id="trunk-based-development" tabindex="-1">Trunk Based Development <a class="header-anchor" href="#trunk-based-development" aria-label="Permalink to “Trunk Based Development”">​</a></h3><p>基于主干的开发，所有开发在主分支进行，频繁发布。</p><p>短周期：每天多次合并到主分支。</p><p>特性开关：使用功能开关控制未完成功能。</p><p>持续集成：主分支始终可构建、可部署。</p><h2 id="版本回退" tabindex="-1">版本回退 <a class="header-anchor" href="#版本回退" aria-label="Permalink to “版本回退”">​</a></h2><p>版本回退是发布失败后的应急措施，需要快速决策和执行。</p><h3 id="回退决策" tabindex="-1">回退决策 <a class="header-anchor" href="#回退决策" aria-label="Permalink to “回退决策”">​</a></h3><p>影响范围：影响多少用户，是否影响核心功能。</p><p>严重程度：是否导致数据丢失、安全漏洞、服务不可用。</p><p>修复时间：修复问题需要多久，回退是否更快。</p><h3 id="回退执行" tabindex="-1">回退执行 <a class="header-anchor" href="#回退执行" aria-label="Permalink to “回退执行”">​</a></h3><p>快速回退：使用蓝绿部署、金丝雀发布时，切换流量即可。</p><p>代码回退：Git 回退到上一个版本，重新部署。</p><p>数据回退：数据库有变更时，需要考虑数据兼容性。</p><h3 id="回退后处理" tabindex="-1">回退后处理 <a class="header-anchor" href="#回退后处理" aria-label="Permalink to “回退后处理”">​</a></h3><p>根因分析：分析发布失败原因，制定改进措施。</p><p>修复方案：修复问题后，评估是否重新发布。</p><p>文档记录：记录回退原因和过程，避免重复问题。</p><p>版本管理是软件工程的基础实践，清晰的版本策略和规范的发布流程能够降低协作成本，提高系统稳定性。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/sde/workflow/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>工作流</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/sde/workflow/devops/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>DevOps</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -48,6 +48,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -107,7 +108,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -119,8 +120,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -471,7 +471,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -530,6 +529,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

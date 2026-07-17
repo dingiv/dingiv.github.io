@@ -49,7 +49,7 @@
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    --gradient_accumulation_steps</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    --fp16</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    --output_dir</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> ./output</span></span></code></pre></div><p>DeepSpeed 的配置文件 <code>ds_config.json</code> 可以包含数十个参数，包括 train_batch_size（全局 batch size）、train_micro_batch_size_per_gpu（单卡 micro batch size）、gradient_accumulation_steps（梯度累积步数）、zero_optimization（ZeRO 优化）、fp16（混合精度）、bf16（brain float）、optimizer（优化器配置）、scheduler（学习率调度）等。</p><h2 id="与-fsdp-的对比" tabindex="-1">与 FSDP 的对比 <a class="header-anchor" href="#与-fsdp-的对比" aria-label="Permalink to “与 FSDP 的对比”">​</a></h2><p>DeepSpeed 和 FSDP（PyTorch 2.0 原生的分布式训练方案）是当前两大主流训练框架。DeepSpeed 的优势在于成熟度高、文档丰富、支持 CPU 卸载；FSDP 的优势在于与 PyTorch 生态深度集成、API 更简洁、支持 torch.compile。</p><p>从性能角度看，DeepSpeed 和 FSDP 在 ZeRO-3 场景下性能相当。但从功能角度看，DeepSpeed 支持更多特性（如 CPU 卸载、弹性训练、混合专家），适合超大规模训练（100B+ 参数）。FSDP 则更适合已有的 PyTorch 代码迁移，API 更简洁，与 torch.compile 无缝集成。</p><p>选择哪个框架需要考虑团队的技术栈和需求。如果团队已经熟悉 PyTorch 且模型规模适中（&lt;100B），FSDP 是更简单的选择；如果需要训练超大规模模型（100B+）或需要 CPU 卸载，DeepSpeed 是更成熟的选择。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/engine/vllm" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>vLLM</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/engine/other" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>其他</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -63,6 +63,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -122,7 +123,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -134,8 +135,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -486,7 +486,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -545,6 +544,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

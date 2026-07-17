@@ -133,7 +133,7 @@
 <span class="line"><span>对 [a, b] 区间内的数值进行加减操作，只需要对差分数组进行修改：</span></span>
 <span class="line"><span>d[a] += val</span></span>
 <span class="line"><span>d[b+1] -= val</span></span></code></pre></div><h3 id="dp-动态规划" tabindex="-1">dp 动态规划 <a class="header-anchor" href="#dp-动态规划" aria-label="Permalink to “dp 动态规划”">​</a></h3><p>动态规划是一种通过将问题分解为子问题，并将子问题的解存储起来，从而避免重复计算的方法，是典型<strong>空间换时间</strong>的思想，同时，动态规划刻意地在构造一个数列问题，将题目转化为寻找数列的递推公式的问题，或者说是寻找状态转移方程的问题。动态规划通常用于解决一些具有重叠子问题和最优子结构的问题，例如背包问题、最长公共子序列问题、最长递增子序列问题等等。</p><p>关键词：最优等；（含有重叠子问题），具体内容参看 <a href="./dp">动态规划</a>。</p><h3 id="位运算" tabindex="-1">位运算 <a class="header-anchor" href="#位运算" aria-label="Permalink to “位运算”">​</a></h3><p>使用位运算可以模拟集合操作，例如集合的并集、交集、差集等等。位运算的时间复杂度为 O(1)，可以用于解决一些需要频繁进行集合操作的问题，例如集合的并集、交集、差集等等，同时降低算法的空间复杂度。但是，位运算需要我们提前知道集合中的元素，并且元素的范围不能太大，否则会超出计算机的表示范围。具体参考<a href="./bit">位运算</a></p><h3 id="数学公式" tabindex="-1">数学公式 <a class="header-anchor" href="#数学公式" aria-label="Permalink to “数学公式”">​</a></h3><p>使用数学公式可以简化算法，一些问题具有鲜明的数学性质，通过归纳数学公式来直接计算答案。数学公式的时间复杂度为 O(1)，可以用于解决一些需要频繁进行计算的问题，例如阶乘、斐波那契数列等等，同时降低算法的空间复杂度。一旦一个问题可以通过推导数学公式来解决，那么该问题的难点就变成了数学推导，而对算法实现的难度大大降低。</p><h2 id="排序" tabindex="-1">排序 <a class="header-anchor" href="#排序" aria-label="Permalink to “排序”">​</a></h2><p>排序算法是计算机科学中最基础且重要的算法之一。根据不同的应用场景和需求，我们可以选择不同的<a href="./../sort/index">排序算法</a>。</p><h3 id="排序算法的选择" tabindex="-1">排序算法的选择 <a class="header-anchor" href="#排序算法的选择" aria-label="Permalink to “排序算法的选择”">​</a></h3><p>选择排序算法时，需要考虑以下因素：</p><ol><li>数据规模：小规模数据可以使用简单排序，大规模数据需要使用高效排序</li><li>数据分布：如果数据分布有特点，可以使用特定排序算法</li><li>稳定性：如果需要保持相等元素的相对顺序，选择稳定排序</li><li>空间限制：如果空间有限，选择原地排序</li><li>数据特点：如果数据基本有序，插入排序可能更高效</li></ol><h3 id="排序算法的应用" tabindex="-1">排序算法的应用 <a class="header-anchor" href="#排序算法的应用" aria-label="Permalink to “排序算法的应用”">​</a></h3><ol><li>数据预处理：排序是许多算法的基础步骤</li><li>查找优化：排序后的数据可以使用二分查找</li><li>去重：排序后可以方便地去除重复元素</li><li>统计：排序后可以方便地进行各种统计</li><li>数据展示：排序后的数据更易于展示和理解</li></ol><h2 id="字符串" tabindex="-1">字符串 <a class="header-anchor" href="#字符串" aria-label="Permalink to “字符串”">​</a></h2><p>字符串算法是计算机科学中最常见和实用的算法之一，涉及对文本数据的处理和分析。字符串处理在日常开发中有着广泛的应用，从简单的文本搜索到复杂的自然语言处理。</p><h3 id="字符串算法的主要类别" tabindex="-1">字符串算法的主要类别 <a class="header-anchor" href="#字符串算法的主要类别" aria-label="Permalink to “字符串算法的主要类别”">​</a></h3><ol><li><strong>搜索与匹配</strong>：在文本中查找模式串 <ul><li>暴力匹配（Brute Force）</li><li>KMP算法（Knuth-Morris-Pratt）</li><li>Boyer-Moore算法</li><li>Rabin-Karp算法</li><li>后缀树/后缀数组</li></ul></li><li><strong>编辑与比较</strong>：计算字符串间的相似度或距离 <ul><li>最长公共子序列（LCS）</li><li>最长公共子串</li><li>编辑距离（Levenshtein距离）</li><li>字符串对齐</li></ul></li><li><strong>压缩与编码</strong>：减少字符串存储空间 <ul><li>Huffman编码</li><li>游程编码（Run-length encoding）</li><li>LZ77/LZ78压缩</li></ul></li><li><strong>文本分析</strong>：从文本中提取信息 <ul><li>正则表达式</li><li>词频统计</li><li>文本分类</li></ul></li></ol><h3 id="常见的字符串数据结构" tabindex="-1">常见的字符串数据结构 <a class="header-anchor" href="#常见的字符串数据结构" aria-label="Permalink to “常见的字符串数据结构”">​</a></h3><ul><li><strong>Trie树（前缀树）</strong>：用于高效存储和查找字符串集合</li><li><strong>后缀树/后缀数组</strong>：用于复杂的字符串匹配问题</li><li><strong>Bloom过滤器</strong>：用于快速判断一个元素是否在集合中</li></ul><p>字符串算法的详细实现和应用可以参考<a href="./../string/index">字符串算法专题</a>。</p><h2 id="加密与解密" tabindex="-1">加密与解密 <a class="header-anchor" href="#加密与解密" aria-label="Permalink to “加密与解密”">​</a></h2><p>加密和解密是信息安全领域的基础技术，用于保护数据的机密性、完整性和可用性。根据加密方式的不同，可以分为以下几类：</p><ol><li><strong>朴素加密</strong>：基于简单的替换或移位操作 <ul><li>凯撒密码：字母表移位</li><li>Base64：二进制数据编码</li><li>其他古典密码</li></ul></li><li><strong>对称加密</strong>：使用相同的密钥进行加密和解密 <ul><li>AES（高级加密标准）：最常用的对称加密算法</li><li>DES（数据加密标准）：较老的对称加密算法</li><li>3DES：DES的三重加密版本</li></ul></li><li><strong>非对称加密</strong>：使用不同的密钥进行加密和解密 <ul><li>RSA：最广泛使用的非对称加密算法</li><li>ECC（椭圆曲线加密）：更高效的现代非对称加密</li><li>DSA（数字签名算法）：主要用于数字签名</li></ul></li><li><strong>哈希加密</strong>：单向加密，不可逆 <ul><li>MD5：较老的哈希算法，已不推荐用于安全场景</li><li>SHA系列：包括SHA-1、SHA-256、SHA-512等</li><li>HMAC：基于哈希的消息认证码</li></ul></li></ol><p>加密算法的选择需要考虑以下因素：</p><ol><li>安全性：算法的抗攻击能力</li><li>性能：加密/解密的速度和资源消耗</li><li>密钥管理：密钥的生成、存储和分发</li><li>应用场景：不同的场景需要不同的加密方案</li></ol><p>详细内容请参考<a href="./../crypto/index">加密与解密专题</a>。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/basic/algo/struct/graph" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>图</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/basic/algo/model/recrusion" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>递归</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -147,6 +147,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -206,7 +207,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -218,8 +219,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -570,7 +570,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -629,6 +628,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

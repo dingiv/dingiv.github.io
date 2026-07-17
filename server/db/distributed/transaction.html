@@ -30,7 +30,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> retry_times </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> create_time</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></div><p>定时任务需要保证幂等性，可以通过分布式锁或任务状态标识避免重复执行。任务执行过程中如果失败，下次执行会继续处理，不会丢失消息。</p><h2 id="事务消息" tabindex="-1">事务消息 <a class="header-anchor" href="#事务消息" aria-label="Permalink to “事务消息”">​</a></h2><h3 id="消息队列支持" tabindex="-1">消息队列支持 <a class="header-anchor" href="#消息队列支持" aria-label="Permalink to “消息队列支持”">​</a></h3><p>事务消息是 RocketMQ 提供的分布式事务解决方案，核心思想是发送消息和本地事务的原子性。事务消息发送流程：发送半消息（Half Message），消息对消费者不可见。执行本地事务。提交或回滚消息，提交后消息对消费者可见，回滚后消息被删除。</p><p>如果本地事务执行失败或超时，RocketMQ 会回调事务状态检查接口，询问本地事务的执行结果。根据检查结果决定提交或回滚消息。</p><h3 id="实现原理" tabindex="-1">实现原理 <a class="header-anchor" href="#实现原理" aria-label="Permalink to “实现原理”">​</a></h3><p>RocketMQ 的事务消息实现原理是利用消息队列的存储能力，先存储半消息，然后执行本地事务，最后根据本地事务结果决定消息的最终状态。这种方式避免了本地事务和消息发送的两阶段提交，实现了最终一致性。</p><p>事务消息的应用场景包括跨服务的业务流程，订单创建后通知库存、物流、支付服务；支付成功后通知订单、积分、营销服务。相比本地消息表，事务消息不需要额外的消息表和后台任务，实现更简洁。</p><h2 id="最大努力通知" tabindex="-1">最大努力通知 <a class="header-anchor" href="#最大努力通知" aria-label="Permalink to “最大努力通知”">​</a></h2><h3 id="通知与确认" tabindex="-1">通知与确认 <a class="header-anchor" href="#通知与确认" aria-label="Permalink to “通知与确认”">​</a></h3><p>最大努力通知是一种简化的分布式事务方案，通过多次通知尝试达到最终一致。通知方发起通知，接收方确认收到通知，如果通知失败，按规则重试。这种方式不保证强一致性，但实现简单，适合对一致性要求不高的场景。</p><p>以支付回调为例：支付平台发起支付结果通知到商户，商户收到通知后返回确认。如果通知失败或超时，支付平台按一定规则重试通知。商户处理通知时需要保证幂等性，重复通知不会导致重复处理。</p><h3 id="通知策略" tabindex="-1">通知策略 <a class="header-anchor" href="#通知策略" aria-label="Permalink to “通知策略”">​</a></h3><p>通知策略包括重试次数、重试间隔、通知方式。重试次数根据业务重要性设定，通常 3-5 次。重试间隔采用指数退避，例如第 1 次 1 分钟后，第 2 次 5 分钟后，第 3 次 30 分钟后。通知方式包括同步 HTTP 调用、异步消息队列、主动查询。</p><p>最大努力通知适合支付回调、物流通知、身份验证等场景。这些场景的特点是业务重要性高，但可以容忍短时间的不一致，通过多次通知最终达到一致。</p><p>分布式事务没有银弹，不同的方案有不同的适用场景和权衡。2PC/3PC 提供强一致性但性能差，TCC/SAGA 适合长事务但开发成本高，本地消息表和事务消息提供最终一致性但需要业务配合。根据业务特点选择合适的方案，在一致性和可用性之间找到平衡点。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/server/db/distributed/sharding" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>分库分表</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/server/db/distributed/newsql" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>NewSQL 数据库</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -44,6 +44,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -103,7 +104,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -115,8 +116,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -467,7 +467,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -526,6 +525,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

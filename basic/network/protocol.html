@@ -26,7 +26,7 @@
 <span class="line"><span>&lt;请求头：键值对&gt;</span></span>
 <span class="line"><span>&lt;空行&gt;</span></span>
 <span class="line"><span>&lt;请求体&gt;</span></span></code></pre></div></li></ol><p>HTTP/2 引入了二进制帧层、多路复用、头部压缩（HPACK）、服务器推送等特性，解决了 HTTP/1.1 的队头阻塞问题。HTTP/3 基于 QUIC 协议（使用 UDP）解决了 TCP 层面的队头阻塞问题。</p><h3 id="ssl-tls" tabindex="-1">SSL/TLS <a class="header-anchor" href="#ssl-tls" aria-label="Permalink to “SSL/TLS”">​</a></h3><p>SSL（Secure Sockets Layer）及其继任者 TLS（Transport Layer Security）是保障网络通信安全的核心协议。它们位于传输层和应用层之间，为应用层协议（如 HTTP、SMTP、POP3、IMAP）提供数据加密、身份验证和数据完整性保护。TLS 1.3 是当前最新版本，相比之前的版本有显著的安全性和性能改进。</p><p>TLS 握手过程分为几个阶段：首先客户端发送 ClientHello 消息，包含支持的加密套件和随机数；服务器回复 ServerHello 消息，选择加密套件并发送证书和随机数；双方使用交换的随机数和预主密钥计算会话密钥；客户端发送 Finished 消息验证握手过程，服务器也发送 Finished 消息完成握手。TLS 1.3 将握手过程简化为 1-RTT，并支持 0-RTT 快速恢复。</p><p>TLS 支持多种密码套件，包括密钥交换算法（如 RSA、ECDHE）、身份验证算法（如 RSA、ECDSA）、对称加密算法（如 AES-GCM、ChaCha20-Poly1305）和消息认证算法（如 HMAC）。前向保密是现代 TLS 的重要特性，即使服务器的长期私钥泄露，过去的会话密钥仍然安全。</p><h3 id="ssh" tabindex="-1">SSH <a class="header-anchor" href="#ssh" aria-label="Permalink to “SSH”">​</a></h3><p>SSH（Secure Shell）是一种用于远程登录和安全通信的加密协议，主要用于在不安全的网络（如互联网）上安全地管理远程服务器。它的核心作用是提供加密的远程访问，防止密码和数据在传输过程中被窃听或篡改。SSH 使用 TCP 端口 22，支持多种认证方式包括密码认证、公钥认证、主机认证、键盘交互认证等。</p><p>SSH 协议分为三层：传输层协议提供服务器认证、数据加密和数据完整性保护；用户认证协议验证客户端身份；连接协议将加密通道复用为多个逻辑通道，支持交互式会话、端口转发、文件传输（SFTP、SCP）等功能。</p><h4 id="ssh-端口转发" tabindex="-1">SSH 端口转发 <a class="header-anchor" href="#ssh-端口转发" aria-label="Permalink to “SSH 端口转发”">​</a></h4><p>SSH 转发基于两个目的：代理和加密。当客户端无法直接连接服务端的时候，转发和代理服务就显得重要；当你使用的应用层协议没有自带的加密机制时，可以使用 SSH 进行套壳从而达到加密效果。</p><p><strong>本地转发</strong>将本地机器 A 的端口 p1 映射为远程服务端 C 的某个端口 p2，用于让本地的应用通过访问本地端口 p1 从而连接远程 C 的端口 p2 上的服务，并且获得加密效果。此时，我们需要引入一个 SSH 中介服务器 B，A 通过 SSH 与 B 建立连接，让 B 代为访问 C，然后将 C 的端口映射到 A 的本地。命令格式为：</p><div class="language-"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span>ssh -L &lt;主机A端口p1&gt;:&lt;主机C&gt;:&lt;主机C端口p2&gt; &lt;主机B的username&gt;@&lt;主机B的hostname&gt;</span></span></code></pre></div><p><strong>远程转发</strong>将远程机器的端口映射到本地机器的端口，适用于远程机器无法主动建立 SSH 连接的场景。命令格式为：</p><div class="language-"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span>ssh -R &lt;远程端口&gt;:&lt;本地目标&gt;:&lt;本地端口&gt; &lt;远程主机&gt;</span></span></code></pre></div><p><strong>动态转发</strong>将 SSH 服务器配置为 SOCKS 代理，客户端通过 SOCKS 协议指定目标地址和端口，SSH 服务器代为建立连接并转发数据。命令格式为：</p><div class="language-"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span>ssh -D &lt;本地端口&gt; &lt;SSH服务器&gt;</span></span></code></pre></div><p>动态转发本质上是在本地创建一个 SOCKS 代理服务器，当应用程序通过这个代理发送请求时，SSH 客户端会将请求通过 SSH 加密通道发送到 SSH 服务器，由 SSH 服务器代为连接目标服务器并将数据返回。这种方式适用于需要访问多个远程服务器的场景，不需要为每个服务配置单独的转发规则。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/basic/network/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>网络协议</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/basic/network/ether" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>以太网</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -40,6 +40,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -99,7 +100,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -111,8 +112,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -463,7 +463,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -522,6 +521,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

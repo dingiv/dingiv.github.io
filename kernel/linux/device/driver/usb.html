@@ -167,7 +167,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    .write </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> my_usb_write,</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    .unlocked_ioctl </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> my_usb_ioctl,</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></div><p>USB 设备类的 <code>fops</code> 与普通字符设备驱动的 <code>file_operations</code> 完全一致。在 <code>read</code> 和 <code>write</code> 中，驱动通过提交 urb（同步或异步）完成与 USB 设备的数据交换。这种模式将 USB 总线细节封装在驱动内部，用户空间只需像读写普通文件一样操作 <code>/dev/my_usb0</code> 即可。</p><p>另一种方式是使用 <code>usbfs</code>（也称为 <code>usbdevfs</code>），内核将 USB 设备的控制权直接暴露给用户空间，由用户空间程序（如 libusb）直接提交 ioctl 来控制设备。这种方式常用于不需要内核驱动的场景，如固件升级工具、设备调试工具等。</p><h2 id="调试与工具" tabindex="-1">调试与工具 <a class="header-anchor" href="#调试与工具" aria-label="Permalink to “调试与工具”">​</a></h2><p>USB 驱动调试常用的工具和方法：</p><ul><li><code>lsusb</code>：列出系统中所有 USB 设备及其厂商 ID、产品 ID、设备类等基本信息，配合 <code>-v</code> 参数可以查看完整的设备描述符和配置描述符。</li><li><code>usbmon</code>：内核自带的 USB 流量抓包工具，通过 <code>debugfs</code> 接口导出，可以捕获总线上所有 USB 传输的细节，类似于网络抓包的 tcpdump。</li><li><code>dmesg</code>：查看内核 USB 子系统的日志输出，包括设备枚举过程、驱动绑定事件、传输错误等。</li><li><code>CONFIG_USB_DEBUG</code>：内核配置选项，开启 USB 核心层的调试信息输出。</li><li><code>usbdevfs</code>：通过 <code>ioctl</code> 从用户空间直接与 USB 设备交互，常配合 libusb 使用，适合不编写内核驱动的场景。</li></ul><p>设备枚举失败时，首先用 <code>lsusb -v</code> 确认设备是否被识别以及描述符是否正确。驱动 probe 未触发时，检查 <code>id_table</code> 的匹配条件是否与设备描述符一致。传输超时或错误时，使用 <code>usbmon</code> 抓包分析总线上的实际传输情况。设备热插拔后驱动未自动加载，检查 <code>MODULE_DEVICE_TABLE</code> 是否正确导出以及 udev 规则是否配置了 modalias 匹配。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/device/driver/pci" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>PCIe 驱动</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/device/lifecycle" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>生命周期</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -181,6 +181,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -240,7 +241,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -252,8 +253,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -604,7 +604,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -663,6 +662,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

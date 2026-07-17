@@ -59,7 +59,7 @@
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(fd);</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>还有其他模块</p><ul><li>GEM (Graphics Execution Manager)，定义：显存管理子系统。分配和管理显存中的缓冲区（Buffer Objects，BO）。支持帧缓冲区、纹理、顶点数据。提供共享内存（如 DMA-BUF）给 Wayland/X11。Skia 的 Vulkan 后端通过 GEM 分配纹理。Cycles 用 GEM 管理 GPU 内存。</li><li>TTM (Translation Table Maps)，定义：显存分页管理（较老，部分 GPU 使用）。处理显存不足时的交换（GPU 到系统内存）。优化内存分配。新 GPU（如 AMD、Intel）更依赖 GEM。</li><li>Vendor-Specific Drivers，作用：实现 DRM 的硬件特定逻辑。抽象硬件细节，提供统一的 DRM API。</li><li>DMA-BUF，定义：跨设备缓冲区共享机制。Flutter 的 Skia Vulkan 后端通过 DMA-BUF 提交渲染结果。</li></ul><h4 id="drm-在视图系统中的工作流程" tabindex="-1">DRM 在视图系统中的工作流程 <a class="header-anchor" href="#drm-在视图系统中的工作流程" aria-label="Permalink to “DRM 在视图系统中的工作流程”">​</a></h4><p>以 GPU 加速场景为例，DRM 如何协作：</p><ul><li>初始化：Wayland 合成器（Mutter）打开 /dev/dri/card0。KMS 检测显示器，设置 1920x1080@60Hz。</li><li>渲染：Flutter（Skia）用 Vulkan 渲染 UI，GEM 分配显存。Cycles 用 CUDA 调用 DRM，计算光线追踪。</li><li>显示：渲染结果存入帧缓冲区（显存）。KMS 通过 CRTC 输出到 HDMI。</li><li>输入：DRM 配合 evdev（/dev/input）传递鼠标/键盘事件。Mutter 分发给 Flutter 窗口。</li></ul><h2 id="完整绘制流程" tabindex="-1">完整绘制流程 <a class="header-anchor" href="#完整绘制流程" aria-label="Permalink to “完整绘制流程”">​</a></h2><ol><li><p>生产阶段：App 进程的“私下操作”</p><p>在 App 进程中，渲染引擎（如 Skia 或游戏引擎）并不会直接和屏幕对话。</p><p>分配 Buf：App 调用图形 API（Vulkan/EGL），驱动程序会在显存中申请一块内存（Buffer）。</p><p>计算存储：GPU 接收指令，将渲染结果（像素数据）填入这个 Buffer。</p><p>导出句柄：重点来了。由于 Linux 进程间内存是隔离的，App 必须通过 dma-buf 机制，将这块显存导出为一个文件描述符（File Descriptor, FD）。</p><p>类比：你做了一桌菜（Buffer），你没法把桌子搬走，但你给了 Wayland 一把房间的钥匙（FD）。</p></li><li><p>传递阶段：Wayland 的“协议握手”</p><p>App 渲染完一帧后，会通过 Wayland 协议 发送一个请求（通常是 wl_surface.commit）：</p><p>发送 FD：App 把刚才那个 dma-buf 的 FD 发给 Wayland 进程。</p><p>元数据同步：同时告知 Wayland 这个 Buffer 的尺寸、像素格式（如 RGBA8888）以及步长（Stride）。</p><p>同步栅栏（Fence）：App 还会发送一个“栅栏”，告诉 Wayland：“Buffer 还在写入中，等这个栅栏信号亮了，你再动它。”</p></li><li><p>合成与显示：Wayland 进程的“接力”</p><p>Wayland 进程（Compositor，如 GNOME 的 Mutter）收到通知后：</p><p>导入 Buf：Wayland 调用图形 API（Vulkan/OpenGL），通过 dma-buf 接口直接把 App 的那块显存挂载到自己的渲染管线中。</p><p>合成（Compositing）：Wayland 把你的 App 窗口（现在只是它的一张纹理）、背景墙纸、其他窗口，通过 GPU 进行一次“大拼装”，生成最终的一张覆盖全屏的 屏幕 Buffer。</p><p>放入 DRM：Wayland 调用 libdrm。它通过 drmModePageFlip 或现代的 Atomic KMS 接口，告诉内核中的 DRM 模块：“嘿，这块新的 Buffer 已经合好了，下次显示扫描时，直接读这个地址。”</p><p>显示刷新：显示器硬件在下一次 VSync（垂直同步）信号到来时，直接从显存中读取该 Buffer，像素就这样亮了起来。</p></li></ol><p>步骤,操作主体,关键技术,本质</p><ol><li>绘制,App (Client),Vulkan / OpenGL,填充显存</li><li>分享,App → Wayland,dma-buf (FD),跨进程传递显存钥匙</li><li>合成,Wayland (Server),Vulkan / OpenGL,纹理叠加</li><li>显示,Wayland → Kernel,DRM / KMS,显存地址翻转 (Flip)</li></ol></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/syscall/process" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>进程管理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/video/terminal" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>终端系统</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -73,6 +73,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -132,7 +133,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -144,8 +145,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -496,7 +496,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -555,6 +554,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

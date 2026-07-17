@@ -37,7 +37,7 @@
 <span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    response_mode</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;tree_summarize&#39;</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">response </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> query_engine.query(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;蒂姆·库克投资了哪些医疗公司？&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><p>LlamaIndex 的特色是支持多种查询模式：keyword 模式基于实体名称精确匹配，embedding 模式用向量化检索（适合实体名称不确定的场景），hybrid 模式结合两者。检索到的子图可以用不同的方式组织答案：tree_summarize 按树结构汇总，no_text 只返回结构化数据，raw 返回原始三元组。</p><h2 id="多跳推理优化" tabindex="-1">多跳推理优化 <a class="header-anchor" href="#多跳推理优化" aria-label="Permalink to “多跳推理优化”">​</a></h2><p>多跳推理是 GraphRAG 的核心优势，也是技术难点。查询&quot;埃隆·马斯克收购的公司有哪些关联 Twitter 的业务&quot;，需要从马斯克到 X 公司（原名 Twitter），到收购的公司（Twitter、SolarCity、?），再到这些公司的关联业务。推理路径可能长达 5-6 跳，中间节点呈指数增长，需要剪枝策略。</p><p>路径排序是关键。不是所有路径都有用，需要根据相关性评分。评分标准包括：路径长度（越短越相关）、关系置信度（关系抽取模型给出的概率）、实体重要性（PageRank、度中心性）。可以用强化学习训练路径选择策略，用人工标注的相关路径作为奖励信号。</p><p>子图扩展策略影响召回率和效率。宽度优先搜索（BFS）均匀扩展所有邻域，适合查询关系简单的情况。深度优先搜索（DFS）沿着最相关的路径深入，适合复杂推理。自适应扩展根据中间节点的类型和关系动态调整，遇到高置信度关系就深入，遇到低置信度就回溯。</p><h2 id="混合检索" tabindex="-1">混合检索 <a class="header-anchor" href="#混合检索" aria-label="Permalink to “混合检索”">​</a></h2><p>GraphRAG 不应该替代向量检索，而是与之互补。向量检索擅长语义相似度匹配（&quot;关于人工智能的文档&quot;），图检索擅长关系推理（&quot;人工智能的创始人是谁&quot;）。混合检索可以同时查询向量库和图数据库，合并去重后排序返回。</p><p>融合策略需要设计权重。对于事实性查询（&quot;谁发明了相对论&quot;），图检索应该有更高权重；对于概念性查询（&quot;解释相对论&quot;），向量检索更重要。可以用 LLM 分析查询类型，动态调整权重。或者用学习排序模型，基于历史查询的点击率训练融合权重。</p><h2 id="应用场景" tabindex="-1">应用场景 <a class="header-anchor" href="#应用场景" aria-label="Permalink to “应用场景”">​</a></h2><p>企业知识管理是 GraphRAG 的天然场景。公司内部有大量文档（产品手册、技术文档、会议记录），构建企业知识图谱后，员工可以查询&quot;谁负责这个项目&quot;、&quot;这个功能依赖哪些模块&quot;等关系问题，比关键词搜索更智能。</p><p>医疗问答需要精确的因果关系。&quot;阿司匹林能和什么药一起吃&quot;需要药物相互作用的知识，向量检索可能返回错误答案，图谱可以明确存储药物相互作用关系。医疗图谱的构建需要专业医生参与，确保关系的准确性。</p><p>金融风控利用知识图谱检测欺诈行为。欺诈团伙往往有复杂的关联网络（共享设备、共用地址、资金流转），图算法可以识别异常模式（短时间内多个账户汇入同一账户）。传统方法基于规则，GraphRAG 可以结合 LLM 理解新型欺诈模式。</p><p>事实核查是另一个重要场景。检测言论的真伪需要验证其与已知知识的关系。&quot;地球是平的&quot;与科学知识库中的&quot;地球是球体&quot;矛盾，可以通过图查询快速发现冲突。新闻机构可以用 GraphRAG 自动核查报道中的事实主张。</p><p>GraphRAG 代表了 RAG 技术的新方向，它弥补了纯向量检索在推理能力的不足，让 AI 应用能够处理更复杂的问题。挑战在于知识图谱的构建成本高、领域特定性强，但随着开源图谱的丰富和构建工具的成熟，GraphRAG 会在更多场景落地。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/overlay/rag/embedding" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>Embedding</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/overlay/rag/agentic_rag" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Agentic RAG</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -51,6 +51,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -110,7 +111,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -122,8 +123,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -474,7 +474,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -533,6 +532,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

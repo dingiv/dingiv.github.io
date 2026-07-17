@@ -50,7 +50,7 @@
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">   X = pat ;</span></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">   X = jim ;</span></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">   X = tim. */</span></span></code></pre></div><p>这个示例展示了符号 AI 的核心特点。开发者只需声明基本事实和推理规则，引擎自动完成所有搜索和推导工作。当我们查询 <code>ancestor(tom, pat)</code> 时，引擎自动搜索路径：tom 是 bob 的父母，bob 是 pat 的父母，因此 tom 是 pat 的祖先。整个推理过程无需显式编写循环或递归调用，完全由 Prolog 的搜索机制完成。</p><p>对比 Python 实现，开发者需要显式编写递归函数、管理遍历逻辑、处理边界条件。两种实现的功能相同，但 Prolog 版本更接近领域知识的自然表达。</p><h2 id="lisp-与符号操纵" tabindex="-1">Lisp 与符号操纵 <a class="header-anchor" href="#lisp-与符号操纵" aria-label="Permalink to “Lisp 与符号操纵”">​</a></h2><p>Lisp 是早期 AI 的主流语言，从 1958 年起就成为符号 AI 的首选工具。代码即数据的设计使得程序可以像处理数据一样处理代码结构，元编程和递归处理符号表达式非常自然。Lisp 的符号表达式（S-expression）是树形结构，适合表示语法树、逻辑公式等复杂符号结构。</p><p>早期 AI 程序多用 Lisp 实现，包括逻辑理论家程序、通用问题求解器等。Lisp 的动态类型、垃圾回收、高阶函数等特性在当时的编程环境中是革命性的，这些特性后来影响了 Python、Ruby 等现代语言。</p><h2 id="专家系统架构" tabindex="-1">专家系统架构 <a class="header-anchor" href="#专家系统架构" aria-label="Permalink to “专家系统架构”">​</a></h2><p>典型专家系统由三个组件构成：知识库、推理引擎和用户界面。知识库存储规则和事实，推理引擎应用规则进行推理，用户界面接受查询并展示推理过程。MYCIN 用 Lisp 实现规则链，能够解释推理依据，这种可解释性是现代黑盒模型所缺乏的。DENDRAL 用符号匹配分析化学结构，展示了符号系统在科学发现中的潜力。</p><h2 id="实现挑战" tabindex="-1">实现挑战 <a class="header-anchor" href="#实现挑战" aria-label="Permalink to “实现挑战”">​</a></h2><p>纯符号 AI 的编程虽然优雅，但在工程实践中面临严峻挑战。知识获取瓶颈意味着每条规则都需要专家与知识工程师紧密合作，专家的隐性知识难以显式化为规则。脆性问题是致命伤，规则只能覆盖预见到的情况，遇到边界场景就会崩溃。规模问题指规则数量随问题复杂度呈指数增长，几万条规则的系统难以维护。</p><p>正是这些挑战导致符号 AI 在 2012 年后让位于连接主义。但符号方法的价值并未消失，在法律推理、数学证明、安全关键系统等需要可解释性和精确推理的场景中仍然不可替代。现代神经符号融合试图结合两者的优势，这可能是通往更强大 AI 的必经之路。</p><hr><h2 id="编程对比" tabindex="-1">编程对比 <a class="header-anchor" href="#编程对比" aria-label="Permalink to “编程对比”">​</a></h2><table tabindex="0"><thead><tr><th>方面</th><th>符号 AI（如 Prolog）</th><th>普通编程语言（如 Python）</th></tr></thead><tbody><tr><td>核心范式</td><td>声明式：描述&quot;是什么&quot;</td><td>命令式：描述&quot;怎么做&quot;</td></tr><tr><td>知识表示</td><td>知识库与推理引擎分离</td><td>逻辑硬编码在控制流中</td></tr><tr><td>执行机制</td><td>引擎自动搜索、匹配、演绎</td><td>按固定顺序或分支执行</td></tr><tr><td>灵活性</td><td>修改知识库即可改变行为</td><td>修改逻辑需重写代码</td></tr><tr><td>通用性</td><td>目标是通用推理能力</td><td>解决特定问题</td></tr><tr><td>解释性</td><td>推理过程可追溯</td><td>需要额外调试或日志</td></tr></tbody></table></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/symbol/outline" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>学习路线</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/symbol/logic" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>数理逻辑基础</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -64,6 +64,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -123,7 +124,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -135,8 +136,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -487,7 +487,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -546,6 +545,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

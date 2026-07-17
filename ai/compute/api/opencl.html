@@ -52,7 +52,7 @@
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">clEnqueueNDRangeKernel</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(queue, kernel, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">global_size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">clEnqueueReadBuffer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(queue, z_buf, CL_TRUE, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, n </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">float</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), z, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></div><p>OpenCL 的内存模型比 CUDA 更复杂，分为 global memory（全局内存）、constant memory（常量内存）、local memory（局部内存，类似 CUDA 的 shared memory）、private memory（私有内存，类似寄存器）。优化 OpenCL kernel 的关键是使用 local memory 缓存频繁访问的数据，以及保证 global memory 的合并访问。</p><h2 id="跨平台能力" tabindex="-1">跨平台能力 <a class="header-anchor" href="#跨平台能力" aria-label="Permalink to “跨平台能力”">​</a></h2><p>OpenCL 的核心价值是<strong>跨平台</strong>。同一份 OpenCL 代码可在 NVIDIA GPU、AMD GPU、Intel CPU、Apple Silicon、甚至 FPGA 上运行，只需针对不同平台编译。这在理论上极大降低了代码移植成本，是 OpenCL 初期能够吸引大量开发者的原因。</p><p>然而，跨平台的代价是<strong>性能妥协</strong>。OpenCL 的抽象级别高于 CUDA，无法暴露硬件特定的特性（如 NVIDIA 的 Tensor Core、AMD 的 wave32/wave64）。为了保证跨平台兼容性，OpenCL 程序通常只能使用硬件的通用能力，难以榨干硬件性能。这使得 OpenCL 在性能敏感的场景（如深度学习训练）中被厂商专用 API 取代。</p><h2 id="生态现状" tabindex="-1">生态现状 <a class="header-anchor" href="#生态现状" aria-label="Permalink to “生态现状”">​</a></h2><p>OpenCL 的生态现状可以用&quot;逐渐式微&quot;来形容。NVIDIA 虽然仍支持 OpenCL，但已停止更新，最新版本停留在 OpenCL 1.2（2011 年），远落后于 Khronos 的 OpenCL 3.0（2020 年）。AMD 和 Intel 仍在积极维护 OpenCL 实现，但两者的重心已转移到自己的专用 API（AMD 的 ROCm/HIP、Intel 的 oneAPI/SYCL）。</p><p>深度学习框架对 OpenCL 的支持也很有限。PyTorch 的 OpenCL 后端从未进入主分支，只能通过第三方库（如 <code>torch-opencl</code>）使用。TensorFlow 的 OpenCL 后端在 2.0 版本后被移除。主流框架（PyTorch、TensorFlow、JAX）都优先支持 CUDA，其次是 ROCm 和 oneAPI，OpenCL 通常是最后选项。</p><p>OpenCL 在以下场景仍有一定价值：</p><ul><li><strong>跨平台科学计算</strong>：如流体力学、分子动力学等 HPC 领域，代码需要在多种硬件上运行</li><li><strong>嵌入式和边缘设备</strong>：如支持 OpenCL 的移动 GPU（Mali、Adreno）、FPGA 加速卡</li><li><strong>原型验证</strong>：快速验证算法在多种硬件上的可行性，无需为每种平台重写代码</li></ul><h2 id="spir-v" tabindex="-1">SPIR-V <a class="header-anchor" href="#spir-v" aria-label="Permalink to “SPIR-V”">​</a></h2><p>SPIR-V（Standard Portable Intermediate Representation）是 OpenCL 生态的重要组成部分。它是一种中间表示格式，类似于 CUDA 的 PTX，可将 OpenCL C 代码编译为与硬件无关的二进制，然后在运行时由驱动编译为目标设备的机器码。</p><p>SPIR-V 的优势在于<strong>分发便捷</strong>。开发者可以发布 SPIR-V 二进制而非源代码，保护知识产权的同时保证跨平台兼容。SPIR-V 也被 Vulkan 采用（作为着色器的中间表示），这使得 OpenCL 和 Vulkan 可以共享编译工具链。</p><p>然而，SPIR-V 的推广并不顺利。NVIDIA 的 CUDA 不支持 SPIR-V（CUDA 只接受 PTX，SPIV-R 目前主要是图形侧在用），AMD 的 ROCm 虽然支持 SPIR-V，但性能不如 HIP。Khronos 推出的 SYCL（基于 C++ 的并行编程语言）使用 SPIR-V 作为中间表示，但 SYCL 的生态同样不温不火。</p><h2 id="与-cuda-对比" tabindex="-1">与 CUDA 对比 <a class="header-anchor" href="#与-cuda-对比" aria-label="Permalink to “与 CUDA 对比”">​</a></h2><table tabindex="0"><thead><tr><th>特性</th><th>OpenCL</th><th>CUDA</th></tr></thead><tbody><tr><td>制定方</td><td>Khronos（开放标准）</td><td>NVIDIA（专有）</td></tr><tr><td>支持硬件</td><td>NVIDIA GPU、AMD GPU、Intel CPU、FPGA 等</td><td>仅 NVIDIA GPU</td></tr><tr><td>编程语言</td><td>OpenCL C（C 的子集）</td><td>CUDA C++（C++ 的扩展）</td></tr><tr><td>抽象级别</td><td>高（跨平台兼容）</td><td>低（贴近硬件）</td></tr><tr><td>性能</td><td>中等（难以榨干硬件）</td><td>高（可极致优化）</td></tr><tr><td>生态支持</td><td>逐渐式微</td><td>主导地位</td></tr><tr><td>工具链</td><td>开源多样</td><td>NVIDIA 官方工具完善</td></tr></tbody></table><p>OpenCL 的失败揭示了跨平台计算 API 的困境：硬件差异化太大，统一抽象难以兼顾性能。各厂商为了竞争，不断推出硬件特有功能（如 Tensor Core、ray tracing core），这些功能无法被标准 API 及时纳入，导致厂商 API 总是领先标准 API 一代以上。</p><h2 id="未来展望" tabindex="-1">未来展望 <a class="header-anchor" href="#未来展望" aria-label="Permalink to “未来展望”">​</a></h2><p>OpenCL 的未来并不乐观。Khronos 已将重心转移到 Vulkan（图形）和 SYCL（计算），OpenCL 的更新频率显著降低。对于新项目，建议优先选择以下方案：</p><ul><li><strong>NVIDIA GPU</strong>：使用 CUDA 或 Triton</li><li><strong>AMD GPU</strong>：使用 ROCm/HIP</li><li><strong>Intel GPU/CPU</strong>：使用 oneAPI/SYCL</li><li><strong>跨平台需求</strong>：考虑 SYCL 或等待 Triton 的跨平台支持</li></ul><p>OpenCL 作为先行者，为跨平台并行计算积累了宝贵经验。它的失败教训也启发了后来的 Triton：跨平台 API 必须以性能为前提，而非单纯追求抽象统一。Triton 通过自动调优和编译期优化，在保持易用性的同时接近手写性能，这可能是跨平台计算 API 的正确方向。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/api/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>标准接口</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/api/cpu" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>SIMD</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -66,6 +66,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -125,7 +126,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -137,8 +138,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -489,7 +489,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -548,6 +547,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

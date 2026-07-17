@@ -48,7 +48,7 @@
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  vertical-align</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">top</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  font-size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">15</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">px</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p><img src="/assets/inheritance.D1UMIsMU.png" alt="执行效果" width="1048" height="513"></p><h2 id="属性计算" tabindex="-1">属性计算 <a class="header-anchor" href="#属性计算" aria-label="Permalink to “属性计算”">​</a></h2><p>对于任意一个元素，从 CSS 源码到最终的元素属性，需要经过多个步骤，并且最终为每一个 CSS 属性计算出值，不得为空。因此，CSS 属性值分为三个阶段：<strong>指定值、计算值和实际值</strong>。</p><ul><li>指定值说的是在代码中书写的 CSS 规则，它可以有很多个。</li><li>计算值是指浏览器根据多个 CSS 规则计算出来的值，其中还要包括对于继承的属性的计算，计算值是一个精确的绝对单位的值，只有一个，例如：所有的长度和尺寸相关的 CSS 属性最终都会变成一个具体的指定具体的多少 <code>px</code>。</li><li>实际值还会考虑真正绘制到屏幕上时元素的真实效果，这个真实效果可能受到布局、显示、特效、动画的影响，从计算值到实际还需要经过实际的渲染，这个值是最终呈现在屏幕上的效果。</li></ul><h3 id="计算过程" tabindex="-1">计算过程 <a class="header-anchor" href="#计算过程" aria-label="Permalink to “计算过程”">​</a></h3><ol><li><p>声明，扫描和解析所有 css 源码，为该元素初始化已经被声明的属性</p></li><li><p>层叠 如果某个属性出现了多次，被重复声明和定义，那么，需要先进行重要性校验；一般地，</p><div class="language-"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span>!important 修饰的浏览器样式 &gt; !important 修饰的作者样式 &gt; 普通作者样式 &gt; 普通浏览器样式</span></span></code></pre></div><p>然后，对于同一类的样式，根据选择性的 Specificity 高低来决定谁被采用；</p></li><li><p>继承，如果元素的某个属性没有被声明，那么看这个属性是否是一个可继承的属性，如果是，那么就是从父元素进行继承；</p></li><li><p>默认，如果一个属性依然没有值那么则使用 W3 标准中定义的默认值。</p></li></ol></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/web/css/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>CSS</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/web/css/sass" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Sass</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -62,6 +62,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -121,7 +122,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -133,8 +134,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -485,7 +485,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -544,6 +543,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

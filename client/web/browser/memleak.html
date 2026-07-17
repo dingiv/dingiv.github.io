@@ -77,7 +77,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> &lt;</span><span style="--shiki-light:#11782a;--shiki-dark:#85E89D;">div</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ref</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{chartRef} </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">style</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{{ width: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">600</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, height: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">400</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }} /&gt;</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>富文本编辑器（如 Quill、TipTap、TinyMCE）的情况类似。编辑器在初始化时会创建大量内部 DOM 节点和事件监听器，如果组件卸载时没有调用销毁方法，这些内部状态全部会留在内存中。动画库（GSAP、Lottie）在运行动画时可能通过 <code>requestAnimationFrame</code> 持有对 DOM 元素的引用，如果动画未在组件销毁时停止，引用也不会被释放。</p><p>WebSocket 客户端和 SSE（Server-Sent Events）连接是另一类常见问题。连接建立后，客户端会持续接收服务端推送的消息，消息回调通常持有业务上下文。如果组件卸载时不断开连接，不仅回调闭包持有的数据不会被释放，连接本身也会持续消耗系统资源。</p><p>排查第三方库泄漏的思路与其他泄漏相同——在 Memory 面板中找到泄漏对象的 Retainers 引用链，如果引用链指向了某个第三方库的内部变量或回调，就说明需要在该库的销毁阶段手动调用清理方法。具体需要调用什么方法取决于库的文档——大多数成熟的库都提供了 <code>destroy</code>、<code>dispose</code>、<code>disconnect</code>、<code>cleanup</code> 之类的销毁 API，关键是确保在组件的卸载钩子中调用它们。</p><h2 id="排查方法" tabindex="-1">排查方法 <a class="header-anchor" href="#排查方法" aria-label="Permalink to “排查方法”">​</a></h2><h3 id="从现象到假设" tabindex="-1">从现象到假设 <a class="header-anchor" href="#从现象到假设" aria-label="Permalink to “从现象到假设”">​</a></h3><p>内存泄漏通常不是直接被发现的，而是通过间接现象察觉：页面打开时间越长越卡顿，Performance 面板中 JS Heap 曲线呈阶梯式上升且从不回落，或者移动端页面使用一段时间后触发浏览器的内存警告甚至白屏崩溃。</p><p>确认泄漏的第一步是建立基线。在 Chrome DevTools 的 Performance 面板中录制一段包含用户典型操作的交互过程，观察 JS Heap 的变化曲线。如果内存在每次执行某个操作后都增长一段但从不回落（呈阶梯状），就可以高度怀疑该操作触发了内存泄漏。记录下具体是哪个操作导致了内存增长，作为后续深入排查的线索。</p><h3 id="堆快照对比" tabindex="-1">堆快照对比 <a class="header-anchor" href="#堆快照对比" aria-label="Permalink to “堆快照对比”">​</a></h3><p>堆快照对比是定位泄漏对象的标准手段。操作步骤如下：在页面初始状态拍下快照 1 作为基线；反复执行疑似泄漏的操作（如打开关闭弹窗 10 次、切换路由 10 次等），拍下快照 2；点击垃圾桶图标强制触发 GC，拍下快照 3。</p><p>使用 Memory 面板的 Comparison 视图，将快照 3 与快照 1 进行对比。面板会列出两张快照之间新增的对象（New）、删除的对象（Deleted）以及数量变化（Delta）。重点关注 Delta 为正且数值较大的对象类型。如果反复打开关闭弹窗 10 次后，某个组件的构造函数实例增加了 10 个，且这些实例没有被删除，就可以确认该组件在销毁时没有被正确清理。</p><p>在确认了泄漏的对象类型后，选中其中一个实例，查看底部的 Retainers（持有者引用链）面板。Retainers 从目标对象向上追溯，列出所有持有其引用的变量和闭包，形成一条完整的引用链。引用链的起点通常是某个全局变量、事件监听器回调或闭包捕获变量——这就是需要修复的泄漏点。</p><div class="language-text"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span>示例 Retainers 引用链：</span></span>
 <span class="line"><span>HTMLDivElement → window.eventHandler (closure) → handler.scopeVars → componentInstance.data</span></span></code></pre></div><h3 id="allocation-timeline-追踪" tabindex="-1">Allocation Timeline 追踪 <a class="header-anchor" href="#allocation-timeline-追踪" aria-label="Permalink to “Allocation Timeline 追踪”">​</a></h3><p>当已知某个操作会导致内存增长但不确定具体是哪段代码分配了内存时，可以使用 Allocation Timeline。启动录制后执行该操作，面板会以时间轴的形式展示内存分配的动态过程。</p><p>查看柱状图中与操作时刻对应的蓝色条目（新分配的内存），底部的构造函数列表会显示这些新分配对象的类型和大小。结合源码中的调用关系，可以判断是哪个函数创建了这些对象。与堆快照对比的定位精度不同，Allocation Timeline 更适合用于&quot;缩小排查范围&quot;——先确定泄漏对象的大致类型和创建时机，再用堆快照做精确定位。</p><h2 id="线上监控" tabindex="-1">线上监控 <a class="header-anchor" href="#线上监控" aria-label="Permalink to “线上监控”">​</a></h2><p>线上环境中的内存泄漏排查比本地困难得多，因为无法在用户的浏览器中打开 DevTools。线上监控依赖的是浏览器暴露的 <code>performance.memory</code> API（Chrome 专有）和自研的内存上报机制。</p><p><code>performance.memory.usedJSHeapSize</code> 返回当前 JS 堆的使用量。可以在应用中定期采样（如每 30 秒采集一次），将内存数据上报到服务端。结合用户的操作日志（路由切换、弹窗打开关闭等事件），可以在线上复现本地难以复现的泄漏场景。当内存使用量超过预设阈值时，也可以在前端触发告警通知，提醒用户刷新页面释放内存。</p><p>Long Tasks API 和 <code>reportError</code> 等前端可观测性手段也可以间接反映内存问题——当内存紧张时，GC 的频率和耗时都会增加，Long Tasks 的数量可能上升。虽然这不是直接监控内存的方式，但可以作为辅助信号帮助判断是否存在内存问题。</p><h2 id="预防策略" tabindex="-1">预防策略 <a class="header-anchor" href="#预防策略" aria-label="Permalink to “预防策略”">​</a></h2><p>预防内存泄漏比事后排查成本低得多。在工程实践中，养成以下习惯可以避免绝大多数泄漏问题。</p><p>在组件销毁生命周期中清理所有副作用。Vue 3 的 <code>onUnmounted</code>、React 的 <code>useEffect</code> 返回函数、Svelte 的 <code>$effect</code> 清理函数等框架机制都是为了这个目的设计的。每个在 <code>mounted</code>/<code>onMounted</code> 中注册的监听器、定时器、WebSocket 连接，都应该在对应的销毁钩子中显式移除。可以将监听器的注册和移除封装为统一的工具函数，减少遗漏的可能性。</p><p>对于缓存，明确缓存的生命周期和容量上限。使用 LRU 缓存限制条目数量，或使用 <code>WeakMap</code>/<code>WeakRef</code> 让 GC 自动管理缓存条目的生命周期。<code>WeakRef</code> 是 ES2021 引入的弱引用包装器，可以创建对对象的弱引用并通过 <code>.deref()</code> 方法访问原始对象，当原始对象被 GC 回收后 <code>.deref()</code> 返回 <code>undefined</code>。</p><p>在 Code Review 中将内存管理作为审查项之一。重点关注全局事件监听器、闭包捕获大对象、未设限的缓存增长、WebSocket/EventSource 连接未断开等模式。很多内存泄漏不是设计问题，而是开发者在编码过程中遗漏了清理逻辑，通过 Review 可以在合并前拦截。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/web/browser/http" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>HTTP 协议</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/web/browser/optimize" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>性能优化</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -91,6 +91,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -150,7 +151,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -162,8 +163,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -514,7 +514,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -573,6 +572,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

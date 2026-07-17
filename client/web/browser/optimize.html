@@ -35,7 +35,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  )</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { startIndex, endIndex }</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>当列表项高度不固定时（如朋友圈、带评论的卡片），虚拟滚动的实现复杂度显著增加。核心策略是&quot;预估高度 + 动态修正&quot;：初始化时为每条数据设定一个预估高度，计算出大致的总高度撑开滚动条；当节点真正渲染到 DOM 后，通过 <code>ResizeObserver</code> 或 <code>getBoundingClientRect()</code> 捕获其真实高度，动态更新一个位置索引缓存表（Offset Map），记录每条数据到顶部的累计偏移量。后续滚动时通过二分查找这个索引表快速定位可视区间。为了防止高频滚动导致 <code>ResizeObserver</code> 密集触发引发掉帧，需要配合 <code>requestAnimationFrame</code> 进行节流。</p><h2 id="图片懒加载" tabindex="-1">图片懒加载 <a class="header-anchor" href="#图片懒加载" aria-label="Permalink to “图片懒加载”">​</a></h2><p>图片懒加载的目标是推迟视口外图片的加载时机，减少首屏的网络请求和带宽消耗。</p><p>早期的实现方案是在 <code>scroll</code> 事件中通过 <code>getBoundingClientRect()</code> 判断图片是否进入视口。这个方案有明显的性能问题：<code>scroll</code> 事件触发极其频繁，且 <code>getBoundingClientRect()</code> 的调用会强制浏览器执行同步布局重算（Forced Synchronous Layout），在滚动期间反复触发会导致严重的卡顿。</p><p>现代方案是使用 <code>IntersectionObserver</code>。它基于浏览器底层的异步机制，只在元素与视口发生交叉时触发回调，不需要在主线程上频繁计算位置。被观察的图片在进入视口时才设置 <code>src</code> 属性发起加载，离开视口后可以选择清除 <code>src</code> 释放内存。</p><p>更简洁的方案是使用浏览器原生的 <code>loading=&quot;lazy&quot;</code> 属性。在 <code>&lt;img&gt;</code> 标签上声明后，浏览器自动推迟视口外图片的加载，无需任何 JavaScript。现代浏览器（Chrome、Firefox、Edge、Safari）均已支持该属性。在实际项目中，首屏可见的关键图片不使用懒加载（确保 LCP 不受影响），首屏以下的图片统一使用原生懒加载，这是成本最低、效果最好的图片优化策略。</p><h2 id="内存泄漏排查" tabindex="-1">内存泄漏排查 <a class="header-anchor" href="#内存泄漏排查" aria-label="Permalink to “内存泄漏排查”">​</a></h2><p>内存泄漏是区分&quot;真有实战经验&quot;和&quot;纯背八股&quot;的分水岭。典型的泄漏场景包括三种：组件销毁时未清除定时器（<code>setInterval</code>、<code>setTimeout</code>）或事件监听器（<code>addEventListener</code>），导致闭包持有组件上下文无法被 GC 回收；在 JavaScript 中保存了 DOM 节点的引用后通过 <code>removeChild</code> 从页面删除了该节点（Detached DOM），DOM 节点虽然不可见但仍占据内存；全局变量或缓存不断增长但从不清理，随着应用运行时间增长内存持续膨胀。</p><p>排查内存泄漏的标准流程基于 Chrome DevTools 的 Memory 面板。第一步，在页面初始化时拍下堆快照（Heap Snapshot）作为基准。第二步，反复执行疑似泄漏的操作（如打开关闭弹窗十次），拍下第二张快照。第三步，点击垃圾桶图标强制触发垃圾回收，拍下第三张快照。第四步，使用 Memory 面板的 Comparison（对比）功能，将第三张快照与第一张进行比对，筛选出增长异常的对象。重点查看 <code>Detached HTMLDivElement</code>（游离 DOM 节点）和特定组件的构造函数实例。通过 Retainers（持有者引用链）面板向上追溯，可以精确定位是哪个全局变量、闭包或未清理的事件监听器锁死了这块内存，然后在代码中对应的清理逻辑处进行修复。</p><p>在日常开发中，养成在组件销毁生命周期（如 Vue 的 <code>onUnmounted</code>、React 的 <code>useEffect</code> 返回清理函数）中主动清除副作用（移除事件监听、清除定时器、断开 WebSocket 连接）的习惯，可以避免绝大多数内存泄漏问题。使用弱引用（<code>WeakMap</code>、<code>WeakSet</code>）替代强引用来缓存对象，也能让 GC 在需要时自动回收这些对象。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/web/browser/memleak" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>内存泄漏</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/web/browser/render%20copy" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>渲染周期</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -49,6 +49,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -108,7 +109,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -120,8 +121,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -472,7 +472,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -531,6 +530,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

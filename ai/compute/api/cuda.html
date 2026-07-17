@@ -49,7 +49,7 @@
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    // 存储结果</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    store_matrix_sync</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(C </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ..., c_frag, mem_row_major);</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>Tensor Core 要求矩阵维度是 16 的倍数（fragment 大小为 16×16），且数据格式为 FP16/BF16/INT8。对于不满足条件的矩阵，需要 padding 填充到 16 的倍数。Tensor Core 的性能是 FP32 的 8 倍（FP16）或 32 倍（INT8），是深度学习加速的核心。</p><h2 id="工具链" tabindex="-1">工具链 <a class="header-anchor" href="#工具链" aria-label="Permalink to “工具链”">​</a></h2><p>CUDA 的工具链包括编译器（<code>nvcc</code>）、调试器（<code>cuda-gdb</code>）、性能分析器（<code>nsys</code>、<code>ncu</code>）。<code>nvcc</code> 将 <code>.cu</code> 文件编译为 PTX（中间表示）或 cubin（二进制），PTX 在运行时由驱动编译为 SASS（GPU 机器码），这实现了跨代兼容（同一 PTX 可在不同 GPU 上运行）。<code>cuda-gdb</code> 是 GDB 的 CUDA 扩展，支持设置断点、检查变量、单步执行 kernel。<code>nsys</code>（Nsight Systems）分析 kernel 的执行时间、内存传输、CPU-GPU 并行情况；<code>ncu</code>（Nsight Compute）深入分析 kernel 的内存带宽、occupancy、指令混合，指导优化。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/api/simt" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>SIMT</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/api/triton" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Triton</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -63,6 +63,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -122,7 +123,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -134,8 +135,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -486,7 +486,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -545,6 +544,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

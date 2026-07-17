@@ -56,7 +56,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">atomic_int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> counter </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">atomic_fetch_add</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">counter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"> // Increments counter atomically</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> value </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> atomic_load</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">counter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"> // Reads counter atomically</span></span></code></pre></div><h2 id="内存屏障" tabindex="-1">内存屏障 <a class="header-anchor" href="#内存屏障" aria-label="Permalink to “内存屏障”">​</a></h2><p>现代的编译器会在编译时做很多工作，其中有的工作是指令重排，也就是代码执行的实际顺序不一定按照我们编写的代码顺序来执行。在单线程情况下，这通常不会有问题，但是一旦到了多线程的环境下，指令重排就可能导致数据竞争和不可预期的结果。更糟糕的是，现代的 CPU 往往可以使用一些硬件加速手段，例如：分支预测和流水线并发，这些硬件级别的行为也会导致指令顺序发生重排。</p><p>为了解决这种问题，引入了内存屏障（memory barrier，或 memory fence）的机制。内存屏障是一种特殊的指令，用于限制编译器和 CPU 的指令重排，保证内存操作的可见性和有序性。常见的内存屏障分为以下几类：</p><ul><li>全屏障（Full Barrier, 通常为 mfence）：确保其前后的所有读写操作都完成，常用于关键的同步点。</li><li>读屏障（Load Barrier, lfence）：保证屏障前的读操作全部完成，才会进行屏障后的读操作。</li><li>写屏障（Store Barrier, sfence）：保证屏障前的写操作全部完成，之后的写操作才会开始。</li></ul><p>内存屏障主要用途包括：</p><ul><li>防止乱序执行：确保关键顺序不可颠倒，避免多线程访问共享变量时出现“看见过时值”或“操作丢失”问题。</li><li>实现同步原语：如锁（mutex）、自旋锁（spinlock）、信号量（semaphore）等都依赖内存屏障保障可见性和顺序性。</li><li>确保写入对其他CPU可见：跨核心通信时，强制将数据从 CPU 缓存刷回主内存，确保其他处理器能够及时看到变更。</li></ul><h2 id="总结" tabindex="-1">总结 <a class="header-anchor" href="#总结" aria-label="Permalink to “总结”">​</a></h2><ul><li>原子操作适合简单数据类型（如整型），复杂结构体仍需加锁保护。</li><li>无锁并发虽然高效，但实现复杂，需谨慎设计，避免ABA问题等陷阱。</li><li>在 SMP（多核）系统下，原子操作通常伴随内存屏障（memory barrier）以保证可见性和有序性。</li></ul></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/design/concurrent/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>并发</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/design/concurrent/lock" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>同步原语</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -70,6 +70,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -129,7 +130,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -141,8 +142,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -493,7 +493,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -552,6 +551,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

@@ -31,7 +31,7 @@
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">        # 参数更新</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        optimizer.step()</span></span></code></pre></div><p>经过成千上万次这样的循环，模型的参数逐渐从随机初始化的状态演化到能够准确完成任务的状态。早期训练阶段损失下降很快，模型学习数据中的主要模式；后期训练阶段损失下降变慢，模型在微调细节。当验证集上的损失不再下降甚至开始上升时，说明模型开始过拟合，此时应该停止训练。</p><h2 id="训练相关概念" tabindex="-1">训练相关概念 <a class="header-anchor" href="#训练相关概念" aria-label="Permalink to “训练相关概念”">​</a></h2><p>深度学习中的训练涉及一些特有的概念，理解这些概念有助于掌握训练过程的节奏。</p><h3 id="epoch、batch-与-step" tabindex="-1">Epoch、Batch 与 Step <a class="header-anchor" href="#epoch、batch-与-step" aria-label="Permalink to “Epoch、Batch 与 Step”">​</a></h3><p>训练数据通常无法一次性全部送入内存或 GPU，因此需要分批处理。Batch（批次）是指每次用于参数更新的样本数量，通常取 32、64、128、256 等 2 的幂次以充分利用 GPU 并行计算能力。较小的 Batch Size 带来更多梯度噪声但更新更频繁，较大的 Batch Size 梯度估计更精确但单次更新开销更大。</p><p>Epoch（轮次）指的是模型完整遍历一次整个训练数据集。实际训练中通常会设置多个 Epoch（几十到几百个），让模型反复看到数据从而逐步收敛。Iteration/Step（步数）是一个 Epoch 内的参数更新次数，等于训练样本总数除以 Batch Size。整个训练过程的总步数等于 Epoch 数乘以每 Epoch 步数，这个数值通常用来设置学习率衰减的周期。</p><h3 id="推理与训练" tabindex="-1">推理与训练 <a class="header-anchor" href="#推理与训练" aria-label="Permalink to “推理与训练”">​</a></h3><p>理解深度学习需要区分推理和训练两个过程。推理时模型已经训练完成，我们只关心输入数据经过网络后的输出结果，这个过程只需要前向传播。比如用 GPT-4 生成文本、用 ResNet 识别图片，都是在做推理，此时网络的所有参数都是固定的，不需要计算梯度。</p><p>训练则是一个反复迭代优化的过程，需要前向传播、计算损失、反向传播、参数更新四个步骤循环往复。从工程角度看，推理只需要一次前向传播，计算量固定且可预测，对延迟敏感；训练则需要大量迭代，计算量是推理的成千上万倍，对吞吐量敏感。这也是为什么训练通常需要昂贵的 GPU 集群，而推理可以在更便宜的硬件甚至手机端运行。</p><h2 id="梯度问题与解决方案" tabindex="-1">梯度问题与解决方案 <a class="header-anchor" href="#梯度问题与解决方案" aria-label="Permalink to “梯度问题与解决方案”">​</a></h2><p>虽然反向传播解决了梯度计算的问题，但深度网络训练中仍然会遇到各种梯度相关的难题。</p><p><strong>梯度消失</strong>是指梯度在向前传播过程中逐渐变小，导致浅层参数几乎不更新，网络难以学习深层特征。这在使用 Sigmoid 等饱和激活函数时尤为严重，因为导数最大值只有 0.25。解决方案包括使用 ReLU 激活函数、残差连接（ResNet）、归一化层（BatchNorm）等。</p><p><strong>梯度爆炸</strong>则相反，梯度在传播过程中不断增大，导致参数更新过大、训练发散。这通常发生在网络过深或初始化不当时。解决方案包括梯度裁剪、权重初始化（Xavier/He 初始化）、归一化层等。梯度消失/爆炸是早期深度学习难以训练超过几层网络的主要原因，也是 ResNet 等架构突破的关键所在。</p><p>理解反向传播的原理有助于调试训练问题。比如梯度为 NaN 时可以检查是否发生了数值溢出，或者某些层的梯度过小时可能发生了梯度消失。训练深度学习模型不仅是调用框架 API，更需要理解底层的计算原理，才能在出现问题时快速定位和解决。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/neural/dl/audio" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>听觉</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/neural/dl/cnn" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>CNN</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -45,6 +45,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -104,7 +105,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -116,8 +117,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -468,7 +468,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -527,6 +526,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS

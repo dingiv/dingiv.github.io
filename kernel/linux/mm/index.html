@@ -30,7 +30,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> list_head children;</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ...</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></div><p>当进程调用 malloc 申请内存时，Linux 的内存分配流程如下：</p><ul><li><p>映射 用户程序发起内存分配请求。程序调用 malloc 函数申请内存，如果申请的内存小于 128KB，使用 brk 系统调用；如果申请的内存大于 128KB，使用 mmap 系统调用；但是不论大小如何，需要始终将内存按照分页进行管理。</p><p>虚拟内存分配，内核在进程的虚拟地址空间中分配一段连续的虚拟内存，此时只分配虚拟地址空间，不分配实际的物理内存；在页表 <code>struct mm_struct *mm</code> 中创建对应的页表项，但标记为<code>不存在</code>。</p></li><li><p>缺页异常 首次访问触发缺页异常，当程序首次访问这段内存时，由于页表项标记为<code>不存在</code>，CPU 触发缺页异常（Page Fault），操作系统接管处理缺页异常，核心函数 <code>do_page_fault</code> 负责处理；</p><p>物理内存分配，操作系统检查访问的虚拟地址是否合法，如果合法，分配物理内存页，更新页表，建立虚拟地址到物理地址的映射；将页表项标记为&quot;存在&quot;；</p><p>TLB 更新，新的页表项被添加到 TLB 中，后续访问可以直接通过 TLB 快速获取物理地址，如果 TLB 已满，根据硬件算法淘汰旧项；</p></li><li><p>访问 内存访问，程序可以正常访问内存，如果访问的地址超出分配范围，触发段错误（Segmentation Fault）；</p><p>内存释放，当调用 free 释放内存时，如果使用 brk 分配的内存，可能通过收缩堆来释放，如果使用 mmap 分配的内存，直接解除映射，对应的物理内存页被回收，页表项被标记为<code>不存在</code>，TLB 中的对应项被标记为无效；</p></li></ul><p>这个过程体现了 Linux 内存管理的几个重要特性：</p><ul><li>延迟分配：只有在实际使用时才分配物理内存</li><li>按需分页：通过缺页异常机制实现</li><li>写时复制：多个进程共享同一物理页，直到需要修改</li><li>内存回收：通过页面置换和内存压缩保持系统稳定</li></ul></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/irq/handler" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>中断处理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/mm/mmap" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>虚拟内存映射</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--><!--]--></div></div></div></div></div>
-    <script src="/assets/site-data.b972eace.js"></script>
+    <script src="/assets/site-data.50072319.js"></script>
 <nav id="sitemap" aria-hidden="true">
 /abstract - 目录
 /ai - 人工智能
@@ -44,6 +44,7 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
 /ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
@@ -103,7 +104,7 @@
 /ai/compute/api/triton - Triton
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
-/ai/compute/distributed/netlink - 通信链路
+/ai/compute/distributed/parallel - 模型拆分
 /ai/compute/engine - 主流引擎
 /ai/compute/engine/deepspeed - DeepSpeed
 /ai/compute/engine/other - 其他
@@ -115,8 +116,7 @@
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
-/ai/compute/impl/parallel - 模型拆分
-/ai/compute/impl/speculative - 投机采样
+/ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
 /ai/compute/kernel/flashattention - FlashAttention
 /ai/compute/kernel/fusion - 算子融合
@@ -467,7 +467,6 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
-/kernel/equip/netlink - 组网
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -526,6 +525,9 @@
 /kernel/linux/syscall/process - 进程管理
 /kernel/linux/video - 视图系统
 /kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信技术
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
 /kernel/vm - 虚拟化
 /kernel/vm/basic - 基本原理
 /kernel/vm/basic/bios - BIOS
