@@ -3,7 +3,10 @@
 /* ===== 通用：两种模式共享的布局与动画 ===== */
 
 /* 粒子层叠控制 */
-.VPContent { position: relative; z-index: 1; }
+.VPContent {
+  position: relative;
+  z-index: 1;
+}
 
 /* 侧边栏链接动画（颜色由模式变量控制） */
 .VPSidebarItem .item .link,
@@ -11,8 +14,9 @@
   transition: color 0.2s, background 0.2s, padding-left 0.25s ease;
   border-radius: 6px;
   margin: 1px 4px;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
+
 .VPSidebarItem .item .link:hover,
 .VPSidebarItem .item .text:hover {
   padding-left: 8px;
@@ -24,17 +28,23 @@
   padding-left: 14px;
   transition: border-color 0.3s;
 }
-.vp-doc h2:hover { border-left-color: #b794f4; }
+
+.vp-doc h2:hover {
+  border-left-color: #b794f4;
+}
 
 /* 代码块圆角与阴影 */
 .vp-doc div[class*='language-'] {
   border-radius: 10px;
   transition: box-shadow 0.3s;
 }
-.vp-doc code { font-family: var(--vp-font-family-mono); }
+
+.vp-doc code {
+  font-family: var(--vp-font-family-mono);
+}
 
 /* 内联代码 */
-.vp-doc :not(pre) > code {
+.vp-doc :not(pre)>code {
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 0.9em;
@@ -62,13 +72,27 @@
 }
 
 /* 滚动条 */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { border-radius: 3px; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+}
 
 /* 返回顶部 */
-.VPBackToTop { opacity: 0; transition: opacity 0.3s; }
-.VPBackToTop.show { opacity: 1; }
+.VPBackToTop {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.VPBackToTop.show {
+  opacity: 1;
+}
 
 /* ===== 亮色模式 ===== */
 :root {
@@ -76,6 +100,8 @@
   --vp-nav-bg-color: rgba(255, 255, 255, 0.55);
   --vp-font-family-base: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --vp-local-nav-bg-color: rgba(255, 255, 255, 0.55);
+  --vp-backdrop-bg-color: rgba(197, 194, 194, 0.707);
 }
 
 /* 导航栏标题 — 亮色渐变色 */
@@ -89,12 +115,13 @@
 
 /* 亮色模式玻璃效果 */
 .VPDoc .container .content {
-  backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   border-radius: 12px;
   padding: 24px 32px;
   border: 1px solid rgba(37, 99, 235, 0.08);
 }
+
 .VPSidebar {
   border-right: 1px solid rgba(37, 99, 235, 0.03);
 }
@@ -105,8 +132,8 @@
 }
 
 .VPNavBar {
-  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   border-bottom: 1px solid rgba(37, 99, 235, 0.06);
 }
 
@@ -119,11 +146,17 @@
 }
 
 /* 亮色模式链接 */
-.vp-doc a { color: #2563eb; transition: color 0.2s, text-shadow 0.2s; }
-.vp-doc a:hover { color: #1d4ed8; }
+.vp-doc a {
+  color: #2563eb;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.vp-doc a:hover {
+  color: #1d4ed8;
+}
 
 /* 亮色模式内联代码 */
-.vp-doc :not(pre) > code {
+.vp-doc :not(pre)>code {
   background: rgba(37, 99, 235, 0.06);
   color: #1d4ed8;
 }
@@ -133,12 +166,25 @@
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
-.vp-doc div[class*='language-']:hover { box-shadow: 0 4px 28px rgba(0, 0, 0, 0.08); }
+
+.vp-doc div[class*='language-']:hover {
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.08);
+}
 
 /* 亮色模式表格 */
-.vp-doc table { border: 1px solid #e2e8f0; }
-.vp-doc th { background: rgba(37, 99, 235, 0.06); color: #1e40af; font-weight: 600; }
-.vp-doc tr:nth-child(even) { background: #f8fafc; }
+.vp-doc table {
+  border: 1px solid #e2e8f0;
+}
+
+.vp-doc th {
+  background: rgba(37, 99, 235, 0.06);
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.vp-doc tr:nth-child(even) {
+  background: #f8fafc;
+}
 
 /* 亮色模式引用块 */
 .vp-doc blockquote {
@@ -147,11 +193,18 @@
 }
 
 /* 亮色模式 hr */
-.vp-doc hr { background: linear-gradient(90deg, transparent, #cbd5e1, transparent); }
+.vp-doc hr {
+  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+}
 
 /* 亮色模式滚动条 */
-::-webkit-scrollbar-thumb { background: rgba(37, 99, 235, 0.15); }
-::-webkit-scrollbar-thumb:hover { background: rgba(37, 99, 235, 0.3); }
+::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.3);
+}
 
 /* 亮色模式 侧边栏 */
 .VPSidebarItem .item .link:hover,
@@ -159,6 +212,7 @@
   color: #2563eb !important;
   background: rgba(37, 99, 235, 0.06);
 }
+
 .VPSidebarItem .item .link.active {
   color: #2563eb !important;
   background: rgba(37, 99, 235, 0.08);
@@ -166,8 +220,13 @@
 }
 
 /* 亮色模式 上一篇/下一篇 */
-.pager-link .title { color: #2563eb !important; }
-.pager-link:hover .title { color: #1d4ed8 !important; }
+.pager-link .title {
+  color: #2563eb !important;
+}
+
+.pager-link:hover .title {
+  color: #1d4ed8 !important;
+}
 
 /* 亮色模式首页 hero */
 .VPHero .name {
@@ -176,8 +235,14 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.VPHero .text { color: #475569; }
-.VPHero .tagline { color: #94a3b8; }
+
+.VPHero .text {
+  color: #475569;
+}
+
+.VPHero .tagline {
+  color: #94a3b8;
+}
 
 /* ===== 暗色模式 — 蓝紫粉调 ===== */
 
@@ -189,6 +254,7 @@ html.dark {
   --vp-c-bg-alt: #182036;
   --vp-sidebar-bg-color: rgba(27, 35, 56, 0.20);
   --vp-nav-bg-color: rgba(27, 35, 56, 0.50);
+  --vp-local-nav-bg-color: rgba(27, 35, 56, 0.50);
   --vp-c-brand-1: #a78bfa;
   --vp-c-brand-2: #8b7cf0;
   --vp-c-brand-3: #7c6ae8;
@@ -200,6 +266,7 @@ html.dark {
   --vp-c-divider: #445273;
   --vp-c-hover: rgba(167, 139, 250, 0.06);
   --vp-c-bg-elv: #1c2540;
+  --vp-backdrop-bg-color: #0009;
 }
 
 /* 导航栏标题 — 蓝紫粉渐变 */
@@ -212,18 +279,23 @@ html.dark .VPNavBarTitle .title {
 
 /* 暗色模式玻璃效果 */
 html.dark .VPDoc .container .content {
-  backdrop-filter: blur(4px);
+  /* NOTE: vite press 的 bug backdrop-filter 写在 -webkit-backdrop-filter 的前面的时候，在构建阶段 backdrop-filter 会被移除 */
+  /* backdrop-filter: blur(4px); */
+
   -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   border-radius: 12px;
   padding: 24px 32px;
   border: 1px solid rgba(167, 139, 250, 0.06);
 }
+
 html.dark .VPSidebar {
   border-right: 1px solid rgba(167, 139, 250, 0.03);
 }
+
 html.dark .VPNavBar {
-  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   border-bottom: 1px solid rgba(167, 139, 250, 0.06);
 }
 
@@ -236,14 +308,17 @@ html.dark .vp-doc h1 {
 }
 
 /* 暗色模式链接 — 紫色发光 */
-html.dark .vp-doc a { color: #a78bfa; }
+html.dark .vp-doc a {
+  color: #a78bfa;
+}
+
 html.dark .vp-doc a:hover {
   color: #c4b5fd;
   text-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
 }
 
 /* 暗色模式内联代码 */
-html.dark .vp-doc :not(pre) > code {
+html.dark .vp-doc :not(pre)>code {
   background: rgba(167, 139, 250, 0.1);
   color: #c4b5fd;
 }
@@ -253,14 +328,25 @@ html.dark .vp-doc div[class*='language-'] {
   border: 1px solid rgba(167, 139, 250, 0.1);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(167, 139, 250, 0.05);
 }
+
 html.dark .vp-doc div[class*='language-']:hover {
   box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(167, 139, 250, 0.06);
 }
 
 /* 暗色模式表格 */
-html.dark .vp-doc table { border: 1px solid rgba(167, 139, 250, 0.1); }
-html.dark .vp-doc th { background: rgba(167, 139, 250, 0.08); color: #c4b5fd; font-weight: 600; }
-html.dark .vp-doc tr:nth-child(even) { background: rgba(167, 139, 250, 0.02); }
+html.dark .vp-doc table {
+  border: 1px solid rgba(167, 139, 250, 0.1);
+}
+
+html.dark .vp-doc th {
+  background: rgba(167, 139, 250, 0.08);
+  color: #c4b5fd;
+  font-weight: 600;
+}
+
+html.dark .vp-doc tr:nth-child(even) {
+  background: rgba(167, 139, 250, 0.02);
+}
 
 /* 暗色模式引用块 */
 html.dark .vp-doc blockquote {
@@ -269,11 +355,18 @@ html.dark .vp-doc blockquote {
 }
 
 /* 暗色模式 hr */
-html.dark .vp-doc hr { background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.2), transparent); }
+html.dark .vp-doc hr {
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.2), transparent);
+}
 
 /* 暗色模式滚动条 */
-html.dark ::-webkit-scrollbar-thumb { background: rgba(167, 139, 250, 0.15); }
-html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(167, 139, 250, 0.3); }
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(167, 139, 250, 0.15);
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(167, 139, 250, 0.3);
+}
 
 /* 暗色模式侧边栏 */
 html.dark .VPSidebarItem .item .link:hover,
@@ -281,6 +374,7 @@ html.dark .VPSidebarItem .item .text:hover {
   color: #a78bfa !important;
   background: rgba(167, 139, 250, 0.06);
 }
+
 html.dark .VPSidebarItem .item .link.active {
   color: #a78bfa !important;
   background: rgba(167, 139, 250, 0.1);
@@ -288,8 +382,13 @@ html.dark .VPSidebarItem .item .link.active {
 }
 
 /* 暗色模式 上一篇/下一篇 */
-html.dark .pager-link .title { color: #a78bfa !important; }
-html.dark .pager-link:hover .title { color: #c4b5fd !important; }
+html.dark .pager-link .title {
+  color: #a78bfa !important;
+}
+
+html.dark .pager-link:hover .title {
+  color: #c4b5fd !important;
+}
 
 /* 暗色模式首页 hero */
 html.dark .VPHero .name {
@@ -298,10 +397,18 @@ html.dark .VPHero .name {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-html.dark .VPHero .text { color: #a5b0c5; }
-html.dark .VPHero .tagline { color: #6b7690; }
+
+html.dark .VPHero .text {
+  color: #a5b0c5;
+}
+
+html.dark .VPHero .tagline {
+  color: #6b7690;
+}
 
 /* ===== 移动端 ===== */
 @media (max-width: 768px) {
-  .VPDoc .container .content { padding: 16px; }
+  .VPDoc .container .content {
+    padding: 16px;
+  }
 }

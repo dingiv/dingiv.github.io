@@ -1,6 +1,6 @@
 ---
-title: 通信技术
-order: 25
+title: 通信
+order: 35
 ---
 
 # 通信技术
