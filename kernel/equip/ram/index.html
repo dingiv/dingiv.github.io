@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>内存 | Spark Notes</title>
+    <meta name="description" content="我的计科学习随笔">
+    <meta name="generator" content="VitePress v2.0.0-alpha.18">
+    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    <script src="/assets/site-data.46e417e4.js"></script>
+    <script type="module" src="/assets/app.CzQd7weX.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
+    <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
+    <link rel="modulepreload" href="/assets/kernel_equip_ram_index.md.CYQq4RJD.lean.js">
+    <link rel="icon" href="/favicon.svg">
+    <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _kernel_equip_ram_" data-v-e9c23681><div><h1 id="内存" tabindex="-1">内存 <a class="header-anchor" href="#内存" aria-label="Permalink to “内存”">​</a></h1><p>内存（DRAM）是 CPU 和存储设备之间的高速缓冲层。CPU 不会直接从 SSD 或硬盘读取数据进行计算——那样太慢了。数据先从持久化存储加载到内存，CPU 再从内存中读取。因此内存的容量决定了能同时处理多大的数据集，内存的带宽和延迟决定了 CPU 能以多快的速度获取数据。</p><h2 id="ddr-代际" tabindex="-1">DDR 代际 <a class="header-anchor" href="#ddr-代际" aria-label="Permalink to “DDR 代际”">​</a></h2><p>DDR（Double Data Rate）是现代 PC 和服务器的主流内存标准。每一代的主要变化是频率翻倍、电压降低、以及物理插槽不兼容。</p><table tabindex="0"><thead><tr><th>代际</th><th>频率范围</th><th>电压</th><th>单条最大容量</th><th>关键特性</th></tr></thead><tbody><tr><td>DDR3</td><td>800-2133 MT/s</td><td>1.5V/1.35V</td><td>8 GB</td><td>2007 年发布，已被淘汰</td></tr><tr><td>DDR4</td><td>2133-4800 MT/s</td><td>1.2V</td><td>32 GB</td><td>当前保有量最大，价格最低</td></tr><tr><td>DDR5</td><td>4800-8400 MT/s</td><td>1.1V</td><td>48 GB (UDIMM) / 256 GB (RDIMM)</td><td>当前主流，带宽翻倍</td></tr></tbody></table><p>DDR5 相比 DDR4 的改进不仅是频率提升。DDR5 将单条内存的内部通道从 1 个拆分为 2 个独立子通道，每个子通道的 burst length 从 8 翻倍到 16。这意味着 DDR5 在同样频率下能提供更高的有效带宽——DDR5-4800 的理论带宽约为 DDR4-3200 的 1.5 倍，尽管频率只提升了 50%。DDR5 还引入了片上 ECC（on-die ECC），对颗粒内部的单比特错误进行自动修正——这与传统 ECC 内存不同，片上 ECC 只覆盖颗粒内部，不覆盖内存控制器到颗粒的传输路径。</p><p>LPDDR（Low Power DDR）是移动设备和嵌入式系统使用的低功耗版本。以 LPDDR5X 为例，电压可低至 0.5V，数据传输率却可达 8533 MT/s。嵌入式设备（如树莓派、RK3688）将 LPDDR 颗粒直接焊接在主板上而非使用插槽，走线极短，存取延迟通常比同频率的插槽式 DDR 低 10-20ns。</p><h2 id="内存架构" tabindex="-1">内存架构 <a class="header-anchor" href="#内存架构" aria-label="Permalink to “内存架构”">​</a></h2><p>内存系统由多层组织结构构成，从颗粒到通道，每一层都有性能和兼容性方面的工程考量。</p><h3 id="颗粒" tabindex="-1">颗粒 <a class="header-anchor" href="#颗粒" aria-label="Permalink to “颗粒”">​</a></h3><p>DRAM 颗粒（chip）是内存的最小物理单元，通常一颗 x8 颗粒提供 8 个数据位（bit）。多颗颗粒并联组成一组可以同时读写 64 位（8 字节）数据的阵列——这 64 位就是 CPU 一次内存访问的数据宽度。以一条 8 GB 的 DDR5 UDIMM 为例，它通常有 8 颗 x8 颗粒（每颗 8 Gb = 1 GB），8×8 位 = 64 位。16 GB 的条子则使用 8 颗 x8 的 16 Gb 颗粒。</p><h3 id="rank" tabindex="-1">Rank <a class="header-anchor" href="#rank" aria-label="Permalink to “Rank”">​</a></h3><p>Rank 是内存控制器看来一组共享地址/命令总线但各自提供 64 位数据总线的颗粒集合。单 Rank 条子只有一组 64 位数据通道，双 Rank 条子有两组——两组 Rank 不能同时读写（共享地址总线），但可以通过交错（interleaving）提升带宽利用率：当 Rank 0 正在刷新或处于 busy 状态时，控制器可以切换到 Rank 1 继续读写。</p><p>对性能的影响：双 Rank 条子通常比同频率的单 Rank 条子有 5-10% 的带宽优势，但也会增加内存控制器的电气负载，同频下的最高可稳定频率通常略低于单 Rank。消费级主板通常支持每通道最多 2 Rank，服务器主板可支持更多。</p><h3 id="bank-和-bank-group" tabindex="-1">Bank 和 Bank Group <a class="header-anchor" href="#bank-和-bank-group" aria-label="Permalink to “Bank 和 Bank Group”">​</a></h3><p>每个 Rank 内部进一步分为 Bank 和 Bank Group。DDR4 通常有 4 个 Bank Group，每组 4 个 Bank（共 16 Bank）；DDR5 增加到 8 个 Bank Group，每组 4 个 Bank（共 32 Bank）。Bank Group 的重要性在于：同一个 Bank Group 内的不同 Bank 之间切换有额外的延迟（tCCD），但不同 Bank Group 之间可以以更低的延迟连续读取。更多的 Bank Group 意味着控制器可以做更细粒度的流水线调度——这是 DDR5 在随机访问性能上优于 DDR4 的底层原因之一。</p><h3 id="通道" tabindex="-1">通道 <a class="header-anchor" href="#通道" aria-label="Permalink to “通道”">​</a></h3><p>内存通道是 CPU 和内存之间的独立数据通路。消费级 CPU 通常有 2 个内存通道（双通道），HEDT 有 4 个，服务器有 8-12 个。双通道意味着 CPU 可以同时从两条独立通路上读取数据，理论带宽翻倍。注意通道数不等于 DIMM 插槽数——一块主板可能有 4 个插槽但只有 2 个通道，插满 4 条时每个通道上挂两条 DIMM（2 DPC, DIMMs Per Channel），这不会增加带宽，反而会增加电气负载。</p><h2 id="时序参数" tabindex="-1">时序参数 <a class="header-anchor" href="#时序参数" aria-label="Permalink to “时序参数”">​</a></h2><p>内存的性能由频率和时序共同决定。频率决定理论带宽，时序决定数据实际到达的时间。内存标签上的四个数字（如 30-36-36-76）对应四个核心时序参数，单位是时钟周期。</p><mjx-container tabindex="0" class="MathJax" jax="SVG" display="true" style="direction:ltr;display:block;text-align:center;margin:1em 0;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-2.172ex;" xmlns="http://www.w3.org/2000/svg" width="33.689ex" height="5.296ex" role="img" focusable="false" viewBox="0 -1381 14890.6 2341" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mtext"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">绝</text><text data-variant="normal" transform="translate(1000,0) scale(1,-1)" font-size="884px" font-family="serif">对</text><text data-variant="normal" transform="translate(2000,0) scale(1,-1)" font-size="884px" font-family="serif">延</text><text data-variant="normal" transform="translate(3000,0) scale(1,-1)" font-size="884px" font-family="serif">迟</text><path data-c="20" d="" transform="translate(4000,0)" style="stroke-width:3;"></path><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" transform="translate(4250,0)" style="stroke-width:3;"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(4639,0)" style="stroke-width:3;"></path><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z" transform="translate(5195,0)" style="stroke-width:3;"></path><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" transform="translate(5589,0)" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(6255.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z" style="stroke-width:3;"></path></g><g data-mml-node="mfrac" transform="translate(7311.6,0)"><g data-mml-node="mrow" transform="translate(1504.8,676)"><g data-mml-node="mtext"><path data-c="43" d="M56 342Q56 428 89 500T174 615T283 681T391 705Q394 705 400 705T408 704Q499 704 569 636L582 624L612 663Q639 700 643 704Q644 704 647 704T653 705H657Q660 705 666 699V419L660 413H626Q620 419 619 430Q610 512 571 572T476 651Q457 658 426 658Q322 658 252 588Q173 509 173 342Q173 221 211 151Q232 111 263 84T328 45T384 29T428 24Q517 24 571 93T626 244Q626 251 632 257H660L666 251V236Q661 133 590 56T403 -21Q262 -21 159 83T56 342Z" style="stroke-width:3;"></path><path data-c="4C" d="M128 622Q121 629 117 631T101 634T58 637H25V683H36Q48 680 182 680Q324 680 348 683H360V637H333Q273 637 258 635T233 622L232 342V129Q232 57 237 52Q243 47 313 47Q384 47 410 53Q470 70 498 110T536 221Q536 226 537 238T540 261T542 272T562 273H582V268Q580 265 568 137T554 5V0H25V46H58Q100 47 109 49T128 61V622Z" transform="translate(722,0)" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(1569.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z" style="stroke-width:3;"></path></g><g data-mml-node="mn" transform="translate(2569.4,0)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(500,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(1000,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(1500,0)" style="stroke-width:3;"></path></g></g><g data-mml-node="mtext" transform="translate(220,-710)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">内</text><text data-variant="normal" transform="translate(1000,0) scale(1,-1)" font-size="884px" font-family="serif">存</text><text data-variant="normal" transform="translate(2000,0) scale(1,-1)" font-size="884px" font-family="serif">频</text><text data-variant="normal" transform="translate(3000,0) scale(1,-1)" font-size="884px" font-family="serif">率</text><path data-c="20" d="" transform="translate(4000,0)" style="stroke-width:3;"></path><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" transform="translate(4250,0)" style="stroke-width:3;"></path><path data-c="4D" d="M132 622Q125 629 121 631T105 634T62 637H29V683H135Q221 683 232 682T249 675Q250 674 354 398L458 124L562 398Q666 674 668 675Q671 681 683 682T781 683H887V637H854Q814 636 803 634T785 622V61Q791 51 802 49T854 46H887V0H876Q855 3 736 3Q605 3 596 0H585V46H618Q660 47 669 49T688 61V347Q688 424 688 461T688 546T688 613L687 632Q454 14 450 7Q446 1 430 1T410 7Q409 9 292 316L176 624V606Q175 588 175 543T175 463T175 356L176 86Q187 50 261 46H278V0H269Q254 3 154 3Q52 3 37 0H29V46H46Q78 48 98 56T122 69T132 86V622Z" transform="translate(4639,0)" style="stroke-width:3;"></path><path data-c="48" d="M128 622Q121 629 117 631T101 634T58 637H25V683H36Q57 680 180 680Q315 680 324 683H335V637H302Q262 636 251 634T233 622L232 500V378H517V622Q510 629 506 631T490 634T447 637H414V683H425Q446 680 569 680Q704 680 713 683H724V637H691Q651 636 640 634T622 622V61Q628 51 639 49T691 46H724V0H713Q692 3 569 3Q434 3 425 0H414V46H447Q489 47 498 49T517 61V332H232V197L233 61Q239 51 250 49T302 46H335V0H324Q303 3 180 3Q45 3 36 0H25V46H58Q100 47 109 49T128 61V622Z" transform="translate(5556,0)" style="stroke-width:3;"></path><path data-c="7A" d="M42 263Q44 270 48 345T53 423V431H393Q399 425 399 415Q399 403 398 402L381 378Q364 355 331 309T265 220L134 41L182 40H206Q254 40 283 46T331 77Q352 105 359 185L361 201Q361 202 381 202H401V196Q401 195 393 103T384 6V0H209L34 1L31 3Q28 8 28 17Q28 30 29 31T160 210T294 394H236Q169 393 152 388Q127 382 113 367Q89 344 82 264V255H42V263Z" transform="translate(6306,0)" style="stroke-width:3;"></path><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" transform="translate(6750,0)" style="stroke-width:3;"></path></g><rect width="7339" height="60" x="120" y="220"></rect></g></g></g></svg><mjx-assistive-mml unselectable="on" display="block" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;overflow:hidden;width:100%;"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mtext>绝对延迟 (ns)</mtext><mo>=</mo><mfrac><mrow><mtext>CL</mtext><mo>×</mo><mn>2000</mn></mrow><mtext>内存频率 (MHz)</mtext></mfrac></math></mjx-assistive-mml></mjx-container><p><strong>CL（CAS Latency，tCL）</strong> 是最核心的指标。它表示内存控制器发出&quot;我要读这一列&quot;的指令后，到该列的第一组数据开始出现在数据总线上的时钟周期间隔。CL 是周期数，不是绝对时间——DDR5-6000 CL30 的绝对延迟是 (30 × 2000) / 6000 = 10ns，DDR4-3200 CL16 也是 (16 × 2000) / 3200 = 10ns。虽然 DDR5-6000 的 CL 数值更高，但每个周期更短，绝对延迟持平。10ns 左右是目前高性能内存的基准线。</p><p><strong>tRCD（RAS-to-CAS Delay）</strong> 是行寻址到列寻址的延迟。DRAM 的存储结构是行列矩阵，访问一个地址需要先选行（激活一行），再选列。tRCD 就是从行激活命令到可以发出列读取命令之间的等待时间。DDR5-6000 的典型 tRCD 在 36-40 个周期（12-13ns）。</p><p><strong>tRP（Row Precharge Time）</strong> 是行预充电时间。当需要访问同一 Bank 中的另一行时，必须先关闭当前行（预充电），然后才能激活新行。tRP 就是从预充电命令到可以激活新行之间的等待时间。频繁的行切换会产生 tRP 开销——这也是为什么顺序访问（同一行内）远快于随机访问（频繁切换行）。</p><p><strong>tRAS（Row Active Time）</strong> 是行激活到预充电的最小间隔。一行被激活后，至少要等待 tRAS 个周期才能被预充电。如果 tRAS 设得太短，可能在数据还没读完时就把行关了；设得太长则影响其他行的访问延迟。</p><p>这些时序参数在 BIOS 中可见。XMP（Intel）和 EXPO（AMD）是内存厂商预置的超频配置文件，包含了频率和时序的优化组合。开启 XMP/EXPO 后主板会自动加载配置文件中的时序参数，无需手动设置。注意 XMP/EXPO 是一种超频行为——DDR5-6000 的内存颗粒出厂时可能是 DDR5-4800 的标准规格，厂商经过测试后保证它可以在 6000 MT/s 稳定运行。</p><h2 id="ecc-与非-ecc" tabindex="-1">ECC 与非 ECC <a class="header-anchor" href="#ecc-与非-ecc" aria-label="Permalink to “ECC 与非 ECC”">​</a></h2><p>ECC（Error Correction Code）内存在每 64 位数据之外额外存储 8 位校验码（SEC-DED, Single Error Correction, Double Error Detection）。它可以自动纠正单比特错误并检测双比特错误。</p><p>单比特错误的来源主要是宇宙射线中的高能中子与 DRAM 颗粒碰撞导致电荷翻转（软错误）。在消费级 PC 上，这种错误极其罕见（大约每 GB 内存每年发生一次），即使发生也通常只影响某个像素的颜色或某个变量的低比特位，难以被察觉。但在服务器环境中——数十台机器、数百 GB 内存、24×7 连续运行——软错误的概率被放大到不可忽视的水平。数据库中的一个翻转比特可能导致索引损坏，虚拟机的一次内存错误可能导致整个 VM 崩溃。</p><p>消费级 CPU（Ryzen、Core）通常支持非 ECC 的 UDIMM，部分 Ryzen 型号也支持 ECC UDIMM（非官方支持，但多数主板可启用）。Intel 的消费级平台通常将 ECC 限制在 W680 等特定芯片组上。服务器 CPU（EPYC、Xeon）则强制要求 RDIMM 或 LRDIMM，全部支持 ECC。</p><h2 id="udimm-vs-rdimm-vs-lrdimm" tabindex="-1">UDIMM vs RDIMM vs LRDIMM <a class="header-anchor" href="#udimm-vs-rdimm-vs-lrdimm" aria-label="Permalink to “UDIMM vs RDIMM vs LRDIMM”">​</a></h2><p>这三种内存条的外观和物理尺寸相同（均为标准 DDR5 DIMM），但内部电路有本质区别，不能混用。</p><p>UDIMM（Unbuffered DIMM）是最简单的设计，CPU 内存控制器直接驱动每条 DIMM 上的所有颗粒。信号路径短，延迟最低，但电气负载随着 DIMM 数量增加而急剧上升。消费级主板只支持 UDIMM，通常最多 2 DPC（每通道 2 条），超过后频率必须降级。</p><p>RDIMM（Registered DIMM）在地址/命令线上增加了一颗寄存器芯片（RCD, Register Clock Driver）。CPU 内存控制器只需要驱动这颗寄存器，寄存器再分发信号到颗粒。这大幅降低了 CPU 侧的电气负载，使单通道可以挂更多 DIMM（服务器主板通常 1-2 DPC 可全速运行）。代价是每个内存操作增加约 1 个时钟周期的寄存延迟。服务器平台均使用 RDIMM。</p><p>LRDIMM（Load-Reduced DIMM）在 RDIMM 基础上进一步在数据线上加缓冲（DB, Data Buffer）。所有信号——地址、命令、数据——都经过缓冲，CPU 侧负载进一步降低。LRDIMM 可以在 2 DPC 配置下保持最高频率，支持的单条最大容量也最高（当前可达 256 GB）。代价是延迟最高（经过 RCD + DB 两级缓冲），且价格昂贵。LRDIMM 主要用于超大内存容量场景——如 2 TB 以上的内存数据库或内存计算集群。</p><h2 id="选型建议" tabindex="-1">选型建议 <a class="header-anchor" href="#选型建议" aria-label="Permalink to “选型建议”">​</a></h2><p>日常办公和轻度游戏场景（8-16GB），DDR4 3200（最低成本）或 DDR5 5600（当前主流频率）都够用。办公应用对内存带宽不敏感。</p><p>游戏和内容创作场景（16-32GB），DDR5 6000 CL30 是目前消费级平台的甜点选择，带宽和延迟均衡，价格合理。超过 6400 后对游戏帧数提升微乎其微，但价格涨幅明显。生产力软件中视频剪辑和 3D 渲染对大容量（32GB+）的需求高于对极高频率的需求。</p><p>工作站和服务器场景（64GB+），优先考虑容量和 ECC 而非极限频率。内存容量不足时操作系统会使用 SSD 作为虚拟内存（swap），性能下降一个数量级。数据库、虚拟化等内存密集型场景应将预算分配在容量上，内存频率的差异在实际负载中很少成为瓶颈——内存带宽通常只在大型矩阵运算和 CFD 仿真中才会跑满。</p><p>内存通道数的选择优先级高于频率。双通道 DDR5-4800 的理论带宽约为单通道的 2 倍，四通道再加倍。如果主板支持四通道（如 TRX50），应优先插满 4 条而非升级到更高频率的双通道配置——实际带宽的提升远大于频率带来的收益。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/equip/slot/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>接口</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/equip/motherboard/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>主板</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    
+<nav id="sitemap" aria-hidden="true">
+<pre>/abstract - 目录
+/ai - 人工智能
+/ai/app - 大模型应用
+/ai/app/arch - 应用架构
+/ai/app/arch/api - API 设计
+/ai/app/arch/caching - Prompt Caching
+/ai/app/arch/gateway - 网关与缓存
+/ai/app/arch/routing - 模型路由
+/ai/app/auto - 自动化
+/ai/app/auto/impl - 实现原理
+/ai/app/auto/traditional - 传统自动化
+/ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
+/ai/app/engine/finetune - 微调
+/ai/app/engine/llama/cpp
+/ai/app/engine/llama_cpp - llama.cpp
+/ai/app/engine/llmops - LLMOps
+/ai/app/engine/vllm - vllm
+/ai/app/lib - 框架库
+/ai/app/lib/langchain - LangChain
+/ai/app/lib/langchain/langgraph - LangGraph
+/ai/app/lib/langchain/runnable - LCEL 与 Runnable
+/ai/app/lib/packages - 常用包
+/ai/app/multimodal - 多模态
+/ai/app/multimodal/audio - 语音交互
+/ai/app/multimodal/generation - 媒体生成
+/ai/app/multimodal/vision - 视觉理解
+/ai/app/overlay - Overlay
+/ai/app/overlay/agent - 智能体
+/ai/app/overlay/agent/a2a - A2A 协议
+/ai/app/overlay/agent/case - 应用实战
+/ai/app/overlay/agent/case/claude/code
+/ai/app/overlay/agent/case/claude_code - Claude Code
+/ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/deep/agent
+/ai/app/overlay/agent/deep_agent - Deep Agent
+/ai/app/overlay/agent/loop - Agent 循环
+/ai/app/overlay/agent/mcp - MCP Server
+/ai/app/overlay/agent/safety - 安全防护
+/ai/app/overlay/agent/safety/content - 内容安全
+/ai/app/overlay/agent/safety/guardrails - Guardrails
+/ai/app/overlay/agent/safety/injection - Prompt 注入
+/ai/app/overlay/agent/skills - Skills
+/ai/app/overlay/agent/tools - 工具调用
+/ai/app/overlay/ops - LLMOps
+/ai/app/overlay/ops/eval - 评估框架
+/ai/app/overlay/ops/monitor - 可观测性
+/ai/app/overlay/ops/test - 测试策略
+/ai/app/overlay/rag - RAG
+/ai/app/overlay/rag/agentic/rag
+/ai/app/overlay/rag/agentic_rag - Agentic RAG
+/ai/app/overlay/rag/data - 数据工程
+/ai/app/overlay/rag/data/parsing - 文档解析
+/ai/app/overlay/rag/data/processing - 数据处理
+/ai/app/overlay/rag/embedding - Embedding
+/ai/app/overlay/rag/graphrag - GraphRAG
+/ai/app/overlay/rag/retrieval - 检索质量
+/ai/app/overlay/rag/vector/db
+/ai/app/overlay/rag/vector_db - 向量数据库
+/ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/context - Context Engineering
+/ai/app/overlay/session/prompt - 提示词
+/ai/app/overlay/ui - AI UI
+/ai/compute - AI 引擎
+/ai/compute/api - 标准接口
+/ai/compute/api/cpu - SIMD
+/ai/compute/api/cuda - CUDA
+/ai/compute/api/opencl - OpenCL
+/ai/compute/api/simt - SIMT
+/ai/compute/api/triton - Triton
+/ai/compute/distributed - 集群
+/ai/compute/distributed/comm - 集合通信
+/ai/compute/distributed/parallel - 模型拆分
+/ai/compute/engine - 主流引擎
+/ai/compute/engine/deepspeed - DeepSpeed
+/ai/compute/engine/other - 其他
+/ai/compute/engine/pytorch - PyTorch
+/ai/compute/engine/vllm - vLLM
+/ai/compute/format - 模型格式
+/ai/compute/format/hf - HF 风格
+/ai/compute/format/onnx - ONNX
+/ai/compute/impl - 设计实现
+/ai/compute/impl/kvcache - KV Cache
+/ai/compute/impl/moe - 混合专家
+/ai/compute/impl/speculative - 投机解码
+/ai/compute/kernel - 算子
+/ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/optimization - 算子优化
+/ai/compute/kernel/quantization - 量化
+/ai/compute/stack - 计算栈
+/ai/cpp - C++
+/ai/neural - 神经网络
+/ai/neural/dl - 深度学习
+/ai/neural/dl/audio - 听觉
+/ai/neural/dl/backforward - 反向传播
+/ai/neural/dl/cnn - CNN
+/ai/neural/dl/diffusion - Diffusion
+/ai/neural/dl/multimodal - 多模态
+/ai/neural/dl/nlp - NLP
+/ai/neural/dl/recommend - 推荐
+/ai/neural/dl/rnn - RNN
+/ai/neural/dl/transformer - Transformer
+/ai/neural/dl/vision - 视觉
+/ai/neural/dl/vit - ViT
+/ai/neural/llm - LLM
+/ai/neural/llm/arch - 架构
+/ai/neural/llm/finetune - 微调
+/ai/neural/llm/memo - 记忆
+/ai/neural/llm/pretraind - 基座模型
+/ai/neural/math - 数学基础
+/ai/neural/ml - 机器学习
+/ai/neural/ml/bf - 梯度下降法
+/ai/neural/ml/loss - 损失函数
+/ai/neural/ml/reinforce - 强化学习
+/ai/neural/ml/supervised - 监督学习
+/ai/neural/ml/unsupervised - 无监督学习
+/ai/neural/numpy - Numpy
+/ai/neural/pytorch - PyTorch
+/ai/neural/sklearn - sklearn
+/ai/python - Python
+/ai/python/basic - 语言基础
+/ai/python/basic/module - 模块系统
+/ai/python/fastapi - FastAPI
+/ai/python/jupyter - jupyter
+/ai/python/uv - uv
+/ai/symbol - 符号逻辑
+/ai/symbol/expert-system - 专家系统
+/ai/symbol/logic - 数理逻辑基础
+/ai/symbol/neuralify - 神经符号融合
+/ai/symbol/outline - 学习路线
+/ai/symbol/prolog - Prolog
+/ai/symbol/reasoning - 推理引擎与搜索
+/ai/symbol/representation - 知识表示
+/basic - 理论基础
+/basic/algo - 算法
+/basic/algo/compress - 压缩
+/basic/algo/crypto - 加密和解密
+/basic/algo/model - 算法模型
+/basic/algo/model/bit - 位运算
+/basic/algo/model/dp - 动态规划
+/basic/algo/model/leetcode - leetcode 题型
+/basic/algo/model/recrusion - 递归
+/basic/algo/model/struct - 数据结构辅助
+/basic/algo/sort - 排序算法
+/basic/algo/string - 字符串算法
+/basic/algo/struct - 数据结构
+/basic/algo/struct/graph - 图
+/basic/algo/struct/tree - 树
+/basic/compile - 编译原理
+/basic/compile/advance - 高级语言
+/basic/compile/dsl - DSL
+/basic/compile/dsl/glob - glob
+/basic/compile/dsl/regex - 正则表达式
+/basic/compile/lang - 编程语言概览
+/basic/db - 数据库
+/basic/db/cmp - SQL
+/basic/db/nf - 范式
+/basic/graphic - 图形学
+/basic/graphic/2d - 2D 图形
+/basic/graphic/3d - 3D 场景渲染
+/basic/hardware - 硬件组成
+/basic/hardware/coding - 编码
+/basic/hardware/cpu - CPU
+/basic/hardware/gpu - GPU
+/basic/hardware/interrupt - 中断
+/basic/hardware/motherboard - 主板
+/basic/hardware/storage - 存储
+/basic/hardware/topo - CPU 拓扑
+/basic/network - 网络协议
+/basic/network/ether - 以太网
+/basic/network/http - HTTP
+/basic/network/ip - IP
+/basic/network/protocol - 网络协议
+/basic/network/tcp - TCP
+/basic/network/udp - UDP
+/basic/os - 操作系统
+/basic/os/mm - 内存管理
+/basic/os/schd - 调度
+/client - 客户端
+/client/art - 美术设计
+/client/art/mime - 媒体文件
+/client/art/render - 渲染
+/client/art/toolchain - 工具链
+/client/csharp - C#
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
+/client/csharp/dotnet - .NET
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
+/client/game - 游戏引擎
+/client/game/cocos - Cocos
+/client/game/godot - Godot
+/client/game/unity - Unity
+/client/game/unreal - Unreal
+/client/gui - 图形应用
+/client/gui/arch - 架构
+/client/gui/arch/observe - 可观测性
+/client/gui/cross - 跨平台</pre>
+<pre>/client/gui/cross/electron - Electron
+/client/gui/cross/flutter - Flutter
+/client/gui/cross/flutter/dart - Dart
+/client/gui/cross/framework - UI 框架
+/client/gui/cross/reactnative - ReactNative
+/client/gui/ergonomic - 人机关系
+/client/gui/ergonomic/interact - 人机交互
+/client/gui/ergonomic/screen - 屏幕
+/client/gui/platform - UI 平台
+/client/gui/platform/android - Android
+/client/gui/platform/gnome - Gnome
+/client/gui/platform/ios - Apple
+/client/gui/platform/web-env - Web 宿主
+/client/gui/platform/windows - Windows
+/client/gui/security - 安全
+/client/gui/security/access - 应用权限
+/client/gui/security/antiattack - 网络攻击
+/client/gui/security/auth - 登录鉴权
+/client/gui/security/privacy - 隐私保护
+/client/gui/security/sandbox - 沙箱
+/client/render - 渲染引擎
+/client/render/api - 标准接口
+/client/render/api/directx - DirectX
+/client/render/api/opengl - OpenGL
+/client/render/api/vulkan - Vulkan
+/client/render/api/vulkan/icd - ICD
+/client/render/api/vulkan/spirv - SPIR-V
+/client/render/api/webgl
+/client/render/api/webgpu - WebGPU
+/client/render/basic - 渲染基础
+/client/render/basic/mapping - 贴图
+/client/render/basic/scene - 3D 场景
+/client/render/engine - 主流引擎
+/client/render/engine/cycles - Cycles
+/client/render/engine/godot - Godot
+/client/render/engine/skia - Skia
+/client/render/raster - 光栅化管线
+/client/render/raster/ae - 后处理
+/client/render/raster/illumination - 光照模型
+/client/render/raster/rast - 光栅化算法
+/client/render/raytrace - 光线追踪管线
+/client/render/raytrace/bvh - 加速算法
+/client/render/raytrace/denoise - 降噪
+/client/render/raytrace/integrate - 混合渲染管线
+/client/render/shader - 着色器
+/client/render/shader/optimization - 着色器优化
+/client/render/shader/patterns - 常见模式
+/client/render/stack - 计算栈
+/client/render/vec/compose
+/client/render/vec_compose - 矢量合成管线
+/client/rust - Rust
+/client/rust/assets - 静态资源管理
+/client/rust/basic - 语言基础
+/client/rust/basic/closure - 闭包
+/client/rust/basic/macro - 宏
+/client/rust/basic/mod - 模块系统
+/client/rust/basic/ref - 智能指针
+/client/rust/basic/trait - 特性
+/client/rust/cargo - Cargo
+/client/rust/cli - CLi
+/client/rust/ld - 链接库
+/client/rust/slint - Slint
+/client/rust/tauri - Tauri
+/client/rust/wasm - WASM
+/client/web - Web
+/client/web/api - Web API
+/client/web/api/wasm - WASM
+/client/web/browser - 浏览器
+/client/web/browser/arch - 架构
+/client/web/browser/devtools - DevTools 性能分析
+/client/web/browser/eventloop - 事件循环
+/client/web/browser/http - HTTP 协议
+/client/web/browser/memleak - 内存泄漏
+/client/web/browser/optimize - 性能优化
+/client/web/browser/render - 渲染周期
+/client/web/browser/render copy - 渲染周期
+/client/web/browser/security - 浏览器安全
+/client/web/browser/security copy - 安全
+/client/web/browser/storage - 存储
+/client/web/browser/v8 - V8
+/client/web/css - CSS
+/client/web/css/basic - 语言基础
+/client/web/css/sass - Sass
+/client/web/css/tailwind - Tailwindcss
+/client/web/css/trick - CSS trick
+/client/web/css/trick/animation - CSS 动画
+/client/web/css/trick/bfc - 块级格式上下文
+/client/web/css/trick/layout - 布局
+/client/web/css/trick/layout/box-sizing - CSS盒模型
+/client/web/css/trick/layout/containing-block - 包含块
+/client/web/css/trick/layout/grid - grid布局
+/client/web/css/trick/relative - 主题定制
+/client/web/css/trick/sort - css 属性的分类
+/client/web/css/trick/z-index - 层叠上下文与 z-index
+/client/web/eng - 工程化
+/client/web/eng/bootstrap - 项目搭建
+/client/web/eng/build - 构建优化
+/client/web/eng/engineering - 工程化搭建
+/client/web/eng/migration - 迁移
+/client/web/eng/svg - svg
+/client/web/eng/vite - Vite
+/client/web/eng/vite-plugin - Vite 插件
+/client/web/eng/webpack - Webpack
+/client/web/html - HTML
+/client/web/html/basic - 语言基础
+/client/web/html/mathml - MathML
+/client/web/html/md - Markdown
+/client/web/html/seo - SEO
+/client/web/html/svg - SVG
+/client/web/html/trick - HTML trick
+/client/web/html/trick/drag - HTML 拖放 API
+/client/web/html/trick/event - 事件与尺寸获取
+/client/web/html/trick/wc - Web Component
+/client/web/js - JavaScript
+/client/web/js/basic - 语言基础
+/client/web/js/basic/async - 异步编程
+/client/web/js/basic/class - 面向对象
+/client/web/js/basic/iterable - 迭代器
+/client/web/js/basic/obj-base-ops - js 对象基本操作
+/client/web/js/basic/own-property - 属性的可枚举性和所有者
+/client/web/js/basic/proto - 原型链
+/client/web/js/basic/stream - Stream API
+/client/web/js/basic/type-transform - 隐式类型转换
+/client/web/js/npm - npm
+/client/web/js/typescript - TypeScript
+/client/web/js/typescript/basic - 语法基础
+/client/web/nodejs - Nodejs
+/client/web/nodejs/express - Express.js
+/client/web/nodejs/nestjs - Nestjs
+/client/web/nodejs/performance - Node.js 性能调优
+/client/web/react - React
+/client/web/react/fiber - Fiber 与调和
+/client/web/react/rsc - 服务端组件
+/client/web/solid - Solid
+/client/web/ssr - SSR
+/client/web/ssr/nextjs - Nextjs
+/client/web/ssr/nuxtjs - Nuxtjs
+/client/web/ssr/seo - SEO
+/client/web/ssr/ssg - SSG
+/client/web/ssr/vike - Vike
+/client/web/typical - 典型业务
+/client/web/vue - Vue
+/client/web/vue/cpc - 组件通信
+/client/web/vue/nuxt-server - 服务端组件
+/client/web/vue/vdom - 虚拟 DOM 与 Diff 算法
+/design - 软件设计
+/design/async - 异步
+/design/async/async-await - await
+/design/async/reactive - 响应式
+/design/async/schedule - 用户态调度
+/design/concurrent - 并发
+/design/concurrent/atom - 原子操作
+/design/concurrent/lock - 同步原语
+/design/concurrent/lock/free
+/design/concurrent/lock_free - 无锁并发
+/design/concurrent/thread - 多线程
+/design/fp - 函数式
+/design/fp/composition - 组合
+/design/fp/functor - 函子
+/design/fp/hint - hint
+/design/fp/immutable - 不可变
+/design/fp/io - IO
+/design/fp/state - 状态管理
+/design/oop - 面向对象
+/design/oop/aop - AOP
+/design/oop/interface - 接口与抽象
+/design/oop/ioc - IOC
+/design/oop/lifetime - 对象生命周期
+/design/oop/om - 对象模型
+/design/oop/pattern - 设计模式
+/design/oop/relationship - 类间关系
+/design/oop/solid - SOLID
+/design/spacetime - 面向时空
+/design/spacetime/domain - 主机域
+/design/spacetime/general - 通用域
+/design/spacetime/general/architecture - 架构演进
+/design/spacetime/general/container - 容器
+/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/dependency - 依赖管理
+/design/spacetime/general/tradeoff - 权衡
+/design/spacetime/network - 网络域
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process/scope - 作用域
+/design/spacetime/process/single - 单进程
+/design/spacetime/space - 体系建构
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
+/design/typical/ddd - DDD
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/refactor - 重构
+/design/typical/simplify - 简化原则
+/design/typical/swift - 敏捷开发
+/examples - 随便看看
+/index
+/kernel - 系统层
+/kernel/asm - 汇编
+/kernel/asm/arm - ARM 指令集
+/kernel/c - C</pre>
+<pre>/kernel/c/basic - 语言基础
+/kernel/c/basic/io - io 操作
+/kernel/c/basic/string - 字符串操作
+/kernel/c/build - 构建系统
+/kernel/c/concurrent - 并发编程
+/kernel/c/debug - 调试
+/kernel/c/lib - 库函数
+/kernel/embed - 嵌入式
+/kernel/embed/bios - BIOS
+/kernel/embed/device - 外设
+/kernel/embed/device/bus - 总线设备
+/kernel/embed/device/bus/i2c - I2C
+/kernel/embed/device/bus/pci - PCI
+/kernel/embed/device/bus/usb - USB
+/kernel/embed/device/comm - 数据面
+/kernel/embed/device/platform - 平台设备
+/kernel/embed/device/sub - 集成子设备
+/kernel/embed/elel - 硬件基础
+/kernel/embed/elel/design - 打板
+/kernel/embed/elel/fpga - FPGA
+/kernel/embed/elel/pcb - PCB
+/kernel/embed/elel/soc - SoC
+/kernel/embed/freertos - FreeRTOS
+/kernel/embed/iot - 物联网
+/kernel/embed/sbc - 开发板
+/kernel/embed/sbc/raspberry - 树莓派
+/kernel/embed/sbc/stm32 - STM32
+/kernel/embed/uboot - U-Boot
+/kernel/equip - 装机
+/kernel/equip/bmc - BMC
+/kernel/equip/gpu - GPU
+/kernel/equip/laptop/brand
+/kernel/equip/laptop_brand - 笔记本
+/kernel/equip/lte - LTE
+/kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/consumer - 消费级
+/kernel/equip/motherboard/epyc - EPYC 装机
+/kernel/equip/motherboard/ram - 内存适配
+/kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/ram - 内存
+/kernel/equip/sbc - SBC
+/kernel/equip/screen - 屏幕
+/kernel/equip/server/room
+/kernel/equip/server_room - 机房
+/kernel/equip/slot - 接口
+/kernel/equip/support - 支撑设备
+/kernel/linux - Linux
+/kernel/linux/develop - 系统开发
+/kernel/linux/develop/ctx - 内核上下文
+/kernel/linux/develop/io/uring
+/kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/kbuild - linux 内核构建系统
+/kernel/linux/develop/lock - 同步原语
+/kernel/linux/develop/service - 系统服务
+/kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/struct - 数据结构
+/kernel/linux/develop/struct/iov - 聚簇读写
+/kernel/linux/develop/struct/linked - 链表
+/kernel/linux/develop/systemd - systemd
+/kernel/linux/device - 设备管理
+/kernel/linux/device/dma - DMA
+/kernel/linux/device/driver - 驱动接口
+/kernel/linux/device/driver/can - CAN
+/kernel/linux/device/driver/pci - PCIe 驱动
+/kernel/linux/device/driver/usb - USB 驱动
+/kernel/linux/device/driver/virtio
+/kernel/linux/device/lifecycle - 生命周期
+/kernel/linux/device/udev - udev
+/kernel/linux/file - 文件管理
+/kernel/linux/file/block - 块设备子系统
+/kernel/linux/file/pfs - 伪文件系统
+/kernel/linux/file/vfs - 虚拟文件系统
+/kernel/linux/irq - 中断管理
+/kernel/linux/irq/clock - 时钟中断
+/kernel/linux/irq/controller - 中断控制器
+/kernel/linux/irq/handler - 中断处理
+/kernel/linux/mm - 内存管理
+/kernel/linux/mm/mmap - 虚拟内存映射
+/kernel/linux/mm/pmm - 物理内存管理
+/kernel/linux/mm/reclaim - 内存回收
+/kernel/linux/mm/swap - 内存交换
+/kernel/linux/net - 网络实现
+/kernel/linux/net/stack - 协议栈
+/kernel/linux/power - 电源管理
+/kernel/linux/power/boot - 开机上电
+/kernel/linux/power/tpm - 安全启动
+/kernel/linux/process - 进程管理
+/kernel/linux/process/ipc - IPC
+/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/schd - 调度
+/kernel/linux/process/security - 权限管理
+/kernel/linux/syscall - 系统调用
+/kernel/linux/syscall/file - 文件管理
+/kernel/linux/syscall/mm - 内存管理
+/kernel/linux/syscall/process - 进程管理
+/kernel/linux/video - 视图系统
+/kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
+/kernel/vm - 虚拟化
+/kernel/vm/basic - 基本原理
+/kernel/vm/basic/bios - BIOS
+/kernel/vm/basic/cpu - CPU
+/kernel/vm/basic/device - 设备
+/kernel/vm/basic/memory - 内存
+/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/vfio - VFIO
+/kernel/vm/virtio - VirtIO
+/sde - 工程化
+/sde/container - 容器
+/sde/container/docker - Docker
+/sde/container/principle - 实现原理
+/sde/git - Git
+/sde/git/advanced - Git 高阶用法
+/sde/git/github - Github
+/sde/git/gitlab - Gitlab
+/sde/k8s - K8s
+/sde/k8s/k3s - k3s
+/sde/k8s/network - 网络模型
+/sde/shell - Shell
+/sde/shell/basic - 语言基础
+/sde/shell/cli - 常见命令行
+/sde/sre - 运维
+/sde/sre/elk - ELK
+/sde/sre/jenkins - Jenkins
+/sde/sre/openstack - OpenStack
+/sde/test - 测试
+/sde/test/basic - 测试原理
+/sde/test/framework - 测试工具与框架
+/sde/test/tdd - 测试驱动开发
+/sde/workflow - 工作流
+/sde/workflow/devops - DevOps
+/sde/workflow/devops/cicd - CI/CD
+/sde/workflow/quality - 质量控制
+/sde/workflow/quality/docs - 文档工程
+/sde/workflow/quality/review - Code Review
+/sde/workflow/version - 版本管理
+/server - 服务端
+/server/db - 数据库
+/server/db/distributed - 集群
+/server/db/distributed/comparison - 数据库对比与选型
+/server/db/distributed/newsql - NewSQL 数据库
+/server/db/distributed/sharding - 分库分表
+/server/db/distributed/transaction - 分布式事务
+/server/db/engine - 存储引擎
+/server/db/engine/fulltext - 全文检索
+/server/db/engine/graph - 图
+/server/db/engine/innodb - innodb
+/server/db/engine/vector - 向量
+/server/db/nosql - NoSQL
+/server/db/nosql/es - ElasticSearch
+/server/db/nosql/milvus - Milvus
+/server/db/nosql/milvus/idx - 向量索引
+/server/db/nosql/milvus/storage - 分布式能力
+/server/db/nosql/milvus/usage - 使用实践
+/server/db/nosql/minio - MinIO
+/server/db/nosql/mongo - MongoDB
+/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/redis - Redis
+/server/db/practice - 工程实践
+/server/db/practice/backup - 备份与恢复
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
+/server/db/practice/monitoring - 监控与运维
+/server/db/practice/standards - 数据库规范
+/server/db/practice/tuning - 性能调优实践
+/server/db/sql - SQL
+/server/db/sql/basic - sql 基础
+/server/db/sql/basic/design - 数据库设计
+/server/db/sql/basic/integrity - 数据完整性
+/server/db/sql/basic/transaction - 事务与并发控制
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql/id - 索引
+/server/db/sql/mysql/impl - 存储引擎
+/server/db/sql/mysql/optimize - 查询优化
+/server/db/sql/pg - PostgreSQL
+/server/db/sql/sqlite - SQLite
+/server/distribute - 分布式
+/server/distribute/arch - 集群架构
+/server/distribute/basic - 分布式基础
+/server/distribute/basic/cap - CAP
+/server/distribute/basic/concurrency - 并发模型
+/server/distribute/basic/concurrency/coroutine - 协程原理
+/server/distribute/basic/concurrency/event-loop - 事件驱动架构
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus/raft - Raft 算法
+/server/distribute/basic/consensus/zab - ZAB 协议
+/server/distribute/basic/id - 分布式 ID
+/server/distribute/basic/lock - 分布式锁
+/server/distribute/basic/transaction - 分布式事务
+/server/distribute/cloud - 云原生
+/server/distribute/cloud/arch - 架构
+/server/distribute/cloud/cicd - CI/CD
+/server/distribute/cloud/container - 容器技术
+/server/distribute/cloud/mesh - Service Mesh
+/server/distribute/cloud/orchestration - Kubernetes</pre>
+<pre>/server/distribute/cloud/pkg - 包管理与镜像
+/server/distribute/micro - 微服务
+/server/distribute/micro/cache - 缓存
+/server/distribute/micro/cache/consistency - 缓存一致性
+/server/distribute/micro/config - 配置中心
+/server/distribute/micro/discovery - 服务发现
+/server/distribute/micro/gateway - API 网关
+/server/distribute/micro/lb - 负载均衡
+/server/distribute/micro/observability - 可观测性
+/server/distribute/micro/observability/monitoring - 监控告警
+/server/distribute/micro/observability/tracing - 链路追踪
+/server/distribute/micro/qos - QoS
+/server/distribute/micro/qos/chaos - 混沌工程
+/server/distribute/micro/qos/fuse - 熔断限流
+/server/distribute/micro/qos/ha - 高可用与容错
+/server/distribute/micro/qos/ha/load-balance - 负载均衡
+/server/distribute/micro/qos/highes - 三高
+/server/distribute/micro/qos/monitor - 监控
+/server/distribute/micro/qos/observability - 可观测性
+/server/distribute/micro/qos/observability/monitoring - 监控指标设计
+/server/distribute/micro/qos/performance - 性能优化
+/server/distribute/micro/qos/performance/profiling - 性能分析工具
+/server/distribute/micro/qos/reliability/disaster-recovery - 容灾
+/server/distribute/micro/qos/reliability/failover - 故障转移
+/server/distribute/micro/qos/slashing - 限流降级
+/server/distribute/micro/reliability - 健壮性
+/server/distribute/micro/reliability/fusing - 熔断降级
+/server/distribute/micro/reliability/ratelimit - 限流
+/server/go - Go
+/server/go/gmp - GMP 调度器
+/server/java - Java
+/server/java/basic - 语言基础
+/server/java/jvm - JVM 内存与 GC
+/server/java/mod - 模块系统
+/server/java/mod/gradle - gradle
+/server/java/mod/maven - Maven
+/server/java/spring - Spring
+/server/middleware - 中间件
+/server/middleware/mq - 消息队列
+/server/middleware/mq/kafka - Kafka
+/server/middleware/mq/rabbitmq - RabbitMQ
+/server/middleware/mq/rocketmq - RocketMQ
+/server/middleware/mycat - MyCat
+/server/middleware/proxy - 代理
+/server/middleware/proxy/haproxy - haproxy
+/server/middleware/proxy/lvs - LVS
+/server/middleware/proxy/nginx - Nginx
+/server/middleware/srs - SRS
+/server/network - 网络编程
+/server/network/io-model - I/O 模型
+/server/network/proto - 网络协议
+/server/network/proto/http - HTTP
+/server/network/proto/quic - QUIC
+/server/network/proto/rpc - RPC 框架
+/server/network/proto/tcp - TCP
+/server/network/proto/udp - UDP
+/server/network/proto/websocket - WebSocket
+/server/network/security - 网络安全
+/server/network/tcp-tuning - TCP 调优
+/server/network/zero-copy - 零拷贝
+/server/typical - 典型业务
+/server/typical/auth - 登录鉴权
+/server/typical/flash/sale
+/server/typical/flash_sale - 秒杀活动
+/server/typical/image - 图片上传
+/server/typical/order - 订单管理
+/server/typical/search - 内容搜索
+/server/typical/setup - 快速建站
+/web3 - 去中心化
+/web3/blockchain - 区块链
+/web3/blockchain/consensus - 共识机制
+/web3/blockchain/crypto - 密码学支持
+/web3/blockchain/ethereum - 以太坊
+/web3/blockchain/zk-proof - 零知识证明
+/web3/dapp - DApp
+/web3/dapp/defi - DeFi
+/web3/dapp/tokens - 代币标准
+/web3/dapp/wallets - 账户与钱包
+/web3/solidity - Solidity
+/web3/solidity/smart-contracts - 智能合约</pre>
+</nav><style>#sitemap{display:none}</style>
+    
+    
+  </body>
+</html>

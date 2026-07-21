@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>服务器 | Spark Notes</title>
+    <meta name="description" content="我的计科学习随笔">
+    <meta name="generator" content="VitePress v2.0.0-alpha.18">
+    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    <script src="/assets/site-data.46e417e4.js"></script>
+    <script type="module" src="/assets/app.CzQd7weX.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
+    <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
+    <link rel="modulepreload" href="/assets/kernel_equip_motherboard_server.md.BMjvkcS9.lean.js">
+    <link rel="icon" href="/favicon.svg">
+    <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _kernel_equip_motherboard_server" data-v-e9c23681><div><h1 id="服务器主板" tabindex="-1">服务器主板 <a class="header-anchor" href="#服务器主板" aria-label="Permalink to “服务器主板”">​</a></h1><p>企业级服务器主板服务于数据中心、云计算和高性能计算场景，与消费级主板的设计思路有本质区别。服务器主板采用 SoC（System-on-Chip）架构，CPU 直接集成内存控制器、PCIe 根复合体、SATA/USB 控制器和安全协处理器，不再需要传统的南桥芯片组。一个低速的外置 BMC（Baseboard Management Controller，基板管理控制器）芯片负责带外管理（IPMI/Redfish）、远程 KVM、虚拟介质挂载等运维功能。</p><p>企业级平台的核心差异体现在三个方面：内存通道数量（决定总带宽）、PCIe 通道数量（决定扩展能力）、以及是否支持多路互联（决定单节点的算力上限）。以 Genoa 平台为例，12 通道 DDR5 提供 460 GB/s 的理论内存带宽，128 条 PCIe 5.0 通道可同时驱动 8 块 GPU 和 24 块 NVMe 硬盘——这些都是消费级平台无法企及的扩展规模。</p><h2 id="与消费级主板的核心差异" tabindex="-1">与消费级主板的核心差异 <a class="header-anchor" href="#与消费级主板的核心差异" aria-label="Permalink to “与消费级主板的核心差异”">​</a></h2><p>服务器主板和消费级主板在多个维度上都有根本性的不同，理解这些差异有助于判断何时应该选择服务器平台。</p><h3 id="ras-特性" tabindex="-1">RAS 特性 <a class="header-anchor" href="#ras-特性" aria-label="Permalink to “RAS 特性”">​</a></h3><p>RAS（Reliability, Availability, Serviceability）是服务器主板的灵魂。可靠性方面，服务器主板全链路支持 ECC 内存（从 DRAM 颗粒到内存控制器），能纠正单比特错误、检测双比特错误；PCIe 通道支持 Advanced Error Reporting（AER），可隔离故障链路。可用性方面，热插拔（Hot-plug）覆盖 CPU、内存、PCIe 设备和 NVMe 硬盘——故障部件可以在不停机的情况下被替换。可维护性方面，BMC 提供带外管理通道，即使操作系统崩溃或 CPU 宕机，管理员仍可通过独立网口远程访问服务器进行诊断和修复。</p><h3 id="内存子系统" tabindex="-1">内存子系统 <a class="header-anchor" href="#内存子系统" aria-label="Permalink to “内存子系统”">​</a></h3><p>消费级主板使用双通道 UDIMM（Unbuffered DIMM），最多 4 条插槽，单条容量通常 48GB 封顶。服务器主板使用 8~12 通道 RDIMM（Registered DIMM）或 LRDIMM（Load-Reduced DIMM）——RDIMM 在地址/命令线上加了寄存器，降低主板走线的电气负载，使单通道可以驱动更高容量和更多 rank 的内存条；LRDIMM 进一步在数据线上加缓冲，可将单条容量推到 256GB。</p><p>Genoa 平台的 12 通道 DDR5-4800 理论带宽约 460 GB/s，是消费级双通道 DDR5-6400（约 102 GB/s）的 4.5 倍。带宽差异在大规模矩阵运算、内存数据库、CFD 仿真等流式工作负载上尤为关键——这些场景下 CPU 的实际吞吐量往往受限于内存带宽而非算力。</p><h3 id="电源与散热" tabindex="-1">电源与散热 <a class="header-anchor" href="#电源与散热" aria-label="Permalink to “电源与散热”">​</a></h3><p>服务器主板的供电设计目标是持续满载稳定性，而非峰值超频能力。CPU VRM 通常采用多相数字供电（如 SP5 平台的 20+ 相），每相配备服务器级 DrMOS 和钽电容，确保在 350-500W TDP 持续负载下纹波控制在极低水平。散热方案为被动式——服务器主板本身不带风扇，依赖机箱内的暴力风扇（1U 服务器常用 40mm 万转风扇）产生的风压强制散热。这要求主板上的散热片设计为低矮的鳍片形态，配合特定风道方向。</p><h2 id="epyc-处理器命名规则" tabindex="-1">EPYC 处理器命名规则 <a class="header-anchor" href="#epyc-处理器命名规则" aria-label="Permalink to “EPYC 处理器命名规则”">​</a></h2><p>AMD EPYC 使用四位数字 + 可选后缀的命名体系，以 7601 为例拆解：</p><p><code>7</code> — 产品系列，7 代表 7000 系列（SP3 平台），9 代表 9000 系列（SP5 平台），8 代表 8000 系列（SP6 边缘计算平台）。</p><p><code>6</code> — 核心数档位，数字越大核心越多但并不精确等于数量，只表示所属的核心数区间。7001 (Naples) 代际的实际对应关系为：2 = 8 核 (7251/7261)、3 = 16 核 (7301/7351)、4 = 24 核 (7401/7451)、5 = 32 核 (7501/7551)、6 = 32 核旗舰款 (7601)。到了 7002/7003 代际核心数整体上移，6 对应到 48~64 核区间。所以解读核心数档位时必须结合第四位的代际数字一起看。</p><p><code>0</code> — 性能/定位细分，在同一核心数档位内区分高低配。第三位数字越大概率上代表更高的主频或更大的缓存配置。例如 7601 的核心数档位为 6（32 核），定位细分 0 意味着它是 32 核中的标准性能款；如果是 6 则属于同核心数下的高频/高性能款。</p><p><code>1</code> — 架构代际，1 = Zen 1 (Naples)、2 = Zen 2 (Rome)、3 = Zen 3 (Milan)、4 = Zen 4 (Genoa/Bergamo/Siena)、5 = Zen 5 (Turin)。这是命名中最重要的单字符——它直接决定了 IPC、能效比和指令集支持（如 AVX-512 从 Zen 4 开始引入）。</p><p>后缀用于标记特殊能力：</p><ul><li><code>P</code> 后缀（如 7551P）：仅支持单路（1P），不能用于双路服务器，但通常价格更低。</li><li><code>F</code> 后缀（如 9374F）：高频优化款，面向单线程延迟敏感型负载（如高频交易、EDA 仿真）。</li><li><code>X</code> 后缀（如 7773X）：搭载 3D V-Cache，在 CCD 上堆叠额外 L3 缓存，适用于计算流体力学、EDA 等对缓存容量极度敏感的工作负载。Milan-X 的 3D V-Cache 将 L3 从 256 MB 提升至 768 MB。</li><li><code>S</code> 后缀（如 9754S）：面向云原生/高密部署，使用 Zen 4c 密集核心，在相同功耗下塞入更多核心。</li></ul><p>以 7601 为例验证这条规则：7 系列 + 6=32 核 + 0=标准性能定位 + 1=Zen 1 架构 + 无后缀=支持双路。7601 实际参数为 32C/64T、基频 2.2 GHz、TDP 180W、8 通道 DDR4-2666、128 条 PCIe 3.0——完全符合命名规则给出的预期。</p><h2 id="企业级平台代际" tabindex="-1">企业级平台代际 <a class="header-anchor" href="#企业级平台代际" aria-label="Permalink to “企业级平台代际”">​</a></h2><p>企业级 CPU 代际与对应的主板平台：</p><table tabindex="0"><thead><tr><th>CPU 代际</th><th>代号</th><th>典型型号</th><th>主板平台</th><th>制程</th><th>关键特性</th></tr></thead><tbody><tr><td>7001</td><td>Naples</td><td>7601、7551、7401</td><td>SP3</td><td>14nm</td><td>Zen 1, DDR4, PCIe 3.0, 最多 32 核</td></tr><tr><td>7002</td><td>Rome</td><td>7742、7702、7452</td><td>SP3</td><td>7nm</td><td>Zen 2, DDR4, PCIe 4.0, 最多 64 核, 引入 chiplet 架构</td></tr><tr><td>7003</td><td>Milan / Milan-X</td><td>7763、7713、7773X</td><td>SP3</td><td>7nm</td><td>Zen 3, DDR4, PCIe 4.0, 可选 3D V-Cache</td></tr><tr><td>9004</td><td>Genoa / Bergamo</td><td>9654、9754、9374F</td><td>SP5</td><td>5nm</td><td>Zen 4/Zen 4c, DDR5, PCIe 5.0, CXL 1.1+, 最多 128 核</td></tr><tr><td>9005</td><td>Turin</td><td>9965、9845</td><td>SP5</td><td>4nm/3nm</td><td>Zen 5/Zen 5c, DDR5-6000, 最多 192 核</td></tr><tr><td>8004</td><td>Siena</td><td>8234、8534P</td><td>SP6</td><td>5nm</td><td>Zen 4c, 6ch DDR5, 96 条 PCIe 5.0, 专为边缘/电信设计</td></tr></tbody></table><h2 id="企业级主板平台-socket" tabindex="-1">企业级主板平台（Socket） <a class="header-anchor" href="#企业级主板平台-socket" aria-label="Permalink to “企业级主板平台（Socket）”">​</a></h2><ul><li>SP3 (LGA 4094)：AMD 的第一代可扩展服务器插座，覆盖 Zen 1 到 Zen 3 三代架构（2017-2022）。这个平台最突出的特点是三代 CPU 共享同一插座——从 Naples 到 Milan，一块 SP3 主板可以通过 BIOS 更新跨越三代 CPU。8 通道 DDR4 和 128 条 PCIe 4.0 的规格在推出时远超同代 Intel Xeon 平台。SP3 是目前数据中心中保有量最大的 EPYC 平台。</li><li>SP5 (LGA 6096)：为 Zen 4/Zen 5 设计的旗舰平台（2022-），插座物理尺寸 76×80 mm，是三个平台中最大的一档。12 通道 DDR5（Genoa 4800 MT/s，Turin 6000 MT/s）和 160 条 PCIe 5.0 通道使其成为 HPC 和 AI 训练场景的主力。支持双路互联和 CXL 1.1+（64 条 lane 可配置为 CXL），TDP 上限在 Turin 代达到 500W。Genoa 到 Turin 保持插座兼容，为已有 SP5 基础设施提供了原地升级路径。</li><li>SP6 (LGA 4844)：面向边缘计算和电信场景的低功耗平台（2023-）。插座物理尺寸与 SP3 相同（58.5×75.4 mm），但引脚数增至 4844。仅支持单路，6 通道 DDR5 和 96 条 PCIe 5.0 的规格仅为 SP5 的一半，对应地 TDP 可低至 70W。SP6 的关键价值在于能在电信机架、零售边缘节点等空间和散热受限的环境中提供 x86 服务器级别的可靠性和 ECC 内存支持，替代大量散落的 Xeon-D 设备。</li></ul><p>SP3、SP5、SP6 三个插座之间物理和电气上互不兼容。换个说法，每换一代平台就需要更换主板和散热器。SP6 和 SP3 虽然尺寸相同（散热器孔位兼容），但引脚定义不同，不能混插 CPU。</p><h2 id="单路与双路拓扑" tabindex="-1">单路与双路拓扑 <a class="header-anchor" href="#单路与双路拓扑" aria-label="Permalink to “单路与双路拓扑”">​</a></h2><p>服务器主板按 CPU 数量分为单路（1P）和双路（2P）两种拓扑。单路主板只焊一个 CPU 插座，所有 PCIe 通道和内存通道由一颗 CPU 独占，适合中小型负载和成本敏感场景。双路主板焊接两个插座，两颗 CPU 通过专用的高速互联总线（AMD 称为 Infinity Fabric）连接，共享内存地址空间但各自维护本地内存控制器。</p><p>双路拓扑的关键工程考量是 NUMA（Non-Uniform Memory Access）。CPU 0 访问自己本地的 8 通道内存延迟最低（本地访问），访问 CPU 1 的内存需要跨越 Infinity Fabric（远程访问），延迟增加约 50-100%。对于内存带宽敏感的应用（如数据库、虚拟机），操作系统需要通过 NUMA 亲和性调度，将进程绑定到某个 NUMA 节点，避免频繁的跨节点内存访问。Linux 的 <code>numactl</code> 和 <code>libnuma</code> 提供了这种绑定的接口。</p><p>是否选择双路取决于工作负载类型。单颗 64 核 EPYC 的总吞吐量通常优于两颗 32 核 EPYC——因为单路下所有核心共享同一内存控制器和 PCIe 根复合体，没有跨节点互联开销。双路的价值在于内存容量翻倍（2×8=16 通道）和 PCIe 通道翻倍（2×128=256 条），适合需要超大内存或大量扩展卡的场景。现代趋势是&quot;单路大核&quot;——用一颗 96 核甚至 128 核的 EPYC 替代双路 48 核配置，既省去 NUMA 调优的麻烦，又降低了主板和互联的复杂度。</p><h2 id="bmc-带外管理" tabindex="-1">BMC 带外管理 <a class="header-anchor" href="#bmc-带外管理" aria-label="Permalink to “BMC 带外管理”">​</a></h2><p>BMC（Baseboard Management Controller）是服务器主板上独立于主 CPU 的一个低功耗管理芯片，主流方案是 ASPEED 的 AST2500/AST2600 系列。BMC 有自己独立的 ARM 处理器、固件（如 OpenBMC、AMI MegaRAC）和网卡，通过 I2C、SMBus、PCIe 与主板各组件连接，即使主系统断电（只要插着电源线）BMC 仍然在线。</p><p>BMC 提供的核心能力包括：带外管理（通过专用网口或 NC-SI 共享主网口），管理员无需经过操作系统即可远程开关机、查看传感器读数、查看事件日志；远程 KVM（BMC 内置视频捕获芯片，模拟键鼠输入，实现类似物理在场的 BIOS/UEFI 操作）；虚拟介质（把远程的 ISO/IMG 挂载为服务器的虚拟光驱/U 盘，实现远程装机）；Serial-over-LAN（远程串口，用于内核调试）。</p><p>BMC 对外的标准协议是 IPMI（Intelligent Platform Management Interface）和现代的 Redfish（基于 REST API 的 DMTF 标准）。IPMI 已逐渐被 Redfish 取代，但 BMC 仍然兼容两者。运维实践中，BMC 是服务器远程运维的核心入口——批量部署操作系统、硬件故障告警、远程故障恢复都依赖 BMC。这也是消费级主板和服务器主板最显著的区别之一：消费级主板没有 BMC，远程管理只能依赖操作系统层面的工具（如 SSH、远程桌面）。</p><h2 id="厂商介绍" tabindex="-1">厂商介绍 <a class="header-anchor" href="#厂商介绍" aria-label="Permalink to “厂商介绍”">​</a></h2><p><strong>国际大厂</strong></p><ul><li><strong>Dell PowerEdge</strong> — 服务器市场份额全球第一。PowerEdge 覆盖从单路入门到四路旗舰，R 开头为机架式（R7625 = 双路 EPYC 2U）、T 为塔式、XE 为边缘/工业。iDRAC（Dell 的 BMC 实现）功能成熟，从虚拟介质挂载、远程固件更新到自动故障告警和 SupportAssist 主动报修，开箱即用。主板全部定制设计不单独出售。</li><li><strong>HPE ProLiant</strong> — 惠普企业级产品线，DL 为机架式、ML 为塔式。iLO（Integrated Lights-Out）是最早的 BMC 实现之一，iLO 6 已支持 Redfish API 和 HTML5 远程控制台。核心优势是全球服务网络——4 小时上门备件更换对金融和电信客户有实际价值。</li><li><strong>Lenovo ThinkSystem</strong> — 收购 IBM x86 服务器业务（System x）后建立的品牌。SR 系列机架式在设计密度上有优势——1U 机箱内支持 32 条 DIMM 和 2 块 GPU 的设计在同类产品中少见。BMC 称为 XClarity Controller，与企业级 XClarity Administrator 管理平台集成。</li><li><strong>Supermicro</strong> 超微— 硅谷公司，以提供裸主板和准系统为核心差异，是自建服务器的首选渠道。优势在于产品迭代快（新平台发布后数周内出板）、SKU 丰富（同代芯片组有数十款不同板型）、价格低于品牌服务器。劣势是 BMC 固件交互不如一线大厂，管理功能需要额外的运维能力。</li><li><strong>Gigabyte / ASRock Rack</strong> 技嘉/华擎— 台湾两大主板厂的服务器部门。Gigabyte R/M 系列面向 GPU 服务器和小型 HPC，ASRock Rack 性价比突出，ROMED8 系列在自建 NAS 中大量使用。BMC 是 ASPEED AST2500/2600 公版方案加少量定制 UI。</li><li><strong>TYAN</strong> 泰安— 台湾老牌服务器主板厂商，1989 年成立，现为神达（MiTAC）旗下品牌。TYAN 专注于服务器主板和准系统的 ODM/OEM 和零售业务，产品线覆盖单路到四路 EPYC 和 Xeon 平台。与 Supermicro 类似，TYAN 也单卖裸主板，在自建服务器和小型数据中心中有一定市场份额。典型产品如 Transport CX 系列 GPU 服务器准系统。</li></ul><p><strong>国内厂商</strong></p><ul><li><strong>浪潮（Inspur）</strong> — 中国服务器市场第一，全球第二。NF 系列机架式覆盖双路到八路，核心优势在于互联网巨头的深度定制——为阿里、腾讯、字节等定制的主板在供电、散热和 BMC 固件上与公版差异显著。浪潮也提供面向 AI 训练的液冷整机柜，可支持 64 GPU 高密度部署。</li><li><strong>华为</strong> — 由于制裁无法采购 x86 CPU，服务器产品线已全面转向自研 ARM 平台。鲲鹏（Kunpeng）处理器用于 TaiShan 系列通用服务器，昇腾（Ascend）NPU 用于 Atlas 系列 AI 服务器。BMC 为自研 iBMC 管理芯片（非 ASPEED）。鲲鹏服务器的最大门槛是 ARM 生态适配——无法直接运行为 x86 编译的现有企业软件。</li><li><strong>超聚变（xFusion）</strong> — 原华为 x86 服务器业务在制裁后被剥离独立。核心产品为 FusionServer 系列 x86 服务器，BMC 沿用华为自研管理芯片和 iBMC 固件，远程管理能力优于多数国产竞品。竞争力在于&quot;华为品质的硬件 + 不受制裁限制的 x86 供应链&quot;。</li><li><strong>新华三（H3C, 原华三）</strong> — HPE 在中国的合资公司，UniServer 系列覆盖 x86 和 ARM。受益于既有网络设备（交换机/路由器）的客户关系，在政企和金融行业占有率较高。</li><li><strong>联想问天</strong> — 联想在国内服务器市场同时经营 ThinkSystem（IBM 收购线）和自有的问天系列。问天定位政企和信创市场，走性价比路线。</li><li><strong>中兴（ZTE）</strong> — 通信设备厂商出身，面向电信和政企市场。优势在于与自研 5G 基站、核心网设备的端到端方案协同——电信运营商采购基站时通常连带采购配套 RAN 服务器。</li><li><strong>同泰怡（Tontayiy）</strong> — 国内服务器 ODM 厂商，为云厂商和运营商提供定制化服务器、存储服务器和边缘计算设备。在二手服务器和拆机市场有一定流通量。</li><li><strong>宁畅（Nettrix）</strong> — 2019 年成立，原曙光团队创立，聚焦定制化 GPU 服务器，X620/X640 系列在国内 AI 基础设施市场增长迅速。</li></ul><p><strong>国产寨板厂商</strong></p><p>在主流品牌之外，国内市场还存在一批使用回收或库存服务器芯片组改造的消费级主板，俗称&quot;寨板&quot;。这类产品的主要目标用户是预算极度有限的 DIY 用户和 E5 洋垃圾爱好者。</p><p>这类主板的选购逻辑与主流消费级主板不同：不追求扩展性（通常只有 1-2 个 M.2 和基本 I/O）、不追求高频（E5 系受限于 CPU 内存控制器，DDR4 上限通常 2400-2666 MHz）、不做超频——核心卖点是&quot;用最低成本获得多核计算能力&quot;。一块 X99 主板 + 一颗 18 核 E5-2696 v3（二手约 150 元）的组合，总成本约 600 元即可获得 36 线程的算力，适合预算有限的 CPU 密集型场景（如代码编译、3D 渲染、本地 CI/CD）。</p><ul><li><strong>华南金牌（Huananzhi）</strong> — 国产寨板的代表品牌，以 X99、X79 芯片组主板起家。核心模式是回收拆机服务器芯片组和 CPU 插座，重新 Layout 为兼容消费级 ATX 机箱和散热器的主板。代表性产品包括 X99-TF（支持 E5 v3/v4 处理器、DDR4 四通道、NVMe M.2、价格通常在 400-600 元区间）。华南金牌的 BIOS 基于公版 AMI Aptio 修改，相比一线厂商的 UEFI 界面简陋，但基本功能（超频、风扇控制、XMP）可用。品控和售后是主要风险——不同批次的用料和稳定性差异大，建议从官方旗舰店购买以获得基本售后保障。</li><li><strong>精粤（Jginyue/Jingyue）</strong> — 与华南金牌定位相近，以 X99、C612 芯片组主板和 B760、B650 等兼容一线 CPU 的低价&quot;平替&quot;主板为主。精粤的亮点是较早布局了 AMD 消费级平台（如 B550、B650 的平替方案），价格显著低于一线品牌同芯片组产品。缺点是 BIOS 更新频率低、QVL 覆盖有限、内存兼容性问题较多——特别是对高频率 DDR5 和冷门品牌内存的支持不如一线稳定。</li></ul><h3 id="个人自建推荐" tabindex="-1">个人自建推荐 <a class="header-anchor" href="#个人自建推荐" aria-label="Permalink to “个人自建推荐”">​</a></h3><p>个人搭建本地服务器与数据中心选型逻辑不同——重点不在品牌整机的售后服务，而在能否买到裸主板、BMC 是否好用、能否装入消费级机箱。</p><p><strong>首选 Supermicro</strong>。它是自建服务器最成熟的选择——裸主板和准系统均可单独购买，H11（SP3/Rome）、H12（SP3/Milan）、H13（SP5/Genoa）系列覆盖了从 ATX 到专有板型的完整产品线。一块二手的 H11SSL-i（SP3, ATX, 单路 Rome/Milan）价格在 1500-2500 元，装入标准 ATX 机箱配合普通 ATX 电源即可运行。Supermicro 的 BIOS 更新和 IPMI 文档在社区中有大量资料，BMC 固件虽然界面粗糙但功能完整。</p><p><strong>次选 ASRock Rack</strong>。性价比更高的零售服务器主板。ROMED8-2T（SP3, ATX, 单路 Rome/Milan, 双 10G 网口）的二手价格常在 1200-1800 元区间，板型标准、兼容标准机箱。ASRock Rack 的 BMC 基于 ASPEED 公版方案，功能与 Supermicro 基本一致。劣势是固件更新频率不如超微，对小众操作系统的兼容性验证较少。</p><p><strong>TYAN</strong> 适合对特定板型有需求的用户——例如需要 7 条 PCIe x16 或更多 SlimSAS 接口。TYAN 的零售渠道不如前两者广，二手市场流动性也较低，但对特殊配置（如 8 GPU 全 x16 带宽）往往是唯一选择。</p><p><strong>不推荐 Dell、HPE、Lenovo 整机</strong>给个人用户。这些品牌的二手服务器（如 R730、DL380 Gen9）虽然极便宜（几百到一千元），但面临三个致命问题：一是噪音——1U/2U 服务器的 40mm 风扇在自检后会全速运转，住宅环境根本无法忍受，除非有独立机房或车库；二是功耗——双路 Xeon v3/v4 平台即使空闲也 150W+；三是固件锁——品牌服务器的 BIOS/BMC 固件更新通常需要有效维保合同才能下载，二手设备没有合法固件来源。如果确实需要品牌服务器，最低配置是 Dell T 系列或 HPE ML 系列的塔式机型——使用 120mm 风扇，噪音可接受，且通常与标准 ATX 电源兼容。</p><p><strong>国内市场对个人用户而言二手拆机是主要渠道</strong>。选择逻辑与国际品牌完全不同,大部分国内服务器厂商只做整机或 ODM 定制，不单卖主板。个人搭建场景下，浪潮、超聚变、联想（ThinkSystem）的拆机主板在二手市场上流通量最大，价格远低于同规格国际品牌。Supermicro 和 ASRock Rack 的国产新板直接从淘宝/京东授权店购买即可，不需要考虑二手。</p><h2 id="服务器主板板型" tabindex="-1">服务器主板板型 <a class="header-anchor" href="#服务器主板板型" aria-label="Permalink to “服务器主板板型”">​</a></h2><p>标准的 EEB（12×13 英寸）和 E-ATX 是零售市场最常见的尺寸，能装入多数 E-ATX 兼容的全塔机箱。品牌服务器大量使用定制板型，走线和散热都针对特定机箱优化，几乎没有跨品牌互换的可能。机架式服务器按 U（1U = 1.75 英寸）划分：1U/2U 追求密度，主板为超长窄形（深 650-800mm），CPU、内存、PCIe 全部水平排列；4U+ 可安装全高扩展卡和大型散热，主板接近 EEB 尺寸。</p><h2 id="内存约束" tabindex="-1">内存约束 <a class="header-anchor" href="#内存约束" aria-label="Permalink to “内存约束”">​</a></h2><p>服务器平台的内存子系统细节——包括 RDIMM/LRDIMM 选择、通道对称填充规则、NUMA 内存交错策略、Rank 数量对频率上限的影响、ECC 故障处理完整链路以及内存供电散热——参见 <a href="./ram">主板与内存的适配</a>。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/equip/motherboard/workstation" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>工作站</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/equip/motherboard/ram" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>内存适配</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    
+<nav id="sitemap" aria-hidden="true">
+<pre>/abstract - 目录
+/ai - 人工智能
+/ai/app - 大模型应用
+/ai/app/arch - 应用架构
+/ai/app/arch/api - API 设计
+/ai/app/arch/caching - Prompt Caching
+/ai/app/arch/gateway - 网关与缓存
+/ai/app/arch/routing - 模型路由
+/ai/app/auto - 自动化
+/ai/app/auto/impl - 实现原理
+/ai/app/auto/traditional - 传统自动化
+/ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
+/ai/app/engine/finetune - 微调
+/ai/app/engine/llama/cpp
+/ai/app/engine/llama_cpp - llama.cpp
+/ai/app/engine/llmops - LLMOps
+/ai/app/engine/vllm - vllm
+/ai/app/lib - 框架库
+/ai/app/lib/langchain - LangChain
+/ai/app/lib/langchain/langgraph - LangGraph
+/ai/app/lib/langchain/runnable - LCEL 与 Runnable
+/ai/app/lib/packages - 常用包
+/ai/app/multimodal - 多模态
+/ai/app/multimodal/audio - 语音交互
+/ai/app/multimodal/generation - 媒体生成
+/ai/app/multimodal/vision - 视觉理解
+/ai/app/overlay - Overlay
+/ai/app/overlay/agent - 智能体
+/ai/app/overlay/agent/a2a - A2A 协议
+/ai/app/overlay/agent/case - 应用实战
+/ai/app/overlay/agent/case/claude/code
+/ai/app/overlay/agent/case/claude_code - Claude Code
+/ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/deep/agent
+/ai/app/overlay/agent/deep_agent - Deep Agent
+/ai/app/overlay/agent/loop - Agent 循环
+/ai/app/overlay/agent/mcp - MCP Server
+/ai/app/overlay/agent/safety - 安全防护
+/ai/app/overlay/agent/safety/content - 内容安全
+/ai/app/overlay/agent/safety/guardrails - Guardrails
+/ai/app/overlay/agent/safety/injection - Prompt 注入
+/ai/app/overlay/agent/skills - Skills
+/ai/app/overlay/agent/tools - 工具调用
+/ai/app/overlay/ops - LLMOps
+/ai/app/overlay/ops/eval - 评估框架
+/ai/app/overlay/ops/monitor - 可观测性
+/ai/app/overlay/ops/test - 测试策略
+/ai/app/overlay/rag - RAG
+/ai/app/overlay/rag/agentic/rag
+/ai/app/overlay/rag/agentic_rag - Agentic RAG
+/ai/app/overlay/rag/data - 数据工程
+/ai/app/overlay/rag/data/parsing - 文档解析
+/ai/app/overlay/rag/data/processing - 数据处理
+/ai/app/overlay/rag/embedding - Embedding
+/ai/app/overlay/rag/graphrag - GraphRAG
+/ai/app/overlay/rag/retrieval - 检索质量
+/ai/app/overlay/rag/vector/db
+/ai/app/overlay/rag/vector_db - 向量数据库
+/ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/context - Context Engineering
+/ai/app/overlay/session/prompt - 提示词
+/ai/app/overlay/ui - AI UI
+/ai/compute - AI 引擎
+/ai/compute/api - 标准接口
+/ai/compute/api/cpu - SIMD
+/ai/compute/api/cuda - CUDA
+/ai/compute/api/opencl - OpenCL
+/ai/compute/api/simt - SIMT
+/ai/compute/api/triton - Triton
+/ai/compute/distributed - 集群
+/ai/compute/distributed/comm - 集合通信
+/ai/compute/distributed/parallel - 模型拆分
+/ai/compute/engine - 主流引擎
+/ai/compute/engine/deepspeed - DeepSpeed
+/ai/compute/engine/other - 其他
+/ai/compute/engine/pytorch - PyTorch
+/ai/compute/engine/vllm - vLLM
+/ai/compute/format - 模型格式
+/ai/compute/format/hf - HF 风格
+/ai/compute/format/onnx - ONNX
+/ai/compute/impl - 设计实现
+/ai/compute/impl/kvcache - KV Cache
+/ai/compute/impl/moe - 混合专家
+/ai/compute/impl/speculative - 投机解码
+/ai/compute/kernel - 算子
+/ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/optimization - 算子优化
+/ai/compute/kernel/quantization - 量化
+/ai/compute/stack - 计算栈
+/ai/cpp - C++
+/ai/neural - 神经网络
+/ai/neural/dl - 深度学习
+/ai/neural/dl/audio - 听觉
+/ai/neural/dl/backforward - 反向传播
+/ai/neural/dl/cnn - CNN
+/ai/neural/dl/diffusion - Diffusion
+/ai/neural/dl/multimodal - 多模态
+/ai/neural/dl/nlp - NLP
+/ai/neural/dl/recommend - 推荐
+/ai/neural/dl/rnn - RNN
+/ai/neural/dl/transformer - Transformer
+/ai/neural/dl/vision - 视觉
+/ai/neural/dl/vit - ViT
+/ai/neural/llm - LLM
+/ai/neural/llm/arch - 架构
+/ai/neural/llm/finetune - 微调
+/ai/neural/llm/memo - 记忆
+/ai/neural/llm/pretraind - 基座模型
+/ai/neural/math - 数学基础
+/ai/neural/ml - 机器学习
+/ai/neural/ml/bf - 梯度下降法
+/ai/neural/ml/loss - 损失函数
+/ai/neural/ml/reinforce - 强化学习
+/ai/neural/ml/supervised - 监督学习
+/ai/neural/ml/unsupervised - 无监督学习
+/ai/neural/numpy - Numpy
+/ai/neural/pytorch - PyTorch
+/ai/neural/sklearn - sklearn
+/ai/python - Python
+/ai/python/basic - 语言基础
+/ai/python/basic/module - 模块系统
+/ai/python/fastapi - FastAPI
+/ai/python/jupyter - jupyter
+/ai/python/uv - uv
+/ai/symbol - 符号逻辑
+/ai/symbol/expert-system - 专家系统
+/ai/symbol/logic - 数理逻辑基础
+/ai/symbol/neuralify - 神经符号融合
+/ai/symbol/outline - 学习路线
+/ai/symbol/prolog - Prolog
+/ai/symbol/reasoning - 推理引擎与搜索
+/ai/symbol/representation - 知识表示
+/basic - 理论基础
+/basic/algo - 算法
+/basic/algo/compress - 压缩
+/basic/algo/crypto - 加密和解密
+/basic/algo/model - 算法模型
+/basic/algo/model/bit - 位运算
+/basic/algo/model/dp - 动态规划
+/basic/algo/model/leetcode - leetcode 题型
+/basic/algo/model/recrusion - 递归
+/basic/algo/model/struct - 数据结构辅助
+/basic/algo/sort - 排序算法
+/basic/algo/string - 字符串算法
+/basic/algo/struct - 数据结构
+/basic/algo/struct/graph - 图
+/basic/algo/struct/tree - 树
+/basic/compile - 编译原理
+/basic/compile/advance - 高级语言
+/basic/compile/dsl - DSL
+/basic/compile/dsl/glob - glob
+/basic/compile/dsl/regex - 正则表达式
+/basic/compile/lang - 编程语言概览
+/basic/db - 数据库
+/basic/db/cmp - SQL
+/basic/db/nf - 范式
+/basic/graphic - 图形学
+/basic/graphic/2d - 2D 图形
+/basic/graphic/3d - 3D 场景渲染
+/basic/hardware - 硬件组成
+/basic/hardware/coding - 编码
+/basic/hardware/cpu - CPU
+/basic/hardware/gpu - GPU
+/basic/hardware/interrupt - 中断
+/basic/hardware/motherboard - 主板
+/basic/hardware/storage - 存储
+/basic/hardware/topo - CPU 拓扑
+/basic/network - 网络协议
+/basic/network/ether - 以太网
+/basic/network/http - HTTP
+/basic/network/ip - IP
+/basic/network/protocol - 网络协议
+/basic/network/tcp - TCP
+/basic/network/udp - UDP
+/basic/os - 操作系统
+/basic/os/mm - 内存管理
+/basic/os/schd - 调度
+/client - 客户端
+/client/art - 美术设计
+/client/art/mime - 媒体文件
+/client/art/render - 渲染
+/client/art/toolchain - 工具链
+/client/csharp - C#
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
+/client/csharp/dotnet - .NET
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
+/client/game - 游戏引擎
+/client/game/cocos - Cocos
+/client/game/godot - Godot
+/client/game/unity - Unity
+/client/game/unreal - Unreal
+/client/gui - 图形应用
+/client/gui/arch - 架构
+/client/gui/arch/observe - 可观测性
+/client/gui/cross - 跨平台</pre>
+<pre>/client/gui/cross/electron - Electron
+/client/gui/cross/flutter - Flutter
+/client/gui/cross/flutter/dart - Dart
+/client/gui/cross/framework - UI 框架
+/client/gui/cross/reactnative - ReactNative
+/client/gui/ergonomic - 人机关系
+/client/gui/ergonomic/interact - 人机交互
+/client/gui/ergonomic/screen - 屏幕
+/client/gui/platform - UI 平台
+/client/gui/platform/android - Android
+/client/gui/platform/gnome - Gnome
+/client/gui/platform/ios - Apple
+/client/gui/platform/web-env - Web 宿主
+/client/gui/platform/windows - Windows
+/client/gui/security - 安全
+/client/gui/security/access - 应用权限
+/client/gui/security/antiattack - 网络攻击
+/client/gui/security/auth - 登录鉴权
+/client/gui/security/privacy - 隐私保护
+/client/gui/security/sandbox - 沙箱
+/client/render - 渲染引擎
+/client/render/api - 标准接口
+/client/render/api/directx - DirectX
+/client/render/api/opengl - OpenGL
+/client/render/api/vulkan - Vulkan
+/client/render/api/vulkan/icd - ICD
+/client/render/api/vulkan/spirv - SPIR-V
+/client/render/api/webgl
+/client/render/api/webgpu - WebGPU
+/client/render/basic - 渲染基础
+/client/render/basic/mapping - 贴图
+/client/render/basic/scene - 3D 场景
+/client/render/engine - 主流引擎
+/client/render/engine/cycles - Cycles
+/client/render/engine/godot - Godot
+/client/render/engine/skia - Skia
+/client/render/raster - 光栅化管线
+/client/render/raster/ae - 后处理
+/client/render/raster/illumination - 光照模型
+/client/render/raster/rast - 光栅化算法
+/client/render/raytrace - 光线追踪管线
+/client/render/raytrace/bvh - 加速算法
+/client/render/raytrace/denoise - 降噪
+/client/render/raytrace/integrate - 混合渲染管线
+/client/render/shader - 着色器
+/client/render/shader/optimization - 着色器优化
+/client/render/shader/patterns - 常见模式
+/client/render/stack - 计算栈
+/client/render/vec/compose
+/client/render/vec_compose - 矢量合成管线
+/client/rust - Rust
+/client/rust/assets - 静态资源管理
+/client/rust/basic - 语言基础
+/client/rust/basic/closure - 闭包
+/client/rust/basic/macro - 宏
+/client/rust/basic/mod - 模块系统
+/client/rust/basic/ref - 智能指针
+/client/rust/basic/trait - 特性
+/client/rust/cargo - Cargo
+/client/rust/cli - CLi
+/client/rust/ld - 链接库
+/client/rust/slint - Slint
+/client/rust/tauri - Tauri
+/client/rust/wasm - WASM
+/client/web - Web
+/client/web/api - Web API
+/client/web/api/wasm - WASM
+/client/web/browser - 浏览器
+/client/web/browser/arch - 架构
+/client/web/browser/devtools - DevTools 性能分析
+/client/web/browser/eventloop - 事件循环
+/client/web/browser/http - HTTP 协议
+/client/web/browser/memleak - 内存泄漏
+/client/web/browser/optimize - 性能优化
+/client/web/browser/render - 渲染周期
+/client/web/browser/render copy - 渲染周期
+/client/web/browser/security - 浏览器安全
+/client/web/browser/security copy - 安全
+/client/web/browser/storage - 存储
+/client/web/browser/v8 - V8
+/client/web/css - CSS
+/client/web/css/basic - 语言基础
+/client/web/css/sass - Sass
+/client/web/css/tailwind - Tailwindcss
+/client/web/css/trick - CSS trick
+/client/web/css/trick/animation - CSS 动画
+/client/web/css/trick/bfc - 块级格式上下文
+/client/web/css/trick/layout - 布局
+/client/web/css/trick/layout/box-sizing - CSS盒模型
+/client/web/css/trick/layout/containing-block - 包含块
+/client/web/css/trick/layout/grid - grid布局
+/client/web/css/trick/relative - 主题定制
+/client/web/css/trick/sort - css 属性的分类
+/client/web/css/trick/z-index - 层叠上下文与 z-index
+/client/web/eng - 工程化
+/client/web/eng/bootstrap - 项目搭建
+/client/web/eng/build - 构建优化
+/client/web/eng/engineering - 工程化搭建
+/client/web/eng/migration - 迁移
+/client/web/eng/svg - svg
+/client/web/eng/vite - Vite
+/client/web/eng/vite-plugin - Vite 插件
+/client/web/eng/webpack - Webpack
+/client/web/html - HTML
+/client/web/html/basic - 语言基础
+/client/web/html/mathml - MathML
+/client/web/html/md - Markdown
+/client/web/html/seo - SEO
+/client/web/html/svg - SVG
+/client/web/html/trick - HTML trick
+/client/web/html/trick/drag - HTML 拖放 API
+/client/web/html/trick/event - 事件与尺寸获取
+/client/web/html/trick/wc - Web Component
+/client/web/js - JavaScript
+/client/web/js/basic - 语言基础
+/client/web/js/basic/async - 异步编程
+/client/web/js/basic/class - 面向对象
+/client/web/js/basic/iterable - 迭代器
+/client/web/js/basic/obj-base-ops - js 对象基本操作
+/client/web/js/basic/own-property - 属性的可枚举性和所有者
+/client/web/js/basic/proto - 原型链
+/client/web/js/basic/stream - Stream API
+/client/web/js/basic/type-transform - 隐式类型转换
+/client/web/js/npm - npm
+/client/web/js/typescript - TypeScript
+/client/web/js/typescript/basic - 语法基础
+/client/web/nodejs - Nodejs
+/client/web/nodejs/express - Express.js
+/client/web/nodejs/nestjs - Nestjs
+/client/web/nodejs/performance - Node.js 性能调优
+/client/web/react - React
+/client/web/react/fiber - Fiber 与调和
+/client/web/react/rsc - 服务端组件
+/client/web/solid - Solid
+/client/web/ssr - SSR
+/client/web/ssr/nextjs - Nextjs
+/client/web/ssr/nuxtjs - Nuxtjs
+/client/web/ssr/seo - SEO
+/client/web/ssr/ssg - SSG
+/client/web/ssr/vike - Vike
+/client/web/typical - 典型业务
+/client/web/vue - Vue
+/client/web/vue/cpc - 组件通信
+/client/web/vue/nuxt-server - 服务端组件
+/client/web/vue/vdom - 虚拟 DOM 与 Diff 算法
+/design - 软件设计
+/design/async - 异步
+/design/async/async-await - await
+/design/async/reactive - 响应式
+/design/async/schedule - 用户态调度
+/design/concurrent - 并发
+/design/concurrent/atom - 原子操作
+/design/concurrent/lock - 同步原语
+/design/concurrent/lock/free
+/design/concurrent/lock_free - 无锁并发
+/design/concurrent/thread - 多线程
+/design/fp - 函数式
+/design/fp/composition - 组合
+/design/fp/functor - 函子
+/design/fp/hint - hint
+/design/fp/immutable - 不可变
+/design/fp/io - IO
+/design/fp/state - 状态管理
+/design/oop - 面向对象
+/design/oop/aop - AOP
+/design/oop/interface - 接口与抽象
+/design/oop/ioc - IOC
+/design/oop/lifetime - 对象生命周期
+/design/oop/om - 对象模型
+/design/oop/pattern - 设计模式
+/design/oop/relationship - 类间关系
+/design/oop/solid - SOLID
+/design/spacetime - 面向时空
+/design/spacetime/domain - 主机域
+/design/spacetime/general - 通用域
+/design/spacetime/general/architecture - 架构演进
+/design/spacetime/general/container - 容器
+/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/dependency - 依赖管理
+/design/spacetime/general/tradeoff - 权衡
+/design/spacetime/network - 网络域
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process/scope - 作用域
+/design/spacetime/process/single - 单进程
+/design/spacetime/space - 体系建构
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
+/design/typical/ddd - DDD
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/refactor - 重构
+/design/typical/simplify - 简化原则
+/design/typical/swift - 敏捷开发
+/examples - 随便看看
+/index
+/kernel - 系统层
+/kernel/asm - 汇编
+/kernel/asm/arm - ARM 指令集
+/kernel/c - C</pre>
+<pre>/kernel/c/basic - 语言基础
+/kernel/c/basic/io - io 操作
+/kernel/c/basic/string - 字符串操作
+/kernel/c/build - 构建系统
+/kernel/c/concurrent - 并发编程
+/kernel/c/debug - 调试
+/kernel/c/lib - 库函数
+/kernel/embed - 嵌入式
+/kernel/embed/bios - BIOS
+/kernel/embed/device - 外设
+/kernel/embed/device/bus - 总线设备
+/kernel/embed/device/bus/i2c - I2C
+/kernel/embed/device/bus/pci - PCI
+/kernel/embed/device/bus/usb - USB
+/kernel/embed/device/comm - 数据面
+/kernel/embed/device/platform - 平台设备
+/kernel/embed/device/sub - 集成子设备
+/kernel/embed/elel - 硬件基础
+/kernel/embed/elel/design - 打板
+/kernel/embed/elel/fpga - FPGA
+/kernel/embed/elel/pcb - PCB
+/kernel/embed/elel/soc - SoC
+/kernel/embed/freertos - FreeRTOS
+/kernel/embed/iot - 物联网
+/kernel/embed/sbc - 开发板
+/kernel/embed/sbc/raspberry - 树莓派
+/kernel/embed/sbc/stm32 - STM32
+/kernel/embed/uboot - U-Boot
+/kernel/equip - 装机
+/kernel/equip/bmc - BMC
+/kernel/equip/gpu - GPU
+/kernel/equip/laptop/brand
+/kernel/equip/laptop_brand - 笔记本
+/kernel/equip/lte - LTE
+/kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/consumer - 消费级
+/kernel/equip/motherboard/epyc - EPYC 装机
+/kernel/equip/motherboard/ram - 内存适配
+/kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/ram - 内存
+/kernel/equip/sbc - SBC
+/kernel/equip/screen - 屏幕
+/kernel/equip/server/room
+/kernel/equip/server_room - 机房
+/kernel/equip/slot - 接口
+/kernel/equip/support - 支撑设备
+/kernel/linux - Linux
+/kernel/linux/develop - 系统开发
+/kernel/linux/develop/ctx - 内核上下文
+/kernel/linux/develop/io/uring
+/kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/kbuild - linux 内核构建系统
+/kernel/linux/develop/lock - 同步原语
+/kernel/linux/develop/service - 系统服务
+/kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/struct - 数据结构
+/kernel/linux/develop/struct/iov - 聚簇读写
+/kernel/linux/develop/struct/linked - 链表
+/kernel/linux/develop/systemd - systemd
+/kernel/linux/device - 设备管理
+/kernel/linux/device/dma - DMA
+/kernel/linux/device/driver - 驱动接口
+/kernel/linux/device/driver/can - CAN
+/kernel/linux/device/driver/pci - PCIe 驱动
+/kernel/linux/device/driver/usb - USB 驱动
+/kernel/linux/device/driver/virtio
+/kernel/linux/device/lifecycle - 生命周期
+/kernel/linux/device/udev - udev
+/kernel/linux/file - 文件管理
+/kernel/linux/file/block - 块设备子系统
+/kernel/linux/file/pfs - 伪文件系统
+/kernel/linux/file/vfs - 虚拟文件系统
+/kernel/linux/irq - 中断管理
+/kernel/linux/irq/clock - 时钟中断
+/kernel/linux/irq/controller - 中断控制器
+/kernel/linux/irq/handler - 中断处理
+/kernel/linux/mm - 内存管理
+/kernel/linux/mm/mmap - 虚拟内存映射
+/kernel/linux/mm/pmm - 物理内存管理
+/kernel/linux/mm/reclaim - 内存回收
+/kernel/linux/mm/swap - 内存交换
+/kernel/linux/net - 网络实现
+/kernel/linux/net/stack - 协议栈
+/kernel/linux/power - 电源管理
+/kernel/linux/power/boot - 开机上电
+/kernel/linux/power/tpm - 安全启动
+/kernel/linux/process - 进程管理
+/kernel/linux/process/ipc - IPC
+/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/schd - 调度
+/kernel/linux/process/security - 权限管理
+/kernel/linux/syscall - 系统调用
+/kernel/linux/syscall/file - 文件管理
+/kernel/linux/syscall/mm - 内存管理
+/kernel/linux/syscall/process - 进程管理
+/kernel/linux/video - 视图系统
+/kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
+/kernel/vm - 虚拟化
+/kernel/vm/basic - 基本原理
+/kernel/vm/basic/bios - BIOS
+/kernel/vm/basic/cpu - CPU
+/kernel/vm/basic/device - 设备
+/kernel/vm/basic/memory - 内存
+/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/vfio - VFIO
+/kernel/vm/virtio - VirtIO
+/sde - 工程化
+/sde/container - 容器
+/sde/container/docker - Docker
+/sde/container/principle - 实现原理
+/sde/git - Git
+/sde/git/advanced - Git 高阶用法
+/sde/git/github - Github
+/sde/git/gitlab - Gitlab
+/sde/k8s - K8s
+/sde/k8s/k3s - k3s
+/sde/k8s/network - 网络模型
+/sde/shell - Shell
+/sde/shell/basic - 语言基础
+/sde/shell/cli - 常见命令行
+/sde/sre - 运维
+/sde/sre/elk - ELK
+/sde/sre/jenkins - Jenkins
+/sde/sre/openstack - OpenStack
+/sde/test - 测试
+/sde/test/basic - 测试原理
+/sde/test/framework - 测试工具与框架
+/sde/test/tdd - 测试驱动开发
+/sde/workflow - 工作流
+/sde/workflow/devops - DevOps
+/sde/workflow/devops/cicd - CI/CD
+/sde/workflow/quality - 质量控制
+/sde/workflow/quality/docs - 文档工程
+/sde/workflow/quality/review - Code Review
+/sde/workflow/version - 版本管理
+/server - 服务端
+/server/db - 数据库
+/server/db/distributed - 集群
+/server/db/distributed/comparison - 数据库对比与选型
+/server/db/distributed/newsql - NewSQL 数据库
+/server/db/distributed/sharding - 分库分表
+/server/db/distributed/transaction - 分布式事务
+/server/db/engine - 存储引擎
+/server/db/engine/fulltext - 全文检索
+/server/db/engine/graph - 图
+/server/db/engine/innodb - innodb
+/server/db/engine/vector - 向量
+/server/db/nosql - NoSQL
+/server/db/nosql/es - ElasticSearch
+/server/db/nosql/milvus - Milvus
+/server/db/nosql/milvus/idx - 向量索引
+/server/db/nosql/milvus/storage - 分布式能力
+/server/db/nosql/milvus/usage - 使用实践
+/server/db/nosql/minio - MinIO
+/server/db/nosql/mongo - MongoDB
+/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/redis - Redis
+/server/db/practice - 工程实践
+/server/db/practice/backup - 备份与恢复
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
+/server/db/practice/monitoring - 监控与运维
+/server/db/practice/standards - 数据库规范
+/server/db/practice/tuning - 性能调优实践
+/server/db/sql - SQL
+/server/db/sql/basic - sql 基础
+/server/db/sql/basic/design - 数据库设计
+/server/db/sql/basic/integrity - 数据完整性
+/server/db/sql/basic/transaction - 事务与并发控制
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql/id - 索引
+/server/db/sql/mysql/impl - 存储引擎
+/server/db/sql/mysql/optimize - 查询优化
+/server/db/sql/pg - PostgreSQL
+/server/db/sql/sqlite - SQLite
+/server/distribute - 分布式
+/server/distribute/arch - 集群架构
+/server/distribute/basic - 分布式基础
+/server/distribute/basic/cap - CAP
+/server/distribute/basic/concurrency - 并发模型
+/server/distribute/basic/concurrency/coroutine - 协程原理
+/server/distribute/basic/concurrency/event-loop - 事件驱动架构
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus/raft - Raft 算法
+/server/distribute/basic/consensus/zab - ZAB 协议
+/server/distribute/basic/id - 分布式 ID
+/server/distribute/basic/lock - 分布式锁
+/server/distribute/basic/transaction - 分布式事务
+/server/distribute/cloud - 云原生
+/server/distribute/cloud/arch - 架构
+/server/distribute/cloud/cicd - CI/CD
+/server/distribute/cloud/container - 容器技术
+/server/distribute/cloud/mesh - Service Mesh
+/server/distribute/cloud/orchestration - Kubernetes</pre>
+<pre>/server/distribute/cloud/pkg - 包管理与镜像
+/server/distribute/micro - 微服务
+/server/distribute/micro/cache - 缓存
+/server/distribute/micro/cache/consistency - 缓存一致性
+/server/distribute/micro/config - 配置中心
+/server/distribute/micro/discovery - 服务发现
+/server/distribute/micro/gateway - API 网关
+/server/distribute/micro/lb - 负载均衡
+/server/distribute/micro/observability - 可观测性
+/server/distribute/micro/observability/monitoring - 监控告警
+/server/distribute/micro/observability/tracing - 链路追踪
+/server/distribute/micro/qos - QoS
+/server/distribute/micro/qos/chaos - 混沌工程
+/server/distribute/micro/qos/fuse - 熔断限流
+/server/distribute/micro/qos/ha - 高可用与容错
+/server/distribute/micro/qos/ha/load-balance - 负载均衡
+/server/distribute/micro/qos/highes - 三高
+/server/distribute/micro/qos/monitor - 监控
+/server/distribute/micro/qos/observability - 可观测性
+/server/distribute/micro/qos/observability/monitoring - 监控指标设计
+/server/distribute/micro/qos/performance - 性能优化
+/server/distribute/micro/qos/performance/profiling - 性能分析工具
+/server/distribute/micro/qos/reliability/disaster-recovery - 容灾
+/server/distribute/micro/qos/reliability/failover - 故障转移
+/server/distribute/micro/qos/slashing - 限流降级
+/server/distribute/micro/reliability - 健壮性
+/server/distribute/micro/reliability/fusing - 熔断降级
+/server/distribute/micro/reliability/ratelimit - 限流
+/server/go - Go
+/server/go/gmp - GMP 调度器
+/server/java - Java
+/server/java/basic - 语言基础
+/server/java/jvm - JVM 内存与 GC
+/server/java/mod - 模块系统
+/server/java/mod/gradle - gradle
+/server/java/mod/maven - Maven
+/server/java/spring - Spring
+/server/middleware - 中间件
+/server/middleware/mq - 消息队列
+/server/middleware/mq/kafka - Kafka
+/server/middleware/mq/rabbitmq - RabbitMQ
+/server/middleware/mq/rocketmq - RocketMQ
+/server/middleware/mycat - MyCat
+/server/middleware/proxy - 代理
+/server/middleware/proxy/haproxy - haproxy
+/server/middleware/proxy/lvs - LVS
+/server/middleware/proxy/nginx - Nginx
+/server/middleware/srs - SRS
+/server/network - 网络编程
+/server/network/io-model - I/O 模型
+/server/network/proto - 网络协议
+/server/network/proto/http - HTTP
+/server/network/proto/quic - QUIC
+/server/network/proto/rpc - RPC 框架
+/server/network/proto/tcp - TCP
+/server/network/proto/udp - UDP
+/server/network/proto/websocket - WebSocket
+/server/network/security - 网络安全
+/server/network/tcp-tuning - TCP 调优
+/server/network/zero-copy - 零拷贝
+/server/typical - 典型业务
+/server/typical/auth - 登录鉴权
+/server/typical/flash/sale
+/server/typical/flash_sale - 秒杀活动
+/server/typical/image - 图片上传
+/server/typical/order - 订单管理
+/server/typical/search - 内容搜索
+/server/typical/setup - 快速建站
+/web3 - 去中心化
+/web3/blockchain - 区块链
+/web3/blockchain/consensus - 共识机制
+/web3/blockchain/crypto - 密码学支持
+/web3/blockchain/ethereum - 以太坊
+/web3/blockchain/zk-proof - 零知识证明
+/web3/dapp - DApp
+/web3/dapp/defi - DeFi
+/web3/dapp/tokens - 代币标准
+/web3/dapp/wallets - 账户与钱包
+/web3/solidity - Solidity
+/web3/solidity/smart-contracts - 智能合约</pre>
+</nav><style>#sitemap{display:none}</style>
+    
+    
+  </body>
+</html>
