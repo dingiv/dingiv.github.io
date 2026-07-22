@@ -8,12 +8,12 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.46e417e4.js"></script>
+    <script src="/assets/site-data.67106ba3.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/ai_compute_impl_speculative.md._UcRppKR.lean.js">
+    <link rel="modulepreload" href="/assets/ai_compute_impl_speculative.md.B87CaFC6.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
@@ -36,7 +36,7 @@
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --model-id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $model </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --draft-model-id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $draft_model </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --speculative-decoding</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --num-speculative-tokens</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8</span></span></code></pre></div><h2 id="局限性" tabindex="-1">局限性 <a class="header-anchor" href="#局限性" aria-label="Permalink to “局限性”">​</a></h2><p>投机解码的局限性在于需要额外的 draft model，这增加了部署复杂度。同时，draft model 需要与主模型保持分布一致，这增加了维护成本。对于频繁变化的模型（如定期重新训练），draft model 也需要同步更新。</p><p>另一个局限是对于输出质量要求极高的场景（如数学计算、代码生成），投机解码可能降低输出质量。因为 draft model 的错误会通过验证传播到大模型，虽然概率不高，但仍可能发生。</p><p>对于这些场景，可以考虑使用更保守的验证策略（如降低阈值、减少 speculation length），或者完全禁用投机解码。</p><h2 id="dflash-扩散式块投机" tabindex="-1">DFlash：扩散式块投机 <a class="header-anchor" href="#dflash-扩散式块投机" aria-label="Permalink to “DFlash：扩散式块投机”">​</a></h2><p>DFlash 是 2025-2026 年投机解码领域的重要进展。传统投机方法（EAGLE、Medusa）依赖自回归 draft model，逐 token 生成候选序列——这个过程本身也是串行的。DFlash 用一个轻量级扩散模型（block diffusion）一次性并行生成一整块 tokens（如 8-16 个），然后让大模型并行验证整块。</p><p>扩散模型的特点是可以在任意位置&quot;填充&quot;——给定上下文后，扩散过程直接从噪声出发，逐步去噪得到候选 token 块。这完全消除了 draft model 的串行瓶颈。在大模型验证阶段，候选块的每个 token 使用特殊设计的 ancestor-only attention mask，使整块可以在一次 forward pass 中并行验证。</p><p>DFlash 在 Qwen、Llama 等模型上实现 2-6 倍的无损加速。加速比取决于生成任务的特征——代码生成等结构化输出场景中 draft 质量更高，加速比也更显著。</p><h2 id="ddtree-树状扩散验证" tabindex="-1">DDTree：树状扩散验证 <a class="header-anchor" href="#ddtree-树状扩散验证" aria-label="Permalink to “DDTree：树状扩散验证”">​</a></h2><p>DDTree（Diffusion Draft Tree）是 DFlash 的扩展。DFlash 一次扩散生成一条候选链（chain），大模型按链验证；DDTree 利用同一次扩散输出中每个位置的概率分布，构建一棵候选树（draft tree），包含多条可能的分支路径。</p><p>树状结构的关键价值在于：大模型一次 forward pass 可以并行验证整棵树上的所有分支，而不是只验证一条路径。候选树通过 best-first heap 算法生成，在固定节点预算下选择最有希望的路径分支。验证时使用 tree attention mask，各分支节点只关注其祖先节点，保持线性复杂度。</p><p>DDTree 在 DFlash 基础上将有效接受长度（acceptance length）进一步提升 1.5-2 倍，总加速可达 6-8 倍，且保持无损。特别适合代码生成、长上下文推理等对输出质量要求高的场景。</p><h2 id="quantspec-自投机量化" tabindex="-1">QuantSpec：自投机量化 <a class="header-anchor" href="#quantspec-自投机量化" aria-label="Permalink to “QuantSpec：自投机量化”">​</a></h2><p>QuantSpec（Apple, 2025）结合了自投机解码和分层量化。传统投机需要一个独立的 draft model，增加部署复杂度。自投机解码使用主模型本身作为 draft——通过减少层数或降低精度来获得更快的 draft pass。</p><p>QuantSpec 的做法：主模型本身经过 4-bit 权重和 KV Cache 量化后作为 draft model。draft pass 用 4-bit 精度快速生成候选 tokens，验证 pass 用完整精度验证。因为 draft 和 target 共享同一套权重（仅精度不同），分布一致性极好，验证通过率高。</p><p>4-bit 量化的 draft model 推理速度提高了约 4 倍，加上自投机避免独立 draft model 的显存开销，QuantSpec 在长上下文场景下特别有优势——节省的显存可以容纳更长的 KV Cache。</p><h2 id="diff-llm-扩散语言模型" tabindex="-1">Diff-LLM：扩散语言模型 <a class="header-anchor" href="#diff-llm-扩散语言模型" aria-label="Permalink to “Diff-LLM：扩散语言模型”">​</a></h2><p>在投机解码之外，扩散模型直接作为语言模型是一个更激进的方向。传统自回归 LLM 逐 token 生成，扩散语言模型（如 LLaDA、dLLM）通过迭代去噪过程并行生成全部 tokens。理论上可以实现完全并行的生成，推理延迟与序列长度无关。</p><p>目前扩散 LLM 的生成质量尚未达到自回归模型的水平，但在某些场景（如短文本补全、代码填充）中已展现出竞争力。DFlash 可以视为扩散模型在&quot;辅助生成&quot;角色上的成功应用——不需要替换主模型，仅用扩散做高效 draft。未来如果扩散 LLM 质量进一步提升，&quot;直接用扩散生成&quot;可能成为新的推理范式。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/impl/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>设计实现</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/impl/moe" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>混合专家</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --num-speculative-tokens</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8</span></span></code></pre></div><h2 id="局限性" tabindex="-1">局限性 <a class="header-anchor" href="#局限性" aria-label="Permalink to “局限性”">​</a></h2><p>投机解码的局限性在于需要额外的 draft model，这增加了部署复杂度。同时，draft model 需要与主模型保持分布一致，这增加了维护成本。对于频繁变化的模型（如定期重新训练），draft model 也需要同步更新。</p><p>另一个局限是对于输出质量要求极高的场景（如数学计算、代码生成），投机解码可能降低输出质量。因为 draft model 的错误会通过验证传播到大模型，虽然概率不高，但仍可能发生。</p><p>对于这些场景，可以考虑使用更保守的验证策略（如降低阈值、减少 speculation length），或者完全禁用投机解码。</p><h2 id="mtp-多-token-预测" tabindex="-1">MTP：多 Token 预测 <a class="header-anchor" href="#mtp-多-token-预测" aria-label="Permalink to “MTP：多 Token 预测”">​</a></h2><p>MTP（Multi-Token Prediction）是一种不需要 draft model 的推理加速方法。传统自回归模型每次 forward 只预测下一个 token，MTP 在模型训练时就在最后一层之上加了多个并行的输出头（prediction head），每个头负责预测不同位置的未来 token——第 1 个 head 预测 token <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.186ex;" xmlns="http://www.w3.org/2000/svg" width="4.714ex" height="1.692ex" role="img" focusable="false" viewBox="0 -666 2083.4 748" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(583.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z" style="stroke-width:3;"></path></g><g data-mml-node="mn" transform="translate(1583.4,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>t</mi><mo>+</mo><mn>1</mn></math></mjx-assistive-mml></mjx-container>，第 2 个 head 预测 token <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.186ex;" xmlns="http://www.w3.org/2000/svg" width="4.714ex" height="1.692ex" role="img" focusable="false" viewBox="0 -666 2083.4 748" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(583.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z" style="stroke-width:3;"></path></g><g data-mml-node="mn" transform="translate(1583.4,0)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>t</mi><mo>+</mo><mn>2</mn></math></mjx-assistive-mml></mjx-container>，以此类推，通常设 2-4 个头。</p><p>推理时，单次 forward 同时输出多个位置的候选 token。这些候选 token 需要验证才能确保质量——最简单的做法是只接受置信度最高的那个候选，其余丢弃，每次 forward 实际只多生成 1-2 个 token。但验证机制比投机解码简单得多——不需要独立的 draft model，不需要比较概率分布，直接看主模型自己的输出置信度是否超过阈值即可。</p><p>MTP 的核心优势在于<strong>零额外显存</strong>。传统投机解码需要加载一个完整的 draft model（即使是 1.8B 的量化版也要 1-2GB 显存），MTP 只多了几个轻量输出头（参数量通常不到主模型的 1%），在显存紧张的本地设备上优势明显。Meta 的 Llama 4 在预训练阶段就使用了 MTP——训练时让模型学习同时预测未来的多个 token，推理时直接复用训练好的预测头。</p><p>MTP 在编码和数学推理等任务上表现更好——因为这些任务的 token 序列有较强的结构性，未来 token 的预测置信度更高。对话类任务的提升略小，因为对话的&quot;下一个词&quot;选择空间更大。</p><h2 id="lookahead-decoding" tabindex="-1">Lookahead Decoding <a class="header-anchor" href="#lookahead-decoding" aria-label="Permalink to “Lookahead Decoding”">​</a></h2><p>Lookahead Decoding（前向解码）是另一种不依赖 draft model 的并行生成策略。核心思路是在已经生成的 token 序列上构造多个候选 n-gram（连续 n 个 token 的片段），然后一次 forward 并行验证这些候选片段是否匹配模型的输出。</p><p>具体过程：给定已生成的 token 序列 <code>[t1, t2, ..., tk]</code>，从序列中提取多个 n-gram 作为候选（如 <code>[t2, t3]</code>、<code>[t4, t5, t6]</code>），然后验证每个候选的下一个 token 是否与模型预测一致。如果一致，这个候选片段直接作为已生成的 token 保留。这个过程可以一次验证多个候选，每次 forward 可接受 2-5 个 token。</p><p>Lookahead 的优势是<strong>完全零额外模型</strong>——候选 token 来自模型自己已经生成的序列，不需要任何 draft model、不需要额外的预测头、不需要额外的训练。代价是有效加速比不如投机解码和 MTP——候选 token 的来源是已生成序列中的重复模式，对于对话这类 token 序列规律性较弱的任务，命中率通常只有 40-60%（每 100 个 token 中有 40-60 个来自 n-gram 片段）。但对于代码生成（变量名、API 调用模式高度重复）和 JSON/XML 输出（结构高度模板化）这类场景，命中率可达 70-90%。</p><p>在实现上，Lookahead Decoding 可以与投机解码组合使用——Lookahead 产生一部分低成本候选 token，投机解码用 draft model 补充那些 Lookahead 猜不到的部分。DeepSeek-V3 的技术报告中提到了类似的组合策略。</p><h2 id="dflash-扩散式块投机" tabindex="-1">DFlash：扩散式块投机 <a class="header-anchor" href="#dflash-扩散式块投机" aria-label="Permalink to “DFlash：扩散式块投机”">​</a></h2><p>DFlash 是 2025-2026 年投机解码领域的重要进展。传统投机方法（EAGLE、Medusa）依赖自回归 draft model，逐 token 生成候选序列——这个过程本身也是串行的。DFlash 用一个轻量级扩散模型（block diffusion）一次性并行生成一整块 tokens（如 8-16 个），然后让大模型并行验证整块。</p><p>扩散模型的特点是可以在任意位置&quot;填充&quot;——给定上下文后，扩散过程直接从噪声出发，逐步去噪得到候选 token 块。这完全消除了 draft model 的串行瓶颈。在大模型验证阶段，候选块的每个 token 使用特殊设计的 ancestor-only attention mask，使整块可以在一次 forward pass 中并行验证。</p><p>DFlash 在 Qwen、Llama 等模型上实现 2-6 倍的无损加速。加速比取决于生成任务的特征——代码生成等结构化输出场景中 draft 质量更高，加速比也更显著。</p><h2 id="ddtree-树状扩散验证" tabindex="-1">DDTree：树状扩散验证 <a class="header-anchor" href="#ddtree-树状扩散验证" aria-label="Permalink to “DDTree：树状扩散验证”">​</a></h2><p>DDTree（Diffusion Draft Tree）是 DFlash 的扩展。DFlash 一次扩散生成一条候选链（chain），大模型按链验证；DDTree 利用同一次扩散输出中每个位置的概率分布，构建一棵候选树（draft tree），包含多条可能的分支路径。</p><p>树状结构的关键价值在于：大模型一次 forward pass 可以并行验证整棵树上的所有分支，而不是只验证一条路径。候选树通过 best-first heap 算法生成，在固定节点预算下选择最有希望的路径分支。验证时使用 tree attention mask，各分支节点只关注其祖先节点，保持线性复杂度。</p><p>DDTree 在 DFlash 基础上将有效接受长度（acceptance length）进一步提升 1.5-2 倍，总加速可达 6-8 倍，且保持无损。特别适合代码生成、长上下文推理等对输出质量要求高的场景。</p><h2 id="quantspec-自投机量化" tabindex="-1">QuantSpec：自投机量化 <a class="header-anchor" href="#quantspec-自投机量化" aria-label="Permalink to “QuantSpec：自投机量化”">​</a></h2><p>QuantSpec（Apple, 2025）结合了自投机解码和分层量化。传统投机需要一个独立的 draft model，增加部署复杂度。自投机解码使用主模型本身作为 draft——通过减少层数或降低精度来获得更快的 draft pass。</p><p>QuantSpec 的做法：主模型本身经过 4-bit 权重和 KV Cache 量化后作为 draft model。draft pass 用 4-bit 精度快速生成候选 tokens，验证 pass 用完整精度验证。因为 draft 和 target 共享同一套权重（仅精度不同），分布一致性极好，验证通过率高。</p><p>4-bit 量化的 draft model 推理速度提高了约 4 倍，加上自投机避免独立 draft model 的显存开销，QuantSpec 在长上下文场景下特别有优势——节省的显存可以容纳更长的 KV Cache。</p><h2 id="diff-llm-扩散语言模型" tabindex="-1">Diff-LLM：扩散语言模型 <a class="header-anchor" href="#diff-llm-扩散语言模型" aria-label="Permalink to “Diff-LLM：扩散语言模型”">​</a></h2><p>在投机解码之外，扩散模型直接作为语言模型是一个更激进的方向。传统自回归 LLM 逐 token 生成，扩散语言模型（如 LLaDA、dLLM）通过迭代去噪过程并行生成全部 tokens。理论上可以实现完全并行的生成，推理延迟与序列长度无关。</p><p>目前扩散 LLM 的生成质量尚未达到自回归模型的水平，但在某些场景（如短文本补全、代码填充）中已展现出竞争力。DFlash 可以视为扩散模型在&quot;辅助生成&quot;角色上的成功应用——不需要替换主模型，仅用扩散做高效 draft。未来如果扩散 LLM 质量进一步提升，&quot;直接用扩散生成&quot;可能成为新的推理范式。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/impl/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>设计实现</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/impl/moe" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>混合专家</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -56,6 +56,11 @@
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
 /ai/app/engine/llmops - LLMOps
+/ai/app/engine/mistral/rs
+/ai/app/engine/mistral_rs - mistral.rs
+/ai/app/engine/run - 跑起模型
+/ai/app/engine/rust/infer
+/ai/app/engine/rust_infer - Rust 推理引擎
 /ai/app/engine/vllm - vllm
 /ai/app/lib - 框架库
 /ai/app/lib/langchain - LangChain
@@ -233,13 +238,13 @@
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
-/client/game/unity - Unity
-/client/game/unreal - Unreal
+/client/game/unity - Unity</pre>
+<pre>/client/game/unreal - Unreal
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
-/client/gui/cross - 跨平台</pre>
-<pre>/client/gui/cross/electron - Electron
+/client/gui/cross - 跨平台
+/client/gui/cross/electron - Electron
 /client/gui/cross/flutter - Flutter
 /client/gui/cross/flutter/dart - Dart
 /client/gui/cross/framework - UI 框架
@@ -433,13 +438,13 @@
 /design/typical/refactor - 重构
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
-/examples - 随便看看
-/index
+/examples - 随便看看</pre>
+<pre>/index
 /kernel - 系统层
 /kernel/asm - 汇编
 /kernel/asm/arm - ARM 指令集
-/kernel/c - C</pre>
-<pre>/kernel/c/basic - 语言基础
+/kernel/c - C
+/kernel/c/basic - 语言基础
 /kernel/c/basic/io - io 操作
 /kernel/c/basic/string - 字符串操作
 /kernel/c/build - 构建系统
@@ -633,13 +638,13 @@
 /server/distribute/basic/id - 分布式 ID
 /server/distribute/basic/lock - 分布式锁
 /server/distribute/basic/transaction - 分布式事务
-/server/distribute/cloud - 云原生
-/server/distribute/cloud/arch - 架构
+/server/distribute/cloud - 云原生</pre>
+<pre>/server/distribute/cloud/arch - 架构
 /server/distribute/cloud/cicd - CI/CD
 /server/distribute/cloud/container - 容器技术
 /server/distribute/cloud/mesh - Service Mesh
-/server/distribute/cloud/orchestration - Kubernetes</pre>
-<pre>/server/distribute/cloud/pkg - 包管理与镜像
+/server/distribute/cloud/orchestration - Kubernetes
+/server/distribute/cloud/pkg - 包管理与镜像
 /server/distribute/micro - 微服务
 /server/distribute/micro/cache - 缓存
 /server/distribute/micro/cache/consistency - 缓存一致性

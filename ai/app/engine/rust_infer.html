@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Rust 推理引擎 | Spark Notes</title>
+    <meta name="description" content="我的计科学习随笔">
+    <meta name="generator" content="VitePress v2.0.0-alpha.18">
+    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    <script src="/assets/site-data.67106ba3.js"></script>
+    <script type="module" src="/assets/app.CzQd7weX.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
+    <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
+    <link rel="modulepreload" href="/assets/ai_app_engine_rust_infer.md.DfWDupB7.lean.js">
+    <link rel="icon" href="/favicon.svg">
+    <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _ai_app_engine_rust_infer" data-v-e9c23681><div><h1 id="rust-推理引擎" tabindex="-1">Rust 推理引擎 <a class="header-anchor" href="#rust-推理引擎" aria-label="Permalink to “Rust 推理引擎”">​</a></h1><p>Rust 生态中有多个用于大模型推理的框架和绑定，它们在性能、安全性和部署便利性上各有取舍。相比 Python 生态，Rust 推理引擎的核心优势在于零依赖部署（单二进制文件）、内存安全保证、以及与 Rust 系统编程生态的无缝集成。</p><h2 id="candle" tabindex="-1">candle <a class="header-anchor" href="#candle" aria-label="Permalink to “candle”">​</a></h2><p>candle 是 HuggingFace 推出的纯 Rust 推理框架，设计理念是&quot;极简依赖、极快编译&quot;。它不依赖 libtorch 或任何 C++ ML 库——核心计算使用 wgpu（跨平台 GPU 后端）或 CUDA（通过 cudarc crate 直接调用 CUDA API），CPU 后端基于纯 Rust 实现。编译时间约 30 秒（PyTorch 的编译可能需要数分钟到半小时）。</p><p>candle 支持主流模型架构——LLaMA、Mistral、Qwen、Phi、Gemma 等，以及文本生成（LLM）、文本嵌入（BERT/Jina）、文生图（Stable Diffusion）、语音识别（Whisper）。模型权重通过 HuggingFace 的 safetensors 格式加载，与 Python 生态共享同一份权重文件。</p><div class="language-rust"><button title="Copy Code" class="copy"></button><span class="lang">rust</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> candle_core</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Device</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Tensor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> hf_hub</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">api</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">sync</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Api</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> candle_transformers</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">models</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">quantized_llama</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ModelWeights</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> api </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Api</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> model_id </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;TheBloke/Llama-2-7b-GGUF&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> repo </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> api</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">model</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model_id</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">to_string</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tokenizer </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> repo</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">get</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;tokenizer.json&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> weights </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ModelWeights</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">from_gguf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(repo</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">get</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;model-q4_k_m.gguf&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Device</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">cuda_if_available</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></div><p>candle 的劣势是生态尚不如 Python 成熟——模型支持度取决于社区的 Candle 实现，部分较新的架构（如 Qwen3.6 的特定变体）可能还没有现成的配置。但对于推理场景，特别是需要将模型嵌入 Rust 应用的场景（如桌面应用内嵌 LLM、边缘设备推理），candle 是目前最成熟的纯 Rust 方案。</p><h2 id="mistral-rs" tabindex="-1">mistral.rs <a class="header-anchor" href="#mistral-rs" aria-label="Permalink to “mistral.rs”">​</a></h2><p>mistral.rs 是专门为本地大模型推理优化的 Rust 框架，底层基于 candle。它的核心特色是<strong>开箱即用的量化加速</strong>和<strong>ISQ（In-Situ Quantization，就地量化）</strong>——在模型加载过程中实时执行量化，直接从 FP16 safetensors 转换为 INT4/INT8 格式运行，不需要预先准备 GGUF 或 AWQ 文件。</p><p>mistral.rs 支持所有主流量化格式——GGUF、GPTQ、AWQ、GGML，以及自定义的 ISQ 量化。推理后端可选 candle（纯 Rust）、libtorch（PyTorch C++ API）、CUDA（直接 GPU 推理），能够在几乎不写代码的情况下启动一个兼容 OpenAI API 的 HTTP 服务。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 安装后直接启动：自动检测 GPU、量化</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mistralrs-server</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -i</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> plain</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> TheBloke/Llama-2-7B-GGUF</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> llama</span></span></code></pre></div><div class="language-rust"><button title="Copy Code" class="copy"></button><span class="lang">rust</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> mistralrs</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">IsqType</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">LoaderBuilder</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">DeviceMapSetting</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 加载时自动 INT4 量化</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> loader </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> LoaderBuilder</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    DeviceMapSetting</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">from_device</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Device</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">cuda_if_available</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">build</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;microsoft/Phi-3-mini-4k-instruct&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">IsqType</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Q4K</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></div><p>mistral.rs 对个人用户的最大价值在于它的 ISQ——下载一个 FP16 模型文件，框架在加载时自动量化并运行。这意味着不需要再去 HuggingFace 找&quot;某某模型的 GGUF 版本&quot;——框架帮你做了量化这一步。</p><h2 id="llama-cpp-rs" tabindex="-1">llama-cpp-rs <a class="header-anchor" href="#llama-cpp-rs" aria-label="Permalink to “llama-cpp-rs”">​</a></h2><p>llama-cpp-rs 是对 llama.cpp C++ 库的 Rust FFI 安全绑定。它不是纯 Rust 实现——底层仍然依赖 llama.cpp 的 C++ 代码——但通过安全的 Rust 类型系统包装了所有 C API。继承了 llama.cpp 的全部功能：GGUF 量化模型、GPU 层卸载、投机解码、KV Cache 量化，以及完整的采样参数控制。</p><p>llama-cpp-rs 的核心价值在于让 Rust 开发者能够以惯用方式使用 llama.cpp——通过 Rust 的 ownership 保证资源的正确释放，通过 Result/Option 处理异常情况，不需要手动管理 C 内存。对于已经在用 llama.cpp 但有 Rust 二次开发需求的用户，这是最直接的路径。</p><div class="language-rust"><button title="Copy Code" class="copy"></button><span class="lang">rust</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> llama_cpp_rs</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">LlamaModel</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">LlamaInference</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">LlamaContextParams</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> model </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> LlamaModel</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">load_from_file</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;qwen3.6-8b-Q4_K_M.gguf&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">None</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> mut</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ctx </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> model</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new_context</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">LlamaContextParams</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">default</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> output </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ctx</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">inference</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;你好，请介绍一下你自己。&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">None</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></div><p>劣势在于编译依赖 llama.cpp 的 C++ 工具链（CMake + C++ 编译器），失去了纯 Rust 项目的单一 <code>cargo build</code> 体验。此外 llama.cpp 的 API 相对底层，没有 candle/mistral.rs 那种开箱即用的高级抽象。</p><h2 id="burn" tabindex="-1">burn <a class="header-anchor" href="#burn" aria-label="Permalink to “burn”">​</a></h2><p>burn 是 Rust 生态中的完整深度学习框架，定位对标 PyTorch。它不是专门的推理引擎，但提供了从训练到推理的端到端能力。</p><p>burn 的最大特色是多后端抽象——同一份模型代码可以在不同后端上运行，切换只需改一行配置。当前支持的后端包括 WGPU（跨平台 GPU，Vulkan/Metal/DX12 自动适配）、CUDA（通过 cudarc crate）、CPU（纯 Rust 实现，通过矩阵乘法优化库加速），以及正在实验中的 ROCm 后端。</p><p>burn 的前向传播图会自动优化——算子融合、内存复用、常量折叠等。训练方面支持自动微分（autodiff）、多种优化器（Adam/AdamW/SGD）、学习率调度器、数据加载管道。模型可以通过 ONNX 导出与其他生态互通。</p><div class="language-rust"><button title="Copy Code" class="copy"></button><span class="lang">rust</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> burn</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">backend</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">wgpu</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Wgpu</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> burn</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">tensor</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Tensor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">type</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Backend</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Wgpu</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Tensor</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Backend</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&gt;</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">from_data</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">([[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">], [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]]);</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> y </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">matmul</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">x</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">transpose</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span></code></pre></div><p>burn 的劣势是模型 zoo 尚不如 PyTorch 丰富——需要自己实现大部分模型架构，或从 ONNX/HuggingFace 导入预训练权重。目前在推理场景中不如 candle 或 mistral.rs 成熟，但如果需要边训练边推理（如在线微调 + 服务），burn 是 Rust 生态中最接近 PyTorch 的方案。</p><h2 id="选型指南" tabindex="-1">选型指南 <a class="header-anchor" href="#选型指南" aria-label="Permalink to “选型指南”">​</a></h2><table tabindex="0"><thead><tr><th>场景</th><th>推荐工具</th><th>原因</th></tr></thead><tbody><tr><td>想最快跑起来，不写代码</td><td>Ollama</td><td>Python 封装的 llama.cpp，一命令启动</td></tr><tr><td>Rust 应用内嵌 LLM</td><td>candle</td><td>纯 Rust、编译快、依赖少</td></tr><tr><td>Rust 应用中做推理服务</td><td>mistral.rs</td><td>自动量化、兼容 OpenAI API</td></tr><tr><td>已有 llama.cpp 经验，用 Rust 开发</td><td>llama-cpp-rs</td><td>FFI 调用，功能完整</td></tr><tr><td>边训练边推理</td><td>burn</td><td>完整 DL 框架</td></tr></tbody></table><p>对于个人本地部署场景，最推荐的是 mistral.rs——ISQ 就地量化消除了&quot;找 GGUF 版本&quot;这一步，且启动命令极简。如果需要在 Rust 桌面应用或嵌入式设备中嵌入推理能力，candle 的纯 Rust 实现和低依赖特性不可替代。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/engine/deploy" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>本地部署</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/engine/mistral_rs" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>mistral.rs</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    
+<nav id="sitemap" aria-hidden="true">
+<pre>/abstract - 目录
+/ai - 人工智能
+/ai/app - 大模型应用
+/ai/app/arch - 应用架构
+/ai/app/arch/api - API 设计
+/ai/app/arch/caching - Prompt Caching
+/ai/app/arch/gateway - 网关与缓存
+/ai/app/arch/routing - 模型路由
+/ai/app/auto - 自动化
+/ai/app/auto/impl - 实现原理
+/ai/app/auto/traditional - 传统自动化
+/ai/app/engine - 推理引擎
+/ai/app/engine/deploy - 本地部署
+/ai/app/engine/finetune - 微调
+/ai/app/engine/llama/cpp
+/ai/app/engine/llama_cpp - llama.cpp
+/ai/app/engine/llmops - LLMOps
+/ai/app/engine/mistral/rs
+/ai/app/engine/mistral_rs - mistral.rs
+/ai/app/engine/run - 跑起模型
+/ai/app/engine/rust/infer
+/ai/app/engine/rust_infer - Rust 推理引擎
+/ai/app/engine/vllm - vllm
+/ai/app/lib - 框架库
+/ai/app/lib/langchain - LangChain
+/ai/app/lib/langchain/langgraph - LangGraph
+/ai/app/lib/langchain/runnable - LCEL 与 Runnable
+/ai/app/lib/packages - 常用包
+/ai/app/multimodal - 多模态
+/ai/app/multimodal/audio - 语音交互
+/ai/app/multimodal/generation - 媒体生成
+/ai/app/multimodal/vision - 视觉理解
+/ai/app/overlay - Overlay
+/ai/app/overlay/agent - 智能体
+/ai/app/overlay/agent/a2a - A2A 协议
+/ai/app/overlay/agent/case - 应用实战
+/ai/app/overlay/agent/case/claude/code
+/ai/app/overlay/agent/case/claude_code - Claude Code
+/ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/deep/agent
+/ai/app/overlay/agent/deep_agent - Deep Agent
+/ai/app/overlay/agent/loop - Agent 循环
+/ai/app/overlay/agent/mcp - MCP Server
+/ai/app/overlay/agent/safety - 安全防护
+/ai/app/overlay/agent/safety/content - 内容安全
+/ai/app/overlay/agent/safety/guardrails - Guardrails
+/ai/app/overlay/agent/safety/injection - Prompt 注入
+/ai/app/overlay/agent/skills - Skills
+/ai/app/overlay/agent/tools - 工具调用
+/ai/app/overlay/ops - LLMOps
+/ai/app/overlay/ops/eval - 评估框架
+/ai/app/overlay/ops/monitor - 可观测性
+/ai/app/overlay/ops/test - 测试策略
+/ai/app/overlay/rag - RAG
+/ai/app/overlay/rag/agentic/rag
+/ai/app/overlay/rag/agentic_rag - Agentic RAG
+/ai/app/overlay/rag/data - 数据工程
+/ai/app/overlay/rag/data/parsing - 文档解析
+/ai/app/overlay/rag/data/processing - 数据处理
+/ai/app/overlay/rag/embedding - Embedding
+/ai/app/overlay/rag/graphrag - GraphRAG
+/ai/app/overlay/rag/retrieval - 检索质量
+/ai/app/overlay/rag/vector/db
+/ai/app/overlay/rag/vector_db - 向量数据库
+/ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/context - Context Engineering
+/ai/app/overlay/session/prompt - 提示词
+/ai/app/overlay/ui - AI UI
+/ai/compute - AI 引擎
+/ai/compute/api - 标准接口
+/ai/compute/api/cpu - SIMD
+/ai/compute/api/cuda - CUDA
+/ai/compute/api/opencl - OpenCL
+/ai/compute/api/simt - SIMT
+/ai/compute/api/triton - Triton
+/ai/compute/distributed - 集群
+/ai/compute/distributed/comm - 集合通信
+/ai/compute/distributed/parallel - 模型拆分
+/ai/compute/engine - 主流引擎
+/ai/compute/engine/deepspeed - DeepSpeed
+/ai/compute/engine/other - 其他
+/ai/compute/engine/pytorch - PyTorch
+/ai/compute/engine/vllm - vLLM
+/ai/compute/format - 模型格式
+/ai/compute/format/hf - HF 风格
+/ai/compute/format/onnx - ONNX
+/ai/compute/impl - 设计实现
+/ai/compute/impl/kvcache - KV Cache
+/ai/compute/impl/moe - 混合专家
+/ai/compute/impl/speculative - 投机解码
+/ai/compute/kernel - 算子
+/ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/optimization - 算子优化
+/ai/compute/kernel/quantization - 量化
+/ai/compute/stack - 计算栈
+/ai/cpp - C++
+/ai/neural - 神经网络
+/ai/neural/dl - 深度学习
+/ai/neural/dl/audio - 听觉
+/ai/neural/dl/backforward - 反向传播
+/ai/neural/dl/cnn - CNN
+/ai/neural/dl/diffusion - Diffusion
+/ai/neural/dl/multimodal - 多模态
+/ai/neural/dl/nlp - NLP
+/ai/neural/dl/recommend - 推荐
+/ai/neural/dl/rnn - RNN
+/ai/neural/dl/transformer - Transformer
+/ai/neural/dl/vision - 视觉
+/ai/neural/dl/vit - ViT
+/ai/neural/llm - LLM
+/ai/neural/llm/arch - 架构
+/ai/neural/llm/finetune - 微调
+/ai/neural/llm/memo - 记忆
+/ai/neural/llm/pretraind - 基座模型
+/ai/neural/math - 数学基础
+/ai/neural/ml - 机器学习
+/ai/neural/ml/bf - 梯度下降法
+/ai/neural/ml/loss - 损失函数
+/ai/neural/ml/reinforce - 强化学习
+/ai/neural/ml/supervised - 监督学习
+/ai/neural/ml/unsupervised - 无监督学习
+/ai/neural/numpy - Numpy
+/ai/neural/pytorch - PyTorch
+/ai/neural/sklearn - sklearn
+/ai/python - Python
+/ai/python/basic - 语言基础
+/ai/python/basic/module - 模块系统
+/ai/python/fastapi - FastAPI
+/ai/python/jupyter - jupyter
+/ai/python/uv - uv
+/ai/symbol - 符号逻辑
+/ai/symbol/expert-system - 专家系统
+/ai/symbol/logic - 数理逻辑基础
+/ai/symbol/neuralify - 神经符号融合
+/ai/symbol/outline - 学习路线
+/ai/symbol/prolog - Prolog
+/ai/symbol/reasoning - 推理引擎与搜索
+/ai/symbol/representation - 知识表示
+/basic - 理论基础
+/basic/algo - 算法
+/basic/algo/compress - 压缩
+/basic/algo/crypto - 加密和解密
+/basic/algo/model - 算法模型
+/basic/algo/model/bit - 位运算
+/basic/algo/model/dp - 动态规划
+/basic/algo/model/leetcode - leetcode 题型
+/basic/algo/model/recrusion - 递归
+/basic/algo/model/struct - 数据结构辅助
+/basic/algo/sort - 排序算法
+/basic/algo/string - 字符串算法
+/basic/algo/struct - 数据结构
+/basic/algo/struct/graph - 图
+/basic/algo/struct/tree - 树
+/basic/compile - 编译原理
+/basic/compile/advance - 高级语言
+/basic/compile/dsl - DSL
+/basic/compile/dsl/glob - glob
+/basic/compile/dsl/regex - 正则表达式
+/basic/compile/lang - 编程语言概览
+/basic/db - 数据库
+/basic/db/cmp - SQL
+/basic/db/nf - 范式
+/basic/graphic - 图形学
+/basic/graphic/2d - 2D 图形
+/basic/graphic/3d - 3D 场景渲染
+/basic/hardware - 硬件组成
+/basic/hardware/coding - 编码
+/basic/hardware/cpu - CPU
+/basic/hardware/gpu - GPU
+/basic/hardware/interrupt - 中断
+/basic/hardware/motherboard - 主板
+/basic/hardware/storage - 存储
+/basic/hardware/topo - CPU 拓扑
+/basic/network - 网络协议
+/basic/network/ether - 以太网
+/basic/network/http - HTTP
+/basic/network/ip - IP
+/basic/network/protocol - 网络协议
+/basic/network/tcp - TCP
+/basic/network/udp - UDP
+/basic/os - 操作系统
+/basic/os/mm - 内存管理
+/basic/os/schd - 调度
+/client - 客户端
+/client/art - 美术设计
+/client/art/mime - 媒体文件
+/client/art/render - 渲染
+/client/art/toolchain - 工具链
+/client/csharp - C#
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
+/client/csharp/dotnet - .NET
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
+/client/game - 游戏引擎
+/client/game/cocos - Cocos
+/client/game/godot - Godot
+/client/game/unity - Unity</pre>
+<pre>/client/game/unreal - Unreal
+/client/gui - 图形应用
+/client/gui/arch - 架构
+/client/gui/arch/observe - 可观测性
+/client/gui/cross - 跨平台
+/client/gui/cross/electron - Electron
+/client/gui/cross/flutter - Flutter
+/client/gui/cross/flutter/dart - Dart
+/client/gui/cross/framework - UI 框架
+/client/gui/cross/reactnative - ReactNative
+/client/gui/ergonomic - 人机关系
+/client/gui/ergonomic/interact - 人机交互
+/client/gui/ergonomic/screen - 屏幕
+/client/gui/platform - UI 平台
+/client/gui/platform/android - Android
+/client/gui/platform/gnome - Gnome
+/client/gui/platform/ios - Apple
+/client/gui/platform/web-env - Web 宿主
+/client/gui/platform/windows - Windows
+/client/gui/security - 安全
+/client/gui/security/access - 应用权限
+/client/gui/security/antiattack - 网络攻击
+/client/gui/security/auth - 登录鉴权
+/client/gui/security/privacy - 隐私保护
+/client/gui/security/sandbox - 沙箱
+/client/render - 渲染引擎
+/client/render/api - 标准接口
+/client/render/api/directx - DirectX
+/client/render/api/opengl - OpenGL
+/client/render/api/vulkan - Vulkan
+/client/render/api/vulkan/icd - ICD
+/client/render/api/vulkan/spirv - SPIR-V
+/client/render/api/webgl
+/client/render/api/webgpu - WebGPU
+/client/render/basic - 渲染基础
+/client/render/basic/mapping - 贴图
+/client/render/basic/scene - 3D 场景
+/client/render/engine - 主流引擎
+/client/render/engine/cycles - Cycles
+/client/render/engine/godot - Godot
+/client/render/engine/skia - Skia
+/client/render/raster - 光栅化管线
+/client/render/raster/ae - 后处理
+/client/render/raster/illumination - 光照模型
+/client/render/raster/rast - 光栅化算法
+/client/render/raytrace - 光线追踪管线
+/client/render/raytrace/bvh - 加速算法
+/client/render/raytrace/denoise - 降噪
+/client/render/raytrace/integrate - 混合渲染管线
+/client/render/shader - 着色器
+/client/render/shader/optimization - 着色器优化
+/client/render/shader/patterns - 常见模式
+/client/render/stack - 计算栈
+/client/render/vec/compose
+/client/render/vec_compose - 矢量合成管线
+/client/rust - Rust
+/client/rust/assets - 静态资源管理
+/client/rust/basic - 语言基础
+/client/rust/basic/closure - 闭包
+/client/rust/basic/macro - 宏
+/client/rust/basic/mod - 模块系统
+/client/rust/basic/ref - 智能指针
+/client/rust/basic/trait - 特性
+/client/rust/cargo - Cargo
+/client/rust/cli - CLi
+/client/rust/ld - 链接库
+/client/rust/slint - Slint
+/client/rust/tauri - Tauri
+/client/rust/wasm - WASM
+/client/web - Web
+/client/web/api - Web API
+/client/web/api/wasm - WASM
+/client/web/browser - 浏览器
+/client/web/browser/arch - 架构
+/client/web/browser/devtools - DevTools 性能分析
+/client/web/browser/eventloop - 事件循环
+/client/web/browser/http - HTTP 协议
+/client/web/browser/memleak - 内存泄漏
+/client/web/browser/optimize - 性能优化
+/client/web/browser/render - 渲染周期
+/client/web/browser/render copy - 渲染周期
+/client/web/browser/security - 浏览器安全
+/client/web/browser/security copy - 安全
+/client/web/browser/storage - 存储
+/client/web/browser/v8 - V8
+/client/web/css - CSS
+/client/web/css/basic - 语言基础
+/client/web/css/sass - Sass
+/client/web/css/tailwind - Tailwindcss
+/client/web/css/trick - CSS trick
+/client/web/css/trick/animation - CSS 动画
+/client/web/css/trick/bfc - 块级格式上下文
+/client/web/css/trick/layout - 布局
+/client/web/css/trick/layout/box-sizing - CSS盒模型
+/client/web/css/trick/layout/containing-block - 包含块
+/client/web/css/trick/layout/grid - grid布局
+/client/web/css/trick/relative - 主题定制
+/client/web/css/trick/sort - css 属性的分类
+/client/web/css/trick/z-index - 层叠上下文与 z-index
+/client/web/eng - 工程化
+/client/web/eng/bootstrap - 项目搭建
+/client/web/eng/build - 构建优化
+/client/web/eng/engineering - 工程化搭建
+/client/web/eng/migration - 迁移
+/client/web/eng/svg - svg
+/client/web/eng/vite - Vite
+/client/web/eng/vite-plugin - Vite 插件
+/client/web/eng/webpack - Webpack
+/client/web/html - HTML
+/client/web/html/basic - 语言基础
+/client/web/html/mathml - MathML
+/client/web/html/md - Markdown
+/client/web/html/seo - SEO
+/client/web/html/svg - SVG
+/client/web/html/trick - HTML trick
+/client/web/html/trick/drag - HTML 拖放 API
+/client/web/html/trick/event - 事件与尺寸获取
+/client/web/html/trick/wc - Web Component
+/client/web/js - JavaScript
+/client/web/js/basic - 语言基础
+/client/web/js/basic/async - 异步编程
+/client/web/js/basic/class - 面向对象
+/client/web/js/basic/iterable - 迭代器
+/client/web/js/basic/obj-base-ops - js 对象基本操作
+/client/web/js/basic/own-property - 属性的可枚举性和所有者
+/client/web/js/basic/proto - 原型链
+/client/web/js/basic/stream - Stream API
+/client/web/js/basic/type-transform - 隐式类型转换
+/client/web/js/npm - npm
+/client/web/js/typescript - TypeScript
+/client/web/js/typescript/basic - 语法基础
+/client/web/nodejs - Nodejs
+/client/web/nodejs/express - Express.js
+/client/web/nodejs/nestjs - Nestjs
+/client/web/nodejs/performance - Node.js 性能调优
+/client/web/react - React
+/client/web/react/fiber - Fiber 与调和
+/client/web/react/rsc - 服务端组件
+/client/web/solid - Solid
+/client/web/ssr - SSR
+/client/web/ssr/nextjs - Nextjs
+/client/web/ssr/nuxtjs - Nuxtjs
+/client/web/ssr/seo - SEO
+/client/web/ssr/ssg - SSG
+/client/web/ssr/vike - Vike
+/client/web/typical - 典型业务
+/client/web/vue - Vue
+/client/web/vue/cpc - 组件通信
+/client/web/vue/nuxt-server - 服务端组件
+/client/web/vue/vdom - 虚拟 DOM 与 Diff 算法
+/design - 软件设计
+/design/async - 异步
+/design/async/async-await - await
+/design/async/reactive - 响应式
+/design/async/schedule - 用户态调度
+/design/concurrent - 并发
+/design/concurrent/atom - 原子操作
+/design/concurrent/lock - 同步原语
+/design/concurrent/lock/free
+/design/concurrent/lock_free - 无锁并发
+/design/concurrent/thread - 多线程
+/design/fp - 函数式
+/design/fp/composition - 组合
+/design/fp/functor - 函子
+/design/fp/hint - hint
+/design/fp/immutable - 不可变
+/design/fp/io - IO
+/design/fp/state - 状态管理
+/design/oop - 面向对象
+/design/oop/aop - AOP
+/design/oop/interface - 接口与抽象
+/design/oop/ioc - IOC
+/design/oop/lifetime - 对象生命周期
+/design/oop/om - 对象模型
+/design/oop/pattern - 设计模式
+/design/oop/relationship - 类间关系
+/design/oop/solid - SOLID
+/design/spacetime - 面向时空
+/design/spacetime/domain - 主机域
+/design/spacetime/general - 通用域
+/design/spacetime/general/architecture - 架构演进
+/design/spacetime/general/container - 容器
+/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/dependency - 依赖管理
+/design/spacetime/general/tradeoff - 权衡
+/design/spacetime/network - 网络域
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process/scope - 作用域
+/design/spacetime/process/single - 单进程
+/design/spacetime/space - 体系建构
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
+/design/typical/ddd - DDD
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/refactor - 重构
+/design/typical/simplify - 简化原则
+/design/typical/swift - 敏捷开发
+/examples - 随便看看</pre>
+<pre>/index
+/kernel - 系统层
+/kernel/asm - 汇编
+/kernel/asm/arm - ARM 指令集
+/kernel/c - C
+/kernel/c/basic - 语言基础
+/kernel/c/basic/io - io 操作
+/kernel/c/basic/string - 字符串操作
+/kernel/c/build - 构建系统
+/kernel/c/concurrent - 并发编程
+/kernel/c/debug - 调试
+/kernel/c/lib - 库函数
+/kernel/embed - 嵌入式
+/kernel/embed/bios - BIOS
+/kernel/embed/device - 外设
+/kernel/embed/device/bus - 总线设备
+/kernel/embed/device/bus/i2c - I2C
+/kernel/embed/device/bus/pci - PCI
+/kernel/embed/device/bus/usb - USB
+/kernel/embed/device/comm - 数据面
+/kernel/embed/device/platform - 平台设备
+/kernel/embed/device/sub - 集成子设备
+/kernel/embed/elel - 硬件基础
+/kernel/embed/elel/design - 打板
+/kernel/embed/elel/fpga - FPGA
+/kernel/embed/elel/pcb - PCB
+/kernel/embed/elel/soc - SoC
+/kernel/embed/freertos - FreeRTOS
+/kernel/embed/iot - 物联网
+/kernel/embed/sbc - 开发板
+/kernel/embed/sbc/raspberry - 树莓派
+/kernel/embed/sbc/stm32 - STM32
+/kernel/embed/uboot - U-Boot
+/kernel/equip - 装机
+/kernel/equip/bmc - BMC
+/kernel/equip/gpu - GPU
+/kernel/equip/laptop/brand
+/kernel/equip/laptop_brand - 笔记本
+/kernel/equip/lte - LTE
+/kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/consumer - 消费级
+/kernel/equip/motherboard/epyc - EPYC 装机
+/kernel/equip/motherboard/ram - 内存适配
+/kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/ram - 内存
+/kernel/equip/sbc - SBC
+/kernel/equip/screen - 屏幕
+/kernel/equip/server/room
+/kernel/equip/server_room - 机房
+/kernel/equip/slot - 接口
+/kernel/equip/support - 支撑设备
+/kernel/linux - Linux
+/kernel/linux/develop - 系统开发
+/kernel/linux/develop/ctx - 内核上下文
+/kernel/linux/develop/io/uring
+/kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/kbuild - linux 内核构建系统
+/kernel/linux/develop/lock - 同步原语
+/kernel/linux/develop/service - 系统服务
+/kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/struct - 数据结构
+/kernel/linux/develop/struct/iov - 聚簇读写
+/kernel/linux/develop/struct/linked - 链表
+/kernel/linux/develop/systemd - systemd
+/kernel/linux/device - 设备管理
+/kernel/linux/device/dma - DMA
+/kernel/linux/device/driver - 驱动接口
+/kernel/linux/device/driver/can - CAN
+/kernel/linux/device/driver/pci - PCIe 驱动
+/kernel/linux/device/driver/usb - USB 驱动
+/kernel/linux/device/driver/virtio
+/kernel/linux/device/lifecycle - 生命周期
+/kernel/linux/device/udev - udev
+/kernel/linux/file - 文件管理
+/kernel/linux/file/block - 块设备子系统
+/kernel/linux/file/pfs - 伪文件系统
+/kernel/linux/file/vfs - 虚拟文件系统
+/kernel/linux/irq - 中断管理
+/kernel/linux/irq/clock - 时钟中断
+/kernel/linux/irq/controller - 中断控制器
+/kernel/linux/irq/handler - 中断处理
+/kernel/linux/mm - 内存管理
+/kernel/linux/mm/mmap - 虚拟内存映射
+/kernel/linux/mm/pmm - 物理内存管理
+/kernel/linux/mm/reclaim - 内存回收
+/kernel/linux/mm/swap - 内存交换
+/kernel/linux/net - 网络实现
+/kernel/linux/net/stack - 协议栈
+/kernel/linux/power - 电源管理
+/kernel/linux/power/boot - 开机上电
+/kernel/linux/power/tpm - 安全启动
+/kernel/linux/process - 进程管理
+/kernel/linux/process/ipc - IPC
+/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/schd - 调度
+/kernel/linux/process/security - 权限管理
+/kernel/linux/syscall - 系统调用
+/kernel/linux/syscall/file - 文件管理
+/kernel/linux/syscall/mm - 内存管理
+/kernel/linux/syscall/process - 进程管理
+/kernel/linux/video - 视图系统
+/kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
+/kernel/vm - 虚拟化
+/kernel/vm/basic - 基本原理
+/kernel/vm/basic/bios - BIOS
+/kernel/vm/basic/cpu - CPU
+/kernel/vm/basic/device - 设备
+/kernel/vm/basic/memory - 内存
+/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/vfio - VFIO
+/kernel/vm/virtio - VirtIO
+/sde - 工程化
+/sde/container - 容器
+/sde/container/docker - Docker
+/sde/container/principle - 实现原理
+/sde/git - Git
+/sde/git/advanced - Git 高阶用法
+/sde/git/github - Github
+/sde/git/gitlab - Gitlab
+/sde/k8s - K8s
+/sde/k8s/k3s - k3s
+/sde/k8s/network - 网络模型
+/sde/shell - Shell
+/sde/shell/basic - 语言基础
+/sde/shell/cli - 常见命令行
+/sde/sre - 运维
+/sde/sre/elk - ELK
+/sde/sre/jenkins - Jenkins
+/sde/sre/openstack - OpenStack
+/sde/test - 测试
+/sde/test/basic - 测试原理
+/sde/test/framework - 测试工具与框架
+/sde/test/tdd - 测试驱动开发
+/sde/workflow - 工作流
+/sde/workflow/devops - DevOps
+/sde/workflow/devops/cicd - CI/CD
+/sde/workflow/quality - 质量控制
+/sde/workflow/quality/docs - 文档工程
+/sde/workflow/quality/review - Code Review
+/sde/workflow/version - 版本管理
+/server - 服务端
+/server/db - 数据库
+/server/db/distributed - 集群
+/server/db/distributed/comparison - 数据库对比与选型
+/server/db/distributed/newsql - NewSQL 数据库
+/server/db/distributed/sharding - 分库分表
+/server/db/distributed/transaction - 分布式事务
+/server/db/engine - 存储引擎
+/server/db/engine/fulltext - 全文检索
+/server/db/engine/graph - 图
+/server/db/engine/innodb - innodb
+/server/db/engine/vector - 向量
+/server/db/nosql - NoSQL
+/server/db/nosql/es - ElasticSearch
+/server/db/nosql/milvus - Milvus
+/server/db/nosql/milvus/idx - 向量索引
+/server/db/nosql/milvus/storage - 分布式能力
+/server/db/nosql/milvus/usage - 使用实践
+/server/db/nosql/minio - MinIO
+/server/db/nosql/mongo - MongoDB
+/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/redis - Redis
+/server/db/practice - 工程实践
+/server/db/practice/backup - 备份与恢复
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
+/server/db/practice/monitoring - 监控与运维
+/server/db/practice/standards - 数据库规范
+/server/db/practice/tuning - 性能调优实践
+/server/db/sql - SQL
+/server/db/sql/basic - sql 基础
+/server/db/sql/basic/design - 数据库设计
+/server/db/sql/basic/integrity - 数据完整性
+/server/db/sql/basic/transaction - 事务与并发控制
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql/id - 索引
+/server/db/sql/mysql/impl - 存储引擎
+/server/db/sql/mysql/optimize - 查询优化
+/server/db/sql/pg - PostgreSQL
+/server/db/sql/sqlite - SQLite
+/server/distribute - 分布式
+/server/distribute/arch - 集群架构
+/server/distribute/basic - 分布式基础
+/server/distribute/basic/cap - CAP
+/server/distribute/basic/concurrency - 并发模型
+/server/distribute/basic/concurrency/coroutine - 协程原理
+/server/distribute/basic/concurrency/event-loop - 事件驱动架构
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus/raft - Raft 算法
+/server/distribute/basic/consensus/zab - ZAB 协议
+/server/distribute/basic/id - 分布式 ID
+/server/distribute/basic/lock - 分布式锁
+/server/distribute/basic/transaction - 分布式事务
+/server/distribute/cloud - 云原生</pre>
+<pre>/server/distribute/cloud/arch - 架构
+/server/distribute/cloud/cicd - CI/CD
+/server/distribute/cloud/container - 容器技术
+/server/distribute/cloud/mesh - Service Mesh
+/server/distribute/cloud/orchestration - Kubernetes
+/server/distribute/cloud/pkg - 包管理与镜像
+/server/distribute/micro - 微服务
+/server/distribute/micro/cache - 缓存
+/server/distribute/micro/cache/consistency - 缓存一致性
+/server/distribute/micro/config - 配置中心
+/server/distribute/micro/discovery - 服务发现
+/server/distribute/micro/gateway - API 网关
+/server/distribute/micro/lb - 负载均衡
+/server/distribute/micro/observability - 可观测性
+/server/distribute/micro/observability/monitoring - 监控告警
+/server/distribute/micro/observability/tracing - 链路追踪
+/server/distribute/micro/qos - QoS
+/server/distribute/micro/qos/chaos - 混沌工程
+/server/distribute/micro/qos/fuse - 熔断限流
+/server/distribute/micro/qos/ha - 高可用与容错
+/server/distribute/micro/qos/ha/load-balance - 负载均衡
+/server/distribute/micro/qos/highes - 三高
+/server/distribute/micro/qos/monitor - 监控
+/server/distribute/micro/qos/observability - 可观测性
+/server/distribute/micro/qos/observability/monitoring - 监控指标设计
+/server/distribute/micro/qos/performance - 性能优化
+/server/distribute/micro/qos/performance/profiling - 性能分析工具
+/server/distribute/micro/qos/reliability/disaster-recovery - 容灾
+/server/distribute/micro/qos/reliability/failover - 故障转移
+/server/distribute/micro/qos/slashing - 限流降级
+/server/distribute/micro/reliability - 健壮性
+/server/distribute/micro/reliability/fusing - 熔断降级
+/server/distribute/micro/reliability/ratelimit - 限流
+/server/go - Go
+/server/go/gmp - GMP 调度器
+/server/java - Java
+/server/java/basic - 语言基础
+/server/java/jvm - JVM 内存与 GC
+/server/java/mod - 模块系统
+/server/java/mod/gradle - gradle
+/server/java/mod/maven - Maven
+/server/java/spring - Spring
+/server/middleware - 中间件
+/server/middleware/mq - 消息队列
+/server/middleware/mq/kafka - Kafka
+/server/middleware/mq/rabbitmq - RabbitMQ
+/server/middleware/mq/rocketmq - RocketMQ
+/server/middleware/mycat - MyCat
+/server/middleware/proxy - 代理
+/server/middleware/proxy/haproxy - haproxy
+/server/middleware/proxy/lvs - LVS
+/server/middleware/proxy/nginx - Nginx
+/server/middleware/srs - SRS
+/server/network - 网络编程
+/server/network/io-model - I/O 模型
+/server/network/proto - 网络协议
+/server/network/proto/http - HTTP
+/server/network/proto/quic - QUIC
+/server/network/proto/rpc - RPC 框架
+/server/network/proto/tcp - TCP
+/server/network/proto/udp - UDP
+/server/network/proto/websocket - WebSocket
+/server/network/security - 网络安全
+/server/network/tcp-tuning - TCP 调优
+/server/network/zero-copy - 零拷贝
+/server/typical - 典型业务
+/server/typical/auth - 登录鉴权
+/server/typical/flash/sale
+/server/typical/flash_sale - 秒杀活动
+/server/typical/image - 图片上传
+/server/typical/order - 订单管理
+/server/typical/search - 内容搜索
+/server/typical/setup - 快速建站
+/web3 - 去中心化
+/web3/blockchain - 区块链
+/web3/blockchain/consensus - 共识机制
+/web3/blockchain/crypto - 密码学支持
+/web3/blockchain/ethereum - 以太坊
+/web3/blockchain/zk-proof - 零知识证明
+/web3/dapp - DApp
+/web3/dapp/defi - DeFi
+/web3/dapp/tokens - 代币标准
+/web3/dapp/wallets - 账户与钱包
+/web3/solidity - Solidity
+/web3/solidity/smart-contracts - 智能合约</pre>
+</nav><style>#sitemap{display:none}</style>
+    
+    
+  </body>
+</html>
