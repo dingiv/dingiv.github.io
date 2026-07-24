@@ -26,7 +26,7 @@ order: 25
 | 提升并发吞吐 | 能（QPS 线性增长） | 能（配合 micro-batch） | 较弱 |
 
 ## 通信硬件：NVLink vs PCIe
-NVLink 是 NVIDIA 的卡间直连技术，Ampere 代（3090、A6000 等）提供 112.5 GB/s 双向带宽。PCIe 4.0 x16 单向带宽仅 31.5 GB/s，约为 NVLink 的 1/4。TP 每层触发两次 AllReduce，NVLink 下通信耗时占总时间 < 5%，PCIe 下可能 > 50%。完整的 NVLink 兼容性参考见 [GPU AI 部署参考](gpu-ai#nvlink-桥接参考)。
+NVLink 是 NVIDIA 的卡间直连技术，Ampere 代（3090、A6000 等）提供 112.5 GB/s 双向带宽。PCIe 4.0 x16 单向带宽仅 31.5 GB/s，约为 NVLink 的 1/4。TP 每层触发两次 AllReduce，NVLink 下通信耗时占总时间 < 5%，PCIe 下可能 > 50%。完整的 NVLink 兼容性参考见 [GPU 硬件](hardware)。
 
 不具备 NVLink 的卡（RTX 4090、3080 等）多卡通信只能走 PCIe，优化方向：
 
@@ -63,11 +63,60 @@ sglang serve Qwen/Qwen3.6-72B --tp 2 --pp 2
 ```
 
 ## 专家并行
-对于 MoE（混合专家）模型（如 DeepSeek-V3、Mixtral），专家并行（EP）将不同的 expert 分配到不同 GPU。Token 通过门控网络路由到激活的 expert 所在 GPU——卡间通信只在路由时发生一次 All-to-All，频率远低于 TP 的逐层全同步。
+MoE（Mixture of Experts）架构的模型——如 DeepSeek-V3、Mixtral 8x7B、Qwen2.5-MoE——与传统 Dense 模型有根本区别：每个 Transformer 层的 FFN 被替换为多个并行的"专家"子网络，每个 token 只激活其中少数几个（通常 top-2）。参数量巨大（DeepSeek-V3 达 671B）但每次前向传播的计算量只对应激活参数（约 37B）。
 
-EP 对 PCIe 环境友好——通信频率低、数据量可控。如果你的部署目标主要是 MoE 模型，EP 是比 TP/PP 更高效的切分方式。
+专家并行（EP）将不同的 expert 分配到不同 GPU。每个 MoE 层的处理流程：Token 到达 → 门控网络（Router）计算每个 expert 的匹配分数 → 取 top-k expert（k=2） → 通过 All-to-All 通信将 token 分发到对应 expert 所在的 GPU → 各 GPU 计算自己负责的 expert → All-to-All 通信将结果传回 → 加权求和输出。
+
+EP 的通信模式与 TP 有本质区别。TP 需要每层两次 AllReduce——所有 GPU 之间进行密集全量同步。EP 的 All-to-All 只发生在 token 路由时：每个 GPU 只发送/接收自己那部分 token 到激活的 expert 所在的 GPU。通信量与激活 expert 数成正比而非模型总层数——一个 token 在 60 层 MoE 模型中只触发 MoE 层（约每两层一次）的路由通信，且每次只与 $k$ 个 expert 通信。
+
+这使 EP 对 PCIe 环境的耐受度远超 TP。本地无 NVLink 的多卡平台跑 MoE 模型时，EP 的通信开销可控——不会像 TP 那样 GPU 绝大部分时间在等待 PCIe 传输。Mixtral 8x7B 在 2 张 3090 PCIe 直连下使用 EP，推理速度接近单卡的两倍；而同样的硬件跑 Dense 70B 模型用 TP=2，吞吐量可能比单卡还低。
+
+EP 与 TP/PP 可以混合使用。DeepSeek-V3 的训练和推理使用了 EP + TP + PP 的组合：节点内 NVLink 互联的 GPU 之间用 TP 处理 Attention 层和 Shared Expert（每个 token 必算），跨节点用 EP 分发 Routed Expert，PP 处理流水线层级切分。本地小规模部署通常只需要 EP 或 EP + 小规模 PP。
+
+```bash
+# vLLM: MoE 模型自动启用 EP
+vllm serve deepseek-ai/DeepSeek-V3 --tensor-parallel-size 2
+
+# 对于 MoE 模型，vLLM 会自动将 expert 分配到各 GPU
+# 可以通过 --max-num-seqs 控制并发请求数来间接影响 EP 效率
+```
+
+MoE 模型的 CPU+GPU 混合推理同样遵循"Attention 优先放 GPU"原则——MoE 层中的 Attention 和 Shared Expert（如果存在）是每个 token 的必经之路，必须放 GPU。Routed Expert 可以部分卸载到 CPU——每个 token 只激活其中 2 个，PCIe 传输开销有限。
+
+## 异构显存与非对称多卡
+本地常见的硬件组合是一张 32G/48G 主卡配几张 16G 副卡——捡二手硬件时很难凑齐同规格。这种非对称组合能用，但用对方式和用错方式的体验天差地别。
+
+"大卡+小卡"的核心优势是单卡独立运行能力。32G 卡可以单卡装下 32B INT4 模型完整运行——完全不需要跨卡通信，延迟最低、速度最快。同等条件下全 16G 卡必须至少两张做 PP 才能跑同规模模型。此外 PP 允许非对称层切分——60 层的模型，32G 卡分配 40 层，16G 卡分配 20 层，可以最大化总显存利用率。
+
+但在张量并行（TP）中，木桶效应是致命问题。主流框架（vLLM、SGLang）的 TP 要求每张卡分配等量的权重切片——32G 卡被迫当 16G 用，富余的 16G 显存直接浪费。更糟的是大卡通常伴随更高的算力和带宽，AllReduce 同步时快卡必须等慢卡——32G 卡的计算单元频繁空转，整机吞吐被 16G 卡拉低。TP 还要求卡数是 2 的幂次（2、4、8），1 张 32G + 2 张 16G 的 3 卡组合很多框架无法开启 TP=3。
+
+最佳实践不是让大卡和小卡挤在同一个并行组里，而是做任务隔离：
+
+方案 A（推荐，省心）：32G 卡单独跑一个 vLLM/SGLang 实例服务主力 LLM；16G 卡单独跑另一个实例服务 Embedding、RAG 向量检索或轻量 Agent。各管各的，互不拖累。
+
+方案 B（极客，llama.cpp 异构切分）：用 llama.cpp 的层映射功能，手动指定不同卡加载不同层数——32G 加载 35 层，16G 加载 15 层。前提是使用 PP 模式的层切分而非 TP，且接受单请求延迟偏高的代价。
+
+## PP 与投机解码的框架兼容性
+投机解码和流水线并行在概念上可以叠加——PP 解决显存问题，投机解码解决速度问题。但框架兼容性有差异：
+
+vLLM 和 SGLang 目前不支持 PP 与投机解码同时开启。投机解码在这些框架中只能配合 TP 使用——所以如果你的多卡方案选择了 PP，就无法在同一实例中使用投机采样。
+
+llama.cpp 原生支持两者叠加——模型按层切分到多卡/CPU 的同时可以挂载 draft model 做投机解码。需要为 draft model 预留 1-2GB 显存空间。
+
+MTP（Multi-Token Prediction）是绕过这个限制的替代方案。Qwen 2.5 等模型内置了多 Token 预测头——模型自身就能一次预测多个 token，不需要额外的 draft model。主模型用 PP 拆分的同时，MTP 投机自动生效，既省显存又免去框架兼容性问题：
+
+```bash
+# llama.cpp: PP层切分 + draft model 投机（同时启用）
+llama-cli -m qwen3.6-32b-Q4_K_M.gguf \
+  -md qwen3.6-0.5b-Q4_K_M.gguf \  # draft model
+  -ngl 20 --draft-max 16           # 主模型 GPU 层数 + 投机深度
+
+# vLLM: TP + 投机（PP 不兼容投机解码）
+vllm serve Qwen/Qwen3.6-32B --tp 2 \
+  --speculative-model Qwen/Qwen3.6-0.5B
+```
 
 ## 选型决策树
-单卡能装下完整量化模型 → DP 多实例（零通信，最高吞吐）。单卡装不下、节点内有 NVLink → TP 优先（低延迟）。单卡装不下、节点内无 NVLink → PP 优先（低带宽容忍度）。MoE 模型 → EP + 小规模 PP 组合。大规模集群（千卡以上） → DP + TP + PP 3D 并行——个人本地环境不需要。
+单卡能装下完整量化模型 → DP 多实例（零通信，最高吞吐）。单卡装不下、节点内有 NVLink → TP 优先（低延迟）+ MTP/投机解码。单卡装不下、节点内无 NVLink → PP 优先（低带宽容忍度）+ MTP（模型支持时）；如果模型不支持 MTP 则需要 llama.cpp 才能同时启用 PP + 投机解码。异构显存（大小卡混插）→ 任务隔离优先，不要塞进同一 TP 组。MoE 模型 → EP 优先（All-to-All 通信对 PCIe 友好），可叠加小规模 PP 拆分 attention+shared expert 与 routed expert。大规模集群（千卡以上） → DP + TP + PP 3D 并行——个人本地环境不需要。
 
-多 GPU 推理中投机解码可以和任何并行策略叠加——它解决的是 Decode 速度而非显存问题，详见[推理优化](optimization)。
+EP 解决的是 MoE 模型的切分方式选择问题，MTP 解决的是 Decode 速度问题——两者解决不同维度，可以叠加使用。完整的并行策略与技术组合方案见[推理优化](optimization)。

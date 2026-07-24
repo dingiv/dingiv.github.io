@@ -80,13 +80,27 @@ docker run --gpus all -p 8080:80 \
 对于这些场景，可以考虑使用更保守的验证策略（如降低阈值、减少 speculation length），或者完全禁用投机解码。
 
 ## MTP：多 Token 预测
-MTP（Multi-Token Prediction）是一种不需要 draft model 的推理加速方法。传统自回归模型每次 forward 只预测下一个 token，MTP 在模型训练时就在最后一层之上加了多个并行的输出头（prediction head），每个头负责预测不同位置的未来 token——第 1 个 head 预测 token $t+1$，第 2 个 head 预测 token $t+2$，以此类推，通常设 2-4 个头。
+MTP（Multi-Token Prediction）是不依赖独立 draft model 的推理加速方法。传统自回归模型每次 forward 只预测下一个 token，MTP 在模型最后一层之上加多个并行的预测头（prediction head），每个头负责预测不同位置的未来 token——第 1 个 head 预测 token $t+1$，第 2 个 head 预测 token $t+2$，以此类推。推理时一次 forward pass 同时输出当前 token + $N$ 个未来位置的候选。
 
-推理时，单次 forward 同时输出多个位置的候选 token。这些候选 token 需要验证才能确保质量——最简单的做法是只接受置信度最高的那个候选，其余丢弃，每次 forward 实际只多生成 1-2 个 token。但验证机制比投机解码简单得多——不需要独立的 draft model，不需要比较概率分布，直接看主模型自己的输出置信度是否超过阈值即可。
+MTP head 的结构极其轻量——每个 head 通常只是 RMSNorm + 小规模线性投影。所有 head 的参数量合计不到主模型的 1%。DeepSeek-V3 的 MTP 设计更进一步，head 之间建立了因果依赖关系：第 $i$ 个 head 接受第 $i-1$ 个 head 的输出作为额外输入，对未来的预测不再是独立的，而是"已知前一步预测结果后再预测下一步"。这种链式结构使得更远位置的预测质量不会因距离而严重衰减。
 
-MTP 的核心优势在于**零额外显存**。传统投机解码需要加载一个完整的 draft model（即使是 1.8B 的量化版也要 1-2GB 显存），MTP 只多了几个轻量输出头（参数量通常不到主模型的 1%），在显存紧张的本地设备上优势明显。Meta 的 Llama 4 在预训练阶段就使用了 MTP——训练时让模型学习同时预测未来的多个 token，推理时直接复用训练好的预测头。
+MTP 的核心优势在于**零额外显存和零额外词表对齐成本**。传统投机解码需要加载完整 draft model（即使是 1.8B 量化版也要 1-2GB 显存），且 draft model 必须与主模型共享词表。MTP 的 head 已包含在模型权重中，部署即自动生效——不需要 `--draft-model` 参数，不需要管理两个模型的版本匹配，不需要在两个模型之间协调显存分配。
 
-MTP 在编码和数学推理等任务上表现更好——因为这些任务的 token 序列有较强的结构性，未来 token 的预测置信度更高。对话类任务的提升略小，因为对话的"下一个词"选择空间更大。
+MTP 在 Memory-Bound 设备上的实际加速比往往高于理论预期。因为 MTP head 与主模型共享 hidden representation——主模型正常计算每个 token 的 hidden state 的过程已经完成了绝大部分工作，MTP head 只需要在此基础上做轻量投影。相比独立 draft model 需要从零开始做完整 forward pass，MTP 的计算增量几乎为零——"多预测的 token 几乎是免费的"。在 3090 等显存带宽受限的设备上，MTP 的 Decode 加速比（1.5-2x）接近甚至超过加载额外 draft model 的投机方案（1.5-2.5x），且不需要牺牲显存给 draft model。
+
+MTP 的局限：需要模型本身在训练时就加了 MTP head——Qwen 2.5、DeepSeek-V3 等 2025 年后的新模型大多支持，但 2024 年及更早的模型（Llama-3、Qwen 2、Mistral）均不支持。可预测的额外 token 数受 head 数量限制——通常 1-2 个，而独立 draft model 可预测 5-8 个。单个 head 的预测质量通常低于同系列独立小模型——小模型有完整的多层 Transformer 做推理，MTP head 只有浅层投影。
+
+MTP 与所有并行策略天然兼容——它是模型内部的能力，无论 PP 还是 TP 都不影响 MTP 的生效。这是 MTP 在多卡场景下对独立 draft model 的最大优势：vLLM/SGLang 中 PP 与独立 draft model 投机解码不兼容，但 PP + 原生 MTP 可以同时工作，因为 MTP 不涉及第二个模型的加载和调度。
+
+```bash
+# vLLM: MTP 自动检测启用（模型内置 MTP head）
+vllm serve Qwen/Qwen3.6-32B --tp 2  # MTP 随 TP 自动生效
+
+# llama.cpp: 原生 MTP
+./llama-server -m qwen3.6-32b-Q4_K_M.gguf --speculative-tokens 2
+```
+
+Meta 的 Llama 4 在预训练阶段就使用了 MTP——训练时让模型学习同时预测未来的多个 token，推理时直接复用训练好的预测头。MTP 在编码和数学推理等结构化输出任务上表现更好——这类任务的 token 序列有较强的确定性，未来 token 的预测置信度更高。
 
 ## Lookahead Decoding
 Lookahead Decoding（前向解码）是另一种不依赖 draft model 的并行生成策略。核心思路是在已经生成的 token 序列上构造多个候选 n-gram（连续 n 个 token 的片段），然后一次 forward 并行验证这些候选片段是否匹配模型的输出。
