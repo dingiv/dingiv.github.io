@@ -4,11 +4,9 @@ order: 36
 ---
 
 # mistral.rs
-
 mistral.rs 是 Rust 生态中最成熟的大模型推理引擎之一，底层基于 HuggingFace 的 candle 框架。它最独特的特性是 ISQ（In-Situ Quantization，就地量化）——在模型加载过程中直接将 FP16 权重转换为 INT4/INT8 格式，不需要预先准备量化模型文件。你只需要下载原始的 safetensors 权重，框架在加载时自动完成量化。
 
 ## 架构
-
 ```
 HTTP Server (OpenAI 兼容) / Python 绑定
          │
@@ -29,7 +27,6 @@ HTTP Server (OpenAI 兼容) / Python 绑定
 CPU、CUDA、Metal、ROCm 不是互斥的"后端选项"而是可以**混合调度**的计算单元。例如把 embed 层放在 CPU 上、attention 层放在 GPU 上，两类计算同时进行。rust 二进制启动时自动检测可用硬件并选择加速单元，不需要手动配置。
 
 ## 底层 candle 的工作原理
-
 candle 是 HuggingFace 推出的纯 Rust 张量计算库，设计目标是"极简依赖、极快编译"。它不依赖 libtorch——核心计算有三个后端：
 
 - CPU 后端：纯 Rust，使用 BLAS（通过 accelerate 或 Intel MKL crate）加速矩阵乘法
@@ -47,7 +44,6 @@ let c = a.matmul(&b)?;
 ```
 
 ## ISQ 就地量化的实现
-
 ISQ 是 mistral.rs 最突出的特性。传统量化流程是：下载 FP16 模型 → 用 AWQ/GPTQ 工具量化 → 保存量化文件 → 加载量化文件推理。这个过程需要额外的时间和磁盘空间（量化工具的安装、量化过程的 GPU 资源，以及量化文件的存储）。ISQ 将量化嵌入到模型加载流程中，一步完成。
 
 ISQ 的原理基于权重矩阵的 channel-wise 量化。对于每个线性层权重 $W \in \mathbb{R}^{d_{out} \times d_{in}}$，对每个输出通道计算 scale $\Delta$ 和零点 $z$：
@@ -63,7 +59,6 @@ mistral.rs 的 ISQ 实现了多种量化方案：Q4K（4-bit K-quant，性能和
 ISQ 的量化时间约为：7B 模型 1-2 分钟（CPU 量化）、70B 模型 8-12 分钟（CPU 量化）。量化精度损失：Q4K 通常导致 PPL 退化 0.3-0.8（相较于 FP16）。
 
 ## 硬件加速
-
 **CUDA（NVIDIA）**是功能最完整的加速单元。支持 FlashAttention V2/V3（长上下文推理的关键加速）、PagedAttention（高效 KV Cache 管理的核心）、cuDNN 加速 kernel、FP8 blockwise 量化。多 GPU 张量并行通过 NCCL（NVIDIA 集合通信库）实现——同一节点内 NVLink 互联的 GPU 使用 NCCL 做 AllReduce。NCCL 也支持跨节点通信，可扩展到多机集群。
 
 **Metal（Apple Silicon）**在 M1/M2/M3 Mac 上实现 GPU 加速。使用 Metal Shading Language（MSL）编写的 kernel，包括优化的 paged attention 实现和量化 GEMM。v0.5.0 之后 ISQ 量化时间在 Metal 上缩短了 30 倍。M1 Max 32 核 GPU 上 7B 模型的推理速度约 20-30 token/s。
@@ -73,7 +68,6 @@ ISQ 的量化时间约为：7B 模型 1-2 分钟（CPU 量化）、70B 模型 8-
 **CPU**始终可用，底层通过 candle 的纯 Rust 实现或使用 BLAS 库加速矩阵乘法。适合没有 GPU 的场景或卸载部分轻量计算层（如 embed/lm_head）。
 
 ## 使用方式
-
 最简启动——下载模型 + ISQ 量化 + 启动 HTTP 服务：
 
 ```bash
@@ -131,7 +125,6 @@ resp = client.chat.completions.create(
 ```
 
 ## 多 GPU 支持
-
 mistral.rs 支持张量并行（TP）将模型权重拆分到多张 GPU。底层通信使用两种方案：NCCL（NVIDIA 集合通信库，节点内 NVLink 和跨节点 InfiniBand 均可使用）和 Ring 后端（基于点对点传输的环状通信，不依赖 NCCL，适合没有 NVLink 的 PCIe 互联场景）。NCCL 的通信效率更高（特别是 NVLink 互联时），Ring 的兼容性更好（不需要 CUDA Toolkit 中的 NCCL 组件）。
 
 除了权重层对 GPU 的映射，还支持 P2P 设备映射（GPU 之间直接传输数据而不经过 CPU）和多节点 NCCL（将张量并行扩展到多台机器）。
@@ -149,7 +142,6 @@ let loader = LoaderBuilder::new(
 ```
 
 ## 与 llama.cpp 的对比
-
 | 维度       | mistral.rs                    | llama.cpp          |
 | ---------- | ----------------------------- | ------------------ |
 | 语言       | Rust                          | C++                |

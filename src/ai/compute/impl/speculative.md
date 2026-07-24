@@ -80,7 +80,6 @@ docker run --gpus all -p 8080:80 \
 对于这些场景，可以考虑使用更保守的验证策略（如降低阈值、减少 speculation length），或者完全禁用投机解码。
 
 ## MTP：多 Token 预测
-
 MTP（Multi-Token Prediction）是一种不需要 draft model 的推理加速方法。传统自回归模型每次 forward 只预测下一个 token，MTP 在模型训练时就在最后一层之上加了多个并行的输出头（prediction head），每个头负责预测不同位置的未来 token——第 1 个 head 预测 token $t+1$，第 2 个 head 预测 token $t+2$，以此类推，通常设 2-4 个头。
 
 推理时，单次 forward 同时输出多个位置的候选 token。这些候选 token 需要验证才能确保质量——最简单的做法是只接受置信度最高的那个候选，其余丢弃，每次 forward 实际只多生成 1-2 个 token。但验证机制比投机解码简单得多——不需要独立的 draft model，不需要比较概率分布，直接看主模型自己的输出置信度是否超过阈值即可。
@@ -90,7 +89,6 @@ MTP 的核心优势在于**零额外显存**。传统投机解码需要加载一
 MTP 在编码和数学推理等任务上表现更好——因为这些任务的 token 序列有较强的结构性，未来 token 的预测置信度更高。对话类任务的提升略小，因为对话的"下一个词"选择空间更大。
 
 ## Lookahead Decoding
-
 Lookahead Decoding（前向解码）是另一种不依赖 draft model 的并行生成策略。核心思路是在已经生成的 token 序列上构造多个候选 n-gram（连续 n 个 token 的片段），然后一次 forward 并行验证这些候选片段是否匹配模型的输出。
 
 具体过程：给定已生成的 token 序列 `[t1, t2, ..., tk]`，从序列中提取多个 n-gram 作为候选（如 `[t2, t3]`、`[t4, t5, t6]`），然后验证每个候选的下一个 token 是否与模型预测一致。如果一致，这个候选片段直接作为已生成的 token 保留。这个过程可以一次验证多个候选，每次 forward 可接受 2-5 个 token。
