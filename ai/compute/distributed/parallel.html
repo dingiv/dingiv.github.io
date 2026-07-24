@@ -8,7 +8,7 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.67106ba3.js"></script>
+    <script src="/assets/site-data.4b19c741.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -34,7 +34,7 @@
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --max-model-len</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 32768</span></span></code></pre></div><p>Megatron-LM 通过 <code>--tensor-model-parallel-size</code> 和 <code>--pipeline-model-parallel-size</code> 设置两种并行度，数据并行度由总 GPU 数除以两者乘积自动计算。<code>--num-layers-per-virtual-pipeline-stage</code> 控制交错式流水线调度（interleaved schedule）的粒度，进一步减少气泡：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">python</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> pretrain_gpt.py</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --tensor-model-parallel-size</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --pipeline-model-parallel-size</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --num-layers-per-virtual-pipeline-stage</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span></span></code></pre></div><h3 id="配置选择的原则" tabindex="-1">配置选择的原则 <a class="header-anchor" href="#配置选择的原则" aria-label="Permalink to “配置选择的原则”">​</a></h3><p>并行策略没有银弹，每次选择都是一次显存-通信-算力利用率的三角权衡。</p><p>显存优先原则：先确保模型能跑起来。如果单卡能装下，不做模型并行。如果装不下，优先用 FSDP/ZeRO（通用性好），不行再加张量并行（通信重但高效），最后加流水线并行（通信轻但有气泡）。</p><p>通信层级原则：通信越频繁的策略放在带宽越高的连接上。节点内 NVLink（900GB/s）承载张量并行，节点间 InfiniBand（50GB/s）承载流水线并行和数据并行。跨机架以太网（12GB/s）仅适合低频的梯度同步或参数服务器通信。</p><p>算力利用率原则：每添加一层并行策略都会引入通信开销和调度气泡。并行度不是越高越好——2 卡 TP 通信开销占 5-10%，8 卡 TP 可能占 20-30%。找到一个并行度，使得通信开销的增长不超过算力增加带来的收益。</p><p>实际调试时最可靠的方法是测量而非估算。用 <code>torch.distributed.collective_profiler</code> 或 <code>NCCL_DEBUG=INFO</code> 打印每次 AllReduce/AllGather 的耗时，确认通信时间占比不超过 20-30%。如果超过，减少该层的并行度或升级硬件。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/distributed/comm" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>集合通信</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/symbol/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>符号逻辑</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --num-layers-per-virtual-pipeline-stage</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span></span></code></pre></div><h3 id="配置选择的原则" tabindex="-1">配置选择的原则 <a class="header-anchor" href="#配置选择的原则" aria-label="Permalink to “配置选择的原则”">​</a></h3><p>并行策略没有银弹，每次选择都是一次显存-通信-算力利用率的三角权衡。</p><p>显存优先原则：先确保模型能跑起来。如果单卡能装下，不做模型并行。如果装不下，优先用 FSDP/ZeRO（通用性好），不行再加张量并行（通信重但高效），最后加流水线并行（通信轻但有气泡）。</p><p>通信层级原则：通信越频繁的策略放在带宽越高的连接上。节点内 NVLink（900GB/s）承载张量并行，节点间 InfiniBand（50GB/s）承载流水线并行和数据并行。跨机架以太网（12GB/s）仅适合低频的梯度同步或参数服务器通信。</p><p>算力利用率原则：每添加一层并行策略都会引入通信开销和调度气泡。并行度不是越高越好——2 卡 TP 通信开销占 5-10%，8 卡 TP 可能占 20-30%。找到一个并行度，使得通信开销的增长不超过算力增加带来的收益。</p><p>实际调试时最可靠的方法是测量而非估算。用 <code>torch.distributed.collective_profiler</code> 或 <code>NCCL_DEBUG=INFO</code> 打印每次 AllReduce/AllGather 的耗时，确认通信时间占比不超过 20-30%。如果超过，减少该层的并行度或升级硬件。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/distributed/comm" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>集合通信</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/deploy/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>部署</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -49,17 +49,14 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
-/ai/app/engine/deploy - 本地部署
-/ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
-/ai/app/engine/llmops - LLMOps
 /ai/app/engine/mistral/rs
 /ai/app/engine/mistral_rs - mistral.rs
-/ai/app/engine/run - 跑起模型
 /ai/app/engine/rust/infer
 /ai/app/engine/rust_infer - Rust 推理引擎
-/ai/app/engine/vllm - vllm
+/ai/app/engine/vllm - vLLM
+/ai/app/finetune - 微调
 /ai/app/lib - 框架库
 /ai/app/lib/langchain - LangChain
 /ai/app/lib/langchain/langgraph - LangGraph
@@ -112,6 +109,14 @@
 /ai/compute/api/opencl - OpenCL
 /ai/compute/api/simt - SIMT
 /ai/compute/api/triton - Triton
+/ai/compute/deploy - 部署
+/ai/compute/deploy/eco - 部署工具
+/ai/compute/deploy/hardware - 硬件
+/ai/compute/deploy/llmops - LLMOps
+/ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/optimization - 推理优化
+/ai/compute/deploy/quantization - 模型量化
+/ai/compute/deploy/serving - 服务部署
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
 /ai/compute/distributed/parallel - 模型拆分
@@ -231,13 +236,13 @@
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
 /client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet
-/client/csharp/unity - Unity
+/client/csharp/nuget - NuGet</pre>
+<pre>/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
-/client/game/unity - Unity</pre>
-<pre>/client/game/unreal - Unreal
+/client/game/unity - Unity
+/client/game/unreal - Unreal
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
@@ -431,13 +436,13 @@
 /design/typical - 经典范式
 /design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配
-/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配</pre>
+<pre>/design/typical/macro - 宏观指导
 /design/typical/refactor - 重构
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
-/examples - 随便看看</pre>
-<pre>/index
+/examples - 随便看看
+/index
 /kernel - 系统层
 /kernel/asm - 汇编
 /kernel/asm/arm - ARM 指令集
@@ -494,6 +499,8 @@
 /kernel/linux/develop/ctx - 内核上下文
 /kernel/linux/develop/io/uring
 /kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/ip/cli
+/kernel/linux/develop/ip_cli - ip 命令
 /kernel/linux/develop/kbuild - linux 内核构建系统
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
@@ -629,15 +636,15 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法
-/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法</pre>
+<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID
 /server/distribute/basic/lock - 分布式锁
 /server/distribute/basic/transaction - 分布式事务
-/server/distribute/cloud - 云原生</pre>
-<pre>/server/distribute/cloud/arch - 架构
+/server/distribute/cloud - 云原生
+/server/distribute/cloud/arch - 架构
 /server/distribute/cloud/cicd - CI/CD
 /server/distribute/cloud/container - 容器技术
 /server/distribute/cloud/mesh - Service Mesh

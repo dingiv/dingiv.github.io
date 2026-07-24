@@ -8,7 +8,7 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.67106ba3.js"></script>
+    <script src="/assets/site-data.4b19c741.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -43,7 +43,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">type</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Backend</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Wgpu</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Tensor</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Backend</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&gt;</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">from_data</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">([[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">], [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]]);</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> y </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">matmul</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">x</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">transpose</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span></code></pre></div><p>burn 的劣势是模型 zoo 尚不如 PyTorch 丰富——需要自己实现大部分模型架构，或从 ONNX/HuggingFace 导入预训练权重。目前在推理场景中不如 candle 或 mistral.rs 成熟，但如果需要边训练边推理（如在线微调 + 服务），burn 是 Rust 生态中最接近 PyTorch 的方案。</p><h2 id="选型指南" tabindex="-1">选型指南 <a class="header-anchor" href="#选型指南" aria-label="Permalink to “选型指南”">​</a></h2><table tabindex="0"><thead><tr><th>场景</th><th>推荐工具</th><th>原因</th></tr></thead><tbody><tr><td>想最快跑起来，不写代码</td><td>Ollama</td><td>Python 封装的 llama.cpp，一命令启动</td></tr><tr><td>Rust 应用内嵌 LLM</td><td>candle</td><td>纯 Rust、编译快、依赖少</td></tr><tr><td>Rust 应用中做推理服务</td><td>mistral.rs</td><td>自动量化、兼容 OpenAI API</td></tr><tr><td>已有 llama.cpp 经验，用 Rust 开发</td><td>llama-cpp-rs</td><td>FFI 调用，功能完整</td></tr><tr><td>边训练边推理</td><td>burn</td><td>完整 DL 框架</td></tr></tbody></table><p>对于个人本地部署场景，最推荐的是 mistral.rs——ISQ 就地量化消除了&quot;找 GGUF 版本&quot;这一步，且启动命令极简。如果需要在 Rust 桌面应用或嵌入式设备中嵌入推理能力，candle 的纯 Rust 实现和低依赖特性不可替代。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/engine/deploy" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>本地部署</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/engine/mistral_rs" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>mistral.rs</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> y </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">matmul</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">x</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">transpose</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span></code></pre></div><p>burn 的劣势是模型 zoo 尚不如 PyTorch 丰富——需要自己实现大部分模型架构，或从 ONNX/HuggingFace 导入预训练权重。目前在推理场景中不如 candle 或 mistral.rs 成熟，但如果需要边训练边推理（如在线微调 + 服务），burn 是 Rust 生态中最接近 PyTorch 的方案。</p><h2 id="选型指南" tabindex="-1">选型指南 <a class="header-anchor" href="#选型指南" aria-label="Permalink to “选型指南”">​</a></h2><table tabindex="0"><thead><tr><th>场景</th><th>推荐工具</th><th>原因</th></tr></thead><tbody><tr><td>想最快跑起来，不写代码</td><td>Ollama</td><td>Python 封装的 llama.cpp，一命令启动</td></tr><tr><td>Rust 应用内嵌 LLM</td><td>candle</td><td>纯 Rust、编译快、依赖少</td></tr><tr><td>Rust 应用中做推理服务</td><td>mistral.rs</td><td>自动量化、兼容 OpenAI API</td></tr><tr><td>已有 llama.cpp 经验，用 Rust 开发</td><td>llama-cpp-rs</td><td>FFI 调用，功能完整</td></tr><tr><td>边训练边推理</td><td>burn</td><td>完整 DL 框架</td></tr></tbody></table><p>对于个人本地部署场景，最推荐的是 mistral.rs——ISQ 就地量化消除了&quot;找 GGUF 版本&quot;这一步，且启动命令极简。如果需要在 Rust 桌面应用或嵌入式设备中嵌入推理能力，candle 的纯 Rust 实现和低依赖特性不可替代。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/engine/llama_cpp" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>llama.cpp</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/engine/mistral_rs" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>mistral.rs</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -58,17 +58,14 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
-/ai/app/engine/deploy - 本地部署
-/ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
-/ai/app/engine/llmops - LLMOps
 /ai/app/engine/mistral/rs
 /ai/app/engine/mistral_rs - mistral.rs
-/ai/app/engine/run - 跑起模型
 /ai/app/engine/rust/infer
 /ai/app/engine/rust_infer - Rust 推理引擎
-/ai/app/engine/vllm - vllm
+/ai/app/engine/vllm - vLLM
+/ai/app/finetune - 微调
 /ai/app/lib - 框架库
 /ai/app/lib/langchain - LangChain
 /ai/app/lib/langchain/langgraph - LangGraph
@@ -121,6 +118,14 @@
 /ai/compute/api/opencl - OpenCL
 /ai/compute/api/simt - SIMT
 /ai/compute/api/triton - Triton
+/ai/compute/deploy - 部署
+/ai/compute/deploy/eco - 部署工具
+/ai/compute/deploy/hardware - 硬件
+/ai/compute/deploy/llmops - LLMOps
+/ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/optimization - 推理优化
+/ai/compute/deploy/quantization - 模型量化
+/ai/compute/deploy/serving - 服务部署
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
 /ai/compute/distributed/parallel - 模型拆分
@@ -240,13 +245,13 @@
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
 /client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet
-/client/csharp/unity - Unity
+/client/csharp/nuget - NuGet</pre>
+<pre>/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
-/client/game/unity - Unity</pre>
-<pre>/client/game/unreal - Unreal
+/client/game/unity - Unity
+/client/game/unreal - Unreal
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
@@ -440,13 +445,13 @@
 /design/typical - 经典范式
 /design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配
-/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配</pre>
+<pre>/design/typical/macro - 宏观指导
 /design/typical/refactor - 重构
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
-/examples - 随便看看</pre>
-<pre>/index
+/examples - 随便看看
+/index
 /kernel - 系统层
 /kernel/asm - 汇编
 /kernel/asm/arm - ARM 指令集
@@ -503,6 +508,8 @@
 /kernel/linux/develop/ctx - 内核上下文
 /kernel/linux/develop/io/uring
 /kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/ip/cli
+/kernel/linux/develop/ip_cli - ip 命令
 /kernel/linux/develop/kbuild - linux 内核构建系统
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
@@ -638,15 +645,15 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法
-/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法</pre>
+<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID
 /server/distribute/basic/lock - 分布式锁
 /server/distribute/basic/transaction - 分布式事务
-/server/distribute/cloud - 云原生</pre>
-<pre>/server/distribute/cloud/arch - 架构
+/server/distribute/cloud - 云原生
+/server/distribute/cloud/arch - 架构
 /server/distribute/cloud/cicd - CI/CD
 /server/distribute/cloud/container - 容器技术
 /server/distribute/cloud/mesh - Service Mesh

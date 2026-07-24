@@ -8,7 +8,7 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.67106ba3.js"></script>
+    <script src="/assets/site-data.4b19c741.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -78,7 +78,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        (</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;model.layers.0-15&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Device</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new_cuda</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        (</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;model.layers.16-31&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Device</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new_cuda</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ])</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">build</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Qwen/Qwen3.6-32B-Instruct&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">IsqType</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Q4K</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></div><h2 id="与-llama-cpp-的对比" tabindex="-1">与 llama.cpp 的对比 <a class="header-anchor" href="#与-llama-cpp-的对比" aria-label="Permalink to “与 llama.cpp 的对比”">​</a></h2><table tabindex="0"><thead><tr><th>维度</th><th>mistral.rs</th><th>llama.cpp</th></tr></thead><tbody><tr><td>语言</td><td>Rust</td><td>C++</td></tr><tr><td>量化</td><td>ISQ（加载时自动量化）</td><td>需预先转换 GGUF</td></tr><tr><td>后端</td><td>candle/CUDA/Metal/libtorch</td><td>CPU + CUDA + Metal</td></tr><tr><td>编译</td><td>cargo build，纯 Rust 最简</td><td>CMake + C++ 工具链</td></tr><tr><td>模型格式</td><td>safetensors（原始格式）</td><td>GGUF（专用格式）</td></tr><tr><td>API</td><td>Rust API + HTTP + Python 绑定</td><td>CLI + HTTP server</td></tr><tr><td>生态成熟度</td><td>较新（2024-）</td><td>成熟（2023-）</td></tr></tbody></table><p>核心差异在于模型加载方式。llama.cpp 需要先将模型转为 GGUF——这是额外的一步，且 GGUF 文件通常需要在 HuggingFace 上找到特定用户提供的预量化版本。mistral.rs 直接读取 HuggingFace 上的原始 safetensors，ISQ 在加载时自动量化。对于下载模型后想立刻跑起来的体验，mistral.rs 比 llama.cpp 少一步&quot;找 GGUF&quot;的摩擦。</p><p>性能方面，两个框架在相同 GPU 和相同量化精度下的推理速度差异很小（5-10% 以内），通常可以忽略。如果追求绝对最快的推理速度，用 CUDA 后端的 mistral.rs 或有 nvidia-specific 优化的 llama.cpp CUDA 版本都可以。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/engine/rust_infer" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>Rust 推理引擎</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/engine/llmops" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>LLMOps</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">build</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Qwen/Qwen3.6-32B-Instruct&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">IsqType</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Q4K</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></div><h2 id="与-llama-cpp-的对比" tabindex="-1">与 llama.cpp 的对比 <a class="header-anchor" href="#与-llama-cpp-的对比" aria-label="Permalink to “与 llama.cpp 的对比”">​</a></h2><table tabindex="0"><thead><tr><th>维度</th><th>mistral.rs</th><th>llama.cpp</th></tr></thead><tbody><tr><td>语言</td><td>Rust</td><td>C++</td></tr><tr><td>量化</td><td>ISQ（加载时自动量化）</td><td>需预先转换 GGUF</td></tr><tr><td>后端</td><td>candle/CUDA/Metal/libtorch</td><td>CPU + CUDA + Metal</td></tr><tr><td>编译</td><td>cargo build，纯 Rust 最简</td><td>CMake + C++ 工具链</td></tr><tr><td>模型格式</td><td>safetensors（原始格式）</td><td>GGUF（专用格式）</td></tr><tr><td>API</td><td>Rust API + HTTP + Python 绑定</td><td>CLI + HTTP server</td></tr><tr><td>生态成熟度</td><td>较新（2024-）</td><td>成熟（2023-）</td></tr></tbody></table><p>核心差异在于模型加载方式。llama.cpp 需要先将模型转为 GGUF——这是额外的一步，且 GGUF 文件通常需要在 HuggingFace 上找到特定用户提供的预量化版本。mistral.rs 直接读取 HuggingFace 上的原始 safetensors，ISQ 在加载时自动量化。对于下载模型后想立刻跑起来的体验，mistral.rs 比 llama.cpp 少一步&quot;找 GGUF&quot;的摩擦。</p><p>性能方面，两个框架在相同 GPU 和相同量化精度下的推理速度差异很小（5-10% 以内），通常可以忽略。如果追求绝对最快的推理速度，用 CUDA 后端的 mistral.rs 或有 nvidia-specific 优化的 llama.cpp CUDA 版本都可以。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/engine/rust_infer" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>Rust 推理引擎</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/multimodal/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>多模态</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -93,17 +93,14 @@
 /ai/app/auto/impl - 实现原理
 /ai/app/auto/traditional - 传统自动化
 /ai/app/engine - 推理引擎
-/ai/app/engine/deploy - 本地部署
-/ai/app/engine/finetune - 微调
 /ai/app/engine/llama/cpp
 /ai/app/engine/llama_cpp - llama.cpp
-/ai/app/engine/llmops - LLMOps
 /ai/app/engine/mistral/rs
 /ai/app/engine/mistral_rs - mistral.rs
-/ai/app/engine/run - 跑起模型
 /ai/app/engine/rust/infer
 /ai/app/engine/rust_infer - Rust 推理引擎
-/ai/app/engine/vllm - vllm
+/ai/app/engine/vllm - vLLM
+/ai/app/finetune - 微调
 /ai/app/lib - 框架库
 /ai/app/lib/langchain - LangChain
 /ai/app/lib/langchain/langgraph - LangGraph
@@ -156,6 +153,14 @@
 /ai/compute/api/opencl - OpenCL
 /ai/compute/api/simt - SIMT
 /ai/compute/api/triton - Triton
+/ai/compute/deploy - 部署
+/ai/compute/deploy/eco - 部署工具
+/ai/compute/deploy/hardware - 硬件
+/ai/compute/deploy/llmops - LLMOps
+/ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/optimization - 推理优化
+/ai/compute/deploy/quantization - 模型量化
+/ai/compute/deploy/serving - 服务部署
 /ai/compute/distributed - 集群
 /ai/compute/distributed/comm - 集合通信
 /ai/compute/distributed/parallel - 模型拆分
@@ -275,13 +280,13 @@
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
 /client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet
-/client/csharp/unity - Unity
+/client/csharp/nuget - NuGet</pre>
+<pre>/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
-/client/game/unity - Unity</pre>
-<pre>/client/game/unreal - Unreal
+/client/game/unity - Unity
+/client/game/unreal - Unreal
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
@@ -475,13 +480,13 @@
 /design/typical - 经典范式
 /design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配
-/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配</pre>
+<pre>/design/typical/macro - 宏观指导
 /design/typical/refactor - 重构
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
-/examples - 随便看看</pre>
-<pre>/index
+/examples - 随便看看
+/index
 /kernel - 系统层
 /kernel/asm - 汇编
 /kernel/asm/arm - ARM 指令集
@@ -538,6 +543,8 @@
 /kernel/linux/develop/ctx - 内核上下文
 /kernel/linux/develop/io/uring
 /kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/ip/cli
+/kernel/linux/develop/ip_cli - ip 命令
 /kernel/linux/develop/kbuild - linux 内核构建系统
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
@@ -673,15 +680,15 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法
-/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法</pre>
+<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID
 /server/distribute/basic/lock - 分布式锁
 /server/distribute/basic/transaction - 分布式事务
-/server/distribute/cloud - 云原生</pre>
-<pre>/server/distribute/cloud/arch - 架构
+/server/distribute/cloud - 云原生
+/server/distribute/cloud/arch - 架构
 /server/distribute/cloud/cicd - CI/CD
 /server/distribute/cloud/container - 容器技术
 /server/distribute/cloud/mesh - Service Mesh

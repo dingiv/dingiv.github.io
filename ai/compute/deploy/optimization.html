@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>推理优化 | Spark Notes</title>
+    <meta name="description" content="我的计科学习随笔">
+    <meta name="generator" content="VitePress v2.0.0-alpha.18">
+    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    <script src="/assets/site-data.4b19c741.js"></script>
+    <script type="module" src="/assets/app.CzQd7weX.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
+    <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
+    <link rel="modulepreload" href="/assets/ai_compute_deploy_optimization.md.BNXOUkit.lean.js">
+    <link rel="icon" href="/favicon.svg">
+    <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _ai_compute_deploy_optimization" data-v-e9c23681><div><h1 id="推理优化" tabindex="-1">推理优化 <a class="header-anchor" href="#推理优化" aria-label="Permalink to “推理优化”">​</a></h1><p>Transformer 大模型的一次推理请求由两个计算特性截然不同的阶段组成。理解这两个阶段是理解所有推理优化技术的起点。</p><h2 id="prefill-与-decode-两种计算范式" tabindex="-1">Prefill 与 Decode：两种计算范式 <a class="header-anchor" href="#prefill-与-decode-两种计算范式" aria-label="Permalink to “Prefill 与 Decode：两种计算范式”">​</a></h2><p>用户输入一个 prompt 后，模型并非&quot;一边读一边写&quot;，而是分两步工作。</p><p><strong>Prefill（预填充）阶段</strong>——模型一次性处理输入 prompt 中的所有 token。所有 token 的注意力计算可以并行执行，GPU 的数千个 CUDA 核心同时工作，矩阵乘法填满计算单元。这个阶段的瓶颈是<strong>算力（Compute-Bound）</strong>——GPU 计算单元满负荷运转，显存带宽不是限制因素。Prefill 的耗时决定了<strong>首字延迟（TTFT, Time To First Token）</strong>——用户发出请求后多久看到第一个字。</p><p><strong>Decode（自回归生成）阶段</strong>——模型逐 token 生成输出。每生成一个 token，都需要从显存中读取整个模型的权重（70B 模型约 140GB FP16），做一次完整的前向传播。但这一次前向传播只处理一个新 token，矩阵乘法的计算量远小于 Prefill 阶段，GPU 的计算单元大量空闲——时间主要消耗在从显存读取权重上。这个阶段的瓶颈是<strong>显存带宽（Memory-Bound）</strong>——生成速度（token/s）直接受限于显存带宽。Decode 的耗时决定了<strong>生成延迟（TPOT, Time Per Output Token）</strong>——每个 token 之间的间隔。</p><mjx-container tabindex="0" class="MathJax" jax="SVG" display="true" style="direction:ltr;display:block;text-align:center;margin:1em 0;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.566ex;" xmlns="http://www.w3.org/2000/svg" width="68.48ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 30268.1 1000" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mtext"><path data-c="50" d="M130 622Q123 629 119 631T103 634T60 637H27V683H214Q237 683 276 683T331 684Q419 684 471 671T567 616Q624 563 624 489Q624 421 573 372T451 307Q429 302 328 301H234V181Q234 62 237 58Q245 47 304 46H337V0H326Q305 3 182 3Q47 3 38 0H27V46H60Q102 47 111 49T130 61V622ZM507 488Q507 514 506 528T500 564T483 597T450 620T397 635Q385 637 307 637H286Q237 637 234 628Q231 624 231 483V342H302H339Q390 342 423 349T481 382Q507 411 507 488Z" style="stroke-width:3;"></path><path data-c="72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z" transform="translate(681,0)" style="stroke-width:3;"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1073,0)" style="stroke-width:3;"></path><path data-c="66" d="M273 0Q255 3 146 3Q43 3 34 0H26V46H42Q70 46 91 49Q99 52 103 60Q104 62 104 224V385H33V431H104V497L105 564L107 574Q126 639 171 668T266 704Q267 704 275 704T289 705Q330 702 351 679T372 627Q372 604 358 590T321 576T284 590T270 627Q270 647 288 667H284Q280 668 273 668Q245 668 223 647T189 592Q183 572 182 497V431H293V385H185V225Q185 63 186 61T189 57T194 54T199 51T206 49T213 48T222 47T231 47T241 46T251 46H282V0H273Z" transform="translate(1517,0)" style="stroke-width:3;"></path><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z" transform="translate(1823,0)" style="stroke-width:3;"></path><path data-c="6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z" transform="translate(2101,0)" style="stroke-width:3;"></path><path data-c="6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z" transform="translate(2379,0)" style="stroke-width:3;"></path><path data-c="3A" d="M78 370Q78 394 95 412T138 430Q162 430 180 414T199 371Q199 346 182 328T139 310T96 327T78 370ZM78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z" transform="translate(2657,0)" style="stroke-width:3;"></path><path data-c="A0" d="" transform="translate(2935,0)" style="stroke-width:3;"></path></g><g data-mml-node="mtext" transform="translate(3185,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">瓶</text><text data-variant="normal" transform="translate(1000,0) scale(1,-1)" font-size="884px" font-family="serif">颈</text></g><g data-mml-node="mo" transform="translate(5462.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z" style="stroke-width:3;"></path></g><g data-mml-node="mtext" transform="translate(6518.6,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">算</text><text data-variant="normal" transform="translate(1000,0) scale(1,-1)" font-size="884px" font-family="serif">力</text><path data-c="20" d="" transform="translate(2000,0)" style="stroke-width:3;"></path><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" transform="translate(2250,0)" style="stroke-width:3;"></path><path data-c="54" d="M36 443Q37 448 46 558T55 671V677H666V671Q667 666 676 556T685 443V437H645V443Q645 445 642 478T631 544T610 593Q593 614 555 625Q534 630 478 630H451H443Q417 630 414 618Q413 616 413 339V63Q420 53 439 50T528 46H558V0H545L361 3Q186 1 177 0H164V46H194Q264 46 283 49T309 63V339V550Q309 620 304 625T271 630H244H224Q154 630 119 601Q101 585 93 554T81 486T76 443V437H36V443Z" transform="translate(2639,0)" style="stroke-width:3;"></path><path data-c="46" d="M128 619Q121 626 117 628T101 631T58 634H25V680H582V676Q584 670 596 560T610 444V440H570V444Q563 493 561 501Q555 538 543 563T516 601T477 622T431 631T374 633H334H286Q252 633 244 631T233 621Q232 619 232 490V363H284Q287 363 303 363T327 364T349 367T372 373T389 385Q407 403 410 459V480H450V200H410V221Q407 276 389 296Q381 303 371 307T348 313T327 316T303 317T284 317H232V189L233 61Q240 54 245 52T270 48T333 46H360V0H348Q324 3 182 3Q51 3 36 0H25V46H58Q100 47 109 49T128 61V619Z" transform="translate(3361,0)" style="stroke-width:3;"></path><path data-c="4C" d="M128 622Q121 629 117 631T101 634T58 637H25V683H36Q48 680 182 680Q324 680 348 683H360V637H333Q273 637 258 635T233 622L232 342V129Q232 57 237 52Q243 47 313 47Q384 47 410 53Q470 70 498 110T536 221Q536 226 537 238T540 261T542 272T562 273H582V268Q580 265 568 137T554 5V0H25V46H58Q100 47 109 49T128 61V622Z" transform="translate(4014,0)" style="stroke-width:3;"></path><path data-c="4F" d="M56 340Q56 423 86 494T164 610T270 680T388 705Q521 705 621 601T722 341Q722 260 693 191T617 75T510 4T388 -22T267 3T160 74T85 189T56 340ZM467 647Q426 665 388 665Q360 665 331 654T269 620T213 549T179 439Q174 411 174 354Q174 144 277 61Q327 20 385 20H389H391Q474 20 537 99Q603 188 603 354Q603 411 598 439Q577 592 467 647Z" transform="translate(4639,0)" style="stroke-width:3;"></path><path data-c="50" d="M130 622Q123 629 119 631T103 634T60 637H27V683H214Q237 683 276 683T331 684Q419 684 471 671T567 616Q624 563 624 489Q624 421 573 372T451 307Q429 302 328 301H234V181Q234 62 237 58Q245 47 304 46H337V0H326Q305 3 182 3Q47 3 38 0H27V46H60Q102 47 111 49T130 61V622ZM507 488Q507 514 506 528T500 564T483 597T450 620T397 635Q385 637 307 637H286Q237 637 234 628Q231 624 231 483V342H302H339Q390 342 423 349T481 382Q507 411 507 488Z" transform="translate(5417,0)" style="stroke-width:3;"></path><path data-c="53" d="M55 507Q55 590 112 647T243 704H257Q342 704 405 641L426 672Q431 679 436 687T446 700L449 704Q450 704 453 704T459 705H463Q466 705 472 699V462L466 456H448Q437 456 435 459T430 479Q413 605 329 646Q292 662 254 662Q201 662 168 626T135 542Q135 508 152 480T200 435Q210 431 286 412T370 389Q427 367 463 314T500 191Q500 110 448 45T301 -21Q245 -21 201 -4T140 27L122 41Q118 36 107 21T87 -7T78 -21Q76 -22 68 -22H64Q61 -22 55 -16V101Q55 220 56 222Q58 227 76 227H89Q95 221 95 214Q95 182 105 151T139 90T205 42T305 24Q352 24 386 62T420 155Q420 198 398 233T340 281Q284 295 266 300Q261 301 239 306T206 314T174 325T141 343T112 367T85 402Q55 451 55 507Z" transform="translate(6098,0)" style="stroke-width:3;"></path><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" transform="translate(6654,0)" style="stroke-width:3;"></path></g><g data-mml-node="mstyle" transform="translate(13561.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(14561.6,0) translate(0 -0.5)"><path data-c="7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z" style="stroke-width:3;"></path></g><g data-mml-node="mstyle" transform="translate(14839.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mtext" transform="translate(15839.6,0)"><path data-c="44" d="M130 622Q123 629 119 631T103 634T60 637H27V683H228Q399 682 419 682T461 676Q504 667 546 641T626 573T685 470T708 336Q708 210 634 116T442 3Q429 1 228 0H27V46H60Q102 47 111 49T130 61V622ZM593 338Q593 439 571 501T493 602Q439 637 355 637H322H294Q238 637 234 628Q231 624 231 344Q231 62 232 59Q233 49 248 48T339 46H350Q456 46 515 95Q561 133 577 191T593 338Z" style="stroke-width:3;"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(764,0)" style="stroke-width:3;"></path><path data-c="63" d="M370 305T349 305T313 320T297 358Q297 381 312 396Q317 401 317 402T307 404Q281 408 258 408Q209 408 178 376Q131 329 131 219Q131 137 162 90Q203 29 272 29Q313 29 338 55T374 117Q376 125 379 127T395 129H409Q415 123 415 120Q415 116 411 104T395 71T366 33T318 2T249 -11Q163 -11 99 53T34 214Q34 318 99 383T250 448T370 421T404 357Q404 334 387 320Z" transform="translate(1208,0)" style="stroke-width:3;"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(1652,0)" style="stroke-width:3;"></path><path data-c="64" d="M376 495Q376 511 376 535T377 568Q377 613 367 624T316 637H298V660Q298 683 300 683L310 684Q320 685 339 686T376 688Q393 689 413 690T443 693T454 694H457V390Q457 84 458 81Q461 61 472 55T517 46H535V0Q533 0 459 -5T380 -11H373V44L365 37Q307 -11 235 -11Q158 -11 96 50T34 215Q34 315 97 378T244 442Q319 442 376 393V495ZM373 342Q328 405 260 405Q211 405 173 369Q146 341 139 305T131 211Q131 155 138 120T173 59Q203 26 251 26Q322 26 373 103V342Z" transform="translate(2152,0)" style="stroke-width:3;"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(2708,0)" style="stroke-width:3;"></path><path data-c="3A" d="M78 370Q78 394 95 412T138 430Q162 430 180 414T199 371Q199 346 182 328T139 310T96 327T78 370ZM78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z" transform="translate(3152,0)" style="stroke-width:3;"></path><path data-c="A0" d="" transform="translate(3430,0)" style="stroke-width:3;"></path></g><g data-mml-node="mtext" transform="translate(19519.6,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">瓶</text><text data-variant="normal" transform="translate(1000,0) scale(1,-1)" font-size="884px" font-family="serif">颈</text></g><g data-mml-node="mo" transform="translate(21797.3,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z" style="stroke-width:3;"></path></g><g data-mml-node="mtext" transform="translate(22853.1,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">显</text><text data-variant="normal" transform="translate(1000,0) scale(1,-1)" font-size="884px" font-family="serif">存</text><text data-variant="normal" transform="translate(2000,0) scale(1,-1)" font-size="884px" font-family="serif">带</text><text data-variant="normal" transform="translate(3000,0) scale(1,-1)" font-size="884px" font-family="serif">宽</text><path data-c="20" d="" transform="translate(4000,0)" style="stroke-width:3;"></path><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" transform="translate(4250,0)" style="stroke-width:3;"></path><path data-c="47" d="M56 342Q56 428 89 500T174 615T283 681T391 705Q394 705 400 705T408 704Q499 704 569 636L582 624L612 663Q639 700 643 704Q644 704 647 704T653 705H657Q660 705 666 699V419L660 413H626Q620 419 619 430Q610 512 571 572T476 651Q457 658 426 658Q401 658 376 654T316 633T254 592T205 519T177 411Q173 369 173 335Q173 259 192 201T238 111T302 58T370 31T431 24Q478 24 513 45T559 100Q562 110 562 160V212Q561 213 557 216T551 220T542 223T526 225T502 226T463 227H437V273H449L609 270Q715 270 727 273H735V227H721Q674 227 668 215Q666 211 666 108V6Q660 0 657 0Q653 0 639 10Q617 25 600 42L587 54Q571 27 524 3T406 -22Q317 -22 238 22T108 151T56 342Z" transform="translate(4639,0)" style="stroke-width:3;"></path><path data-c="42" d="M131 622Q124 629 120 631T104 634T61 637H28V683H229H267H346Q423 683 459 678T531 651Q574 627 599 590T624 512Q624 461 583 419T476 360L466 357Q539 348 595 302T651 187Q651 119 600 67T469 3Q456 1 242 0H28V46H61Q103 47 112 49T131 61V622ZM511 513Q511 560 485 594T416 636Q415 636 403 636T371 636T333 637Q266 637 251 636T232 628Q229 624 229 499V374H312L396 375L406 377Q410 378 417 380T442 393T474 417T499 456T511 513ZM537 188Q537 239 509 282T430 336L329 337H229V200V116Q229 57 234 52Q240 47 334 47H383Q425 47 443 53Q486 67 511 104T537 188Z" transform="translate(5424,0)" style="stroke-width:3;"></path><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z" transform="translate(6132,0)" style="stroke-width:3;"></path><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z" transform="translate(6632,0)" style="stroke-width:3;"></path><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" transform="translate(7026,0)" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="block" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;overflow:hidden;width:100%;"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mtext>Prefill: </mtext><mtext>瓶颈</mtext><mo>=</mo><mtext>算力 (TFLOPS)</mtext><mstyle scriptlevel="0"><mspace width="1em"></mspace></mstyle><mo data-mjx-texclass="ORD" stretchy="false">|</mo><mstyle scriptlevel="0"><mspace width="1em"></mspace></mstyle><mtext>Decode: </mtext><mtext>瓶颈</mtext><mo>=</mo><mtext>显存带宽 (GB/s)</mtext></math></mjx-assistive-mml></mjx-container><p>这一差异是所有推理优化技术的底层逻辑：解决首字慢和解决生成慢用的是完全不同的手段。混淆两个阶段的瓶颈，就会在错误的方向上浪费资源——给 Decode 加更多算力没用（GPU 已经在等显存了），给 Prefill 扩显存带宽收益也有限（GPU 计算单元才是瓶颈）。</p><p>以 RTX 3090 为例：FP16 算力 142 TFLOPS，显存带宽 936 GB/s。一个 70B 模型（FP16 约 140GB）在 Decode 阶段，每生成一个 token 需要读取约 140GB 权重数据。936 GB/s 的带宽下，理论最快生成速度为 936 ÷ 140 ≈ 6.7 token/s。即使 GPU 有无限算力，速度也不可能超过这个值——这就是 Memory-Bound 的本质。</p><h2 id="prefill-优化-降低首字延迟" tabindex="-1">Prefill 优化：降低首字延迟 <a class="header-anchor" href="#prefill-优化-降低首字延迟" aria-label="Permalink to “Prefill 优化：降低首字延迟”">​</a></h2><p>Prefill 是 Compute-Bound——优化方向是减少不必要的计算量、提升计算效率。</p><h3 id="flashattention-让注意力计算不再等显存" tabindex="-1">FlashAttention：让注意力计算不再等显存 <a class="header-anchor" href="#flashattention-让注意力计算不再等显存" aria-label="Permalink to “FlashAttention：让注意力计算不再等显存”">​</a></h3><p>自注意力机制的理论瓶颈不在算力而在显存访问模式。标准的注意力计算需要反复读写一个 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:0;" xmlns="http://www.w3.org/2000/svg" width="6.784ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 2998.4 683" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(1110.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z" style="stroke-width:3;"></path></g><g data-mml-node="mi" transform="translate(2110.4,0)"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi><mo>×</mo><mi>N</mi></math></mjx-assistive-mml></mjx-container> 的注意力矩阵（<mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:0;" xmlns="http://www.w3.org/2000/svg" width="2.009ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 888 683" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi></math></mjx-assistive-mml></mjx-container> 为序列长度），每次读写都经过显存。32K 上下文生成一个 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.05ex;" xmlns="http://www.w3.org/2000/svg" width="14.078ex" height="1.557ex" role="img" focusable="false" viewBox="0 -666 6222.4 688" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><path data-c="33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z" style="stroke-width:3;"></path><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z" transform="translate(500,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(1000,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(1500,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(2000,0)" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(2722.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z" style="stroke-width:3;"></path></g><g data-mml-node="mn" transform="translate(3722.4,0)"><path data-c="33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z" style="stroke-width:3;"></path><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z" transform="translate(500,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(1000,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(1500,0)" style="stroke-width:3;"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(2000,0)" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32000</mn><mo>×</mo><mn>32000</mn></math></mjx-assistive-mml></mjx-container> 的矩阵，即使是 FP16 也需要约 2GB 显存，而计算本身只需要几毫秒——绝大部分时间花在显存读写上。</p><p>FlashAttention 的核心思想是分块计算（Tiling）：将注意力矩阵切分为小块，每个块的计算完全在 GPU 的 SRAM（on-chip 缓存，带宽 &gt; 10 TB/s）中完成，中间结果不回写显存。通过重新编排计算顺序，避免了显存带宽瓶颈。注意力计算的显存带宽利用率从 ~20% 提升到 80%+。FlashAttention-2 需要 sm_80（Ampere）及以上 CUDA 算力——这也是为什么 3090 是本地 AI 部署的架构起点。</p><p>8K+ 长上下文中，注意力计算可能占 Prefill 总时间的 30-40%。FA2 将其降到 10% 以下。大多数现代推理框架默认启用——不需要额外配置，只要 GPU 架构支持就自动生效。</p><h3 id="prefix-caching-相同的开头只算一次" tabindex="-1">Prefix Caching：相同的开头只算一次 <a class="header-anchor" href="#prefix-caching-相同的开头只算一次" aria-label="Permalink to “Prefix Caching：相同的开头只算一次”">​</a></h3><p>生产环境中大量请求共享相同的&quot;开头&quot;——system prompt（&quot;你是一个有帮助的助手…&quot;）、RAG 检索到的文档片段、工具调用的定义和示例。传统推理对每个请求都从头计算这些公共前缀的 KV Cache，重复消耗 Prefill 算力。</p><p>Prefix Caching 将已计算的 KV Cache 按前缀树（Trie）结构缓存。新请求到达时，如果前缀匹配缓存中的某个节点，直接复用该节点及所有祖先的 KV Cache，只计算不匹配的后缀部分。SGLang 的 RadixAttention 将这一思想做到极致——任何前缀匹配（不仅是完整 prompt 匹配）都能命中缓存，多轮对话中 system prompt 和早期轮次的 KV Cache 自动复用，prefill 计算开销降低 5 倍以上。</p><h3 id="chunked-prefill-计算与访存的时间重叠" tabindex="-1">Chunked Prefill：计算与访存的时间重叠 <a class="header-anchor" href="#chunked-prefill-计算与访存的时间重叠" aria-label="Permalink to “Chunked Prefill：计算与访存的时间重叠”">​</a></h3><p>在并发服务场景中，一个长 prompt 的 Prefill 可能独占 GPU 数秒，期间所有其他请求的 Decode 被挂起——用户看到的是&quot;转圈圈&quot;。</p><p>Chunked Prefill 将一个长 prompt 切分为多个小块，与正在进行的 Decode 步拼装到同一个 batch 中同时提交 GPU。Prefill 的矩阵计算填满 CUDA 核心（Compute-Bound），同时 Decode 的访存利用显存带宽（Memory-Bound）——计算与访存在硬件层面重叠执行。对用户来说，其他请求的 Decode 不再被长 Prefill 阻塞。vLLM 和 SGLang 默认启用。</p><h2 id="decode-优化-提升生成速度" tabindex="-1">Decode 优化：提升生成速度 <a class="header-anchor" href="#decode-优化-提升生成速度" aria-label="Permalink to “Decode 优化：提升生成速度”">​</a></h2><p>Decode 是 Memory-Bound——优化方向是减少每个 token 需要从显存读取的数据量。</p><h3 id="模型量化-读得更少就是算得更快" tabindex="-1">模型量化：读得更少就是算得更快 <a class="header-anchor" href="#模型量化-读得更少就是算得更快" aria-label="Permalink to “模型量化：读得更少就是算得更快”">​</a></h3><p>量化对 Decode 的加速效果往往被误解为&quot;减少计算量&quot;，实际上主要收益来自&quot;减少显存读取量&quot;。Q4_K_M 量化将权重从 16-bit 压缩到 4-bit，每个 token 需要从显存读取的权重数据量降为原来的 1/4。Memory-Bound 场景下，读取量减半→速度翻倍。回到 3090 + 70B 的例子：INT4 量化后权重约 35GB，理论 Decode 速度上限从 6.7 token/s 提升到 936 ÷ 35 ≈ 26.7 token/s。</p><p>量化方案和格式选型详见<a href="./quantization">模型量化</a>。Decode 优化的关键是：不是所有的量化对生成速度有同等提升——GGUF Q4_K_M 的 Decode 速度约是 FP16 的 3-4 倍，而 AWQ INT4 的 Decode 速度约是 FP16 的 2-3 倍（AWQ 在 GPU 上做 INT4 矩阵乘法需要反量化开销，GGUF 在 llama.cpp 中有更激进的 kernel 优化）。</p><h3 id="投机解码-打破自回归的串行锁" tabindex="-1">投机解码：打破自回归的串行锁 <a class="header-anchor" href="#投机解码-打破自回归的串行锁" aria-label="Permalink to “投机解码：打破自回归的串行锁”">​</a></h3><p>Decode 的根本瓶颈不是显存带宽太小，而是自回归生成本身的串行性——必须先产生 token N，才能计算 token N+1。GPU 的并行计算能力在 Decode 阶段被浪费——几千个 CUDA 核心等着处理一个 token。</p><p>投机解码用算法换并行度。用一个极小的 draft model（1B-3B）快速串行预测 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container> 个候选 token（draft model 很小，Memory-Bound 的瓶颈也小，生成速度极快），然后大模型一次 Prefill（并行验证）这 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container> 个 token。通过的保留，不通过的回退。draft model 准确率超过 80% 时，<mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container> 个 token 的总耗时 ≈ 1 次大模型 Prefill + <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container> 次小模型 Decode——而小模型的单次 Decode 比大模型快 5-10 倍。</p><p>投机解码不影响模型权重，精度无损。同系列模型搭配通过率最高——Qwen3.6-32B + Qwen3.6-1.8B draft 共享词表，通过率 85-95%。EAGLE 更进一步，使用与主模型共享 embedding/lm_head 的轻量 draft head，通过率可达 90%+。DFlash 将 draft 从逐 token 生成改为一次性并行扩散，完全消除了 draft 的串行瓶颈。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># llama.cpp: draft model 投机</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">./llama-server</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> qwen3.6-32b-Q4_K_M.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --draft-model</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> qwen3.6-1.8b-Q4_K_M.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --speculative-tokens</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 999</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># SGLang: EAGLE 投机引擎</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">sglang</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Qwen/Qwen3.6-32B</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --speculative-algorithm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> EAGLE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --speculative-num-tokens</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8</span></span></code></pre></div><p>投机解码的代价是额外的显存——draft model 的权重和 KV Cache。Qwen3.6-1.8B Q4_K_M 约 1.2GB，通常可以接受。投机解码可以和量化、多卡并行叠加使用，效果累乘。</p><h3 id="mtp-免草稿模型的原生投机" tabindex="-1">MTP：免草稿模型的原生投机 <a class="header-anchor" href="#mtp-免草稿模型的原生投机" aria-label="Permalink to “MTP：免草稿模型的原生投机”">​</a></h3><p>MTP（Multi-Token Prediction）是投机解码的演进方向——将多 token 预测能力直接内置到模型架构中，完全消除对独立 draft model 的依赖。</p><p>传统投机解码需要在显存中额外驻留一个 draft model（1B-3B，约 1-2GB），且 draft model 必须与主模型共享词表。两个模型的加载和管理增加了工程复杂度——版本匹配、显存分配、框架兼容性都是隐藏成本。MTP 通过在模型最后一层添加额外的预测头来解决：主模型正常计算每个 token 的 hidden state，然后 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:0;" xmlns="http://www.w3.org/2000/svg" width="2.009ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 888 683" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi></math></mjx-assistive-mml></mjx-container> 个并行的 MTP head 各自预测第 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.439ex;" xmlns="http://www.w3.org/2000/svg" width="21.066ex" height="1.984ex" role="img" focusable="false" viewBox="0 -683 9311 877" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(583.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z" style="stroke-width:3;"></path></g><g data-mml-node="mn" transform="translate(1583.4,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(2083.4,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z" style="stroke-width:3;"></path></g><g data-mml-node="mi" transform="translate(2528.1,0)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(3111.3,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z" style="stroke-width:3;"></path></g><g data-mml-node="mn" transform="translate(4111.6,0)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(4611.6,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(5056.2,0)"><path data-c="2026" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60ZM525 60Q525 84 542 102T585 120Q609 120 627 104T646 61Q646 36 629 18T586 0T543 17T525 60ZM972 60Q972 84 989 102T1032 120Q1056 120 1074 104T1093 61Q1093 36 1076 18T1033 0T990 17T972 60Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(6394.9,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z" style="stroke-width:3;"></path></g><g data-mml-node="mi" transform="translate(6839.6,0)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z" style="stroke-width:3;"></path></g><g data-mml-node="mo" transform="translate(7422.8,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z" style="stroke-width:3;"></path></g><g data-mml-node="mi" transform="translate(8423,0)"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>t</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>t</mi><mo>+</mo><mn>2</mn><mo>,</mo><mo>…</mo><mo>,</mo><mi>t</mi><mo>+</mo><mi>N</mi></math></mjx-assistive-mml></mjx-container> 位置的 token。一次 forward pass 同时输出当前 token + <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:0;" xmlns="http://www.w3.org/2000/svg" width="2.009ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 888 683" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi></math></mjx-assistive-mml></mjx-container> 个未来 token。</p><p>MTP head 的结构极其轻量——每个 head 通常只是 RMSNorm + 小规模线性投影，额外参数量约为主模型的 1%。DeepSeek-V3 的 MTP 进一步优化了 head 之间的因果依赖关系——前一个 head 的输出作为后一个 head 的额外输入——预测质量更高。Qwen 2.5 系列同样内置了 MTP 支持。推理框架检测到模型有 MTP head 时自动启用——不需要 <code>--draft-model</code> 参数。</p><p>MTP 相对于独立 draft model 的优势：零额外显存（MTP head 约 1% 参数增量已包含在模型权重中）、无需词表对齐（同一个模型天然一致）、框架兼容性更好（不需要管理两个模型的加载和切分）、通过率更高（MTP head 与主模型共享 hidden representation，分布对齐度优于独立小模型）。</p><p>MTP 的局限：需要模型本身支持 MTP head（Qwen 2.5、DeepSeek-V3 等少数新模型），大量旧模型没有；可预测的额外 token 数受 head 数量限制（通常 1-2 个，而独立 draft model 可预测 5-8 个）；单个 head 的预测质量通常低于同系列独立小模型（小模型有完整的多层 Transformer，MTP head 只是浅层投影）。</p><p>MTP 在多卡并行场景下的最大优势是与所有并行策略兼容——无论 PP 还是 TP，MTP 都随主模型自动生效。vLLM 中 PP + 独立 draft model 投机解码不兼容，但 PP + 原生 MTP（如果模型支持）可以同时工作，因为 MTP 不需要加载第二个模型。llama.cpp 中 MTP 和独立 draft model 都支持，可择一使用：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># llama.cpp: 原生 MTP（模型内置 MTP head）</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">./llama-server</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> qwen3.6-32b-Q4_K_M.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --speculative-tokens</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># vLLM: 原生 MTP 随 TP/PP 自动生效，无需额外参数</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Qwen/Qwen3.6-32B</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --tp</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span></span></code></pre></div><p>选型：模型支持 MTP → 优先用 MTP（零额外成本，框架兼容性完美）；模型不支持 MTP 但有同系列小模型 → 用独立 draft model（通过率 85-95%，1.5-2.5x 加速）；既无 MTP 又无合适 draft model → 无法用投机解码。MTP 和独立 draft model 不能同时使用——前者是内置方案，后者是外挂方案，解决同一个问题。</p><h3 id="kv-cache-压缩-gqa、mla-与量化" tabindex="-1">KV Cache 压缩：GQA、MLA 与量化 <a class="header-anchor" href="#kv-cache-压缩-gqa、mla-与量化" aria-label="Permalink to “KV Cache 压缩：GQA、MLA 与量化”">​</a></h3><p>Decode 阶段每个 token 不仅需要读取模型权重，还需要读取之前所有 token 的 Key 和 Value 缓存来做注意力计算。32K 上下文的 KV Cache（FP16）约 16GB——已经超过很多模型的量化权重。</p><p>GQA（Grouped Query Attention）是架构层面的压缩——多个 Query 头共享一组 KV 头。Llama-3 使用 8 组 KV 头（相比 32 个 Query 头），KV Cache 缩小 4 倍。这是现代开源模型能在 24GB 显卡上运行的架构前提。选择模型时优先挑自带 GQA 的版本——这是免费的架构红利。</p><p>MLA（Multi-Head Latent Attention，DeepSeek 提出）更激进——利用低秩矩阵分解将 KV Cache 压缩到极小潜空间，压缩比 90%+。KV Cache 从几十 GB 降到几 GB。MLA 是模型架构特性，下载支持 MLA 的模型（DeepSeek-V2/V3），部署即自动生效。</p><p>KV Cache 量化是后训练优化——将 K/V 缓存从 FP16 压缩到 4-8 bit。TurboQuant（Google Research, ICLR 2026）是目前最优方案：PolarQuant 随机旋转变换 + 标量量化，配合 QJL 1-bit 残差符号修正实现无偏注意力计算。4-bit KV Cache 后相同硬件支持 4 倍上下文。代价是 Attention 计算前需动态反量化，Decode 延迟增加 10-50%。硬件支持 FP8（Ada/Hopper 架构）时，FP8 KV Cache 零延迟但压缩比仅 2x。完整机制与选型决策见<a href="./quantization">模型量化</a>。</p><h2 id="cpu-gpu-混合推理" tabindex="-1">CPU+GPU 混合推理 <a class="header-anchor" href="#cpu-gpu-混合推理" aria-label="Permalink to “CPU+GPU 混合推理”">​</a></h2><p>当显存放不下完整模型时，CPU+GPU 混合推理用系统内存补足显存缺口。代价是速度——数据经过 PCIe 总线从 CPU 内存传输到 GPU 时，瓶颈从 GPU 显存带宽（~936 GB/s）骤降到 PCIe 带宽（PCIe 4.0 x16 ≈ 31.5 GB/s，约为显存带宽的 1/30）。混合推理的核心调优目标：最大化 GPU 承载的层数、最小化 PCIe 传输、把 CPU 端推到性能极限。</p><p>不是所有框架都适合混合推理。llama.cpp 是为此场景设计的引擎，支持细粒度层切分（<code>-ngl</code>）、CPU 线程绑定、NUMA 优化和内存锁定。vLLM 和 SGLang 的 CPU offload 会引入 PagedKV 管理和额外内存开销，混合推理场景不推荐。</p><h3 id="层切分策略-榨干每-mb-显存" tabindex="-1">层切分策略：榨干每 MB 显存 <a class="header-anchor" href="#层切分策略-榨干每-mb-显存" aria-label="Permalink to “层切分策略：榨干每 MB 显存”">​</a></h3><p>原则是&quot;能多放一层 GPU，绝不留给 CPU&quot;。CPU 卸载的每一层会让 Decode 速度掉 2-5 倍——因为该层的权重数据需要从 CPU 内存经 PCIe 传到 GPU，每生成一个 token 都要经历一次。</p><p>计算单层显存开销：模型文件大小 ÷ 总层数 ≈ 单层权重。7B Q4_K_M 模型约 4.5GB、32 层，每层约 140MB。32B Q4_K_M 约 19GB、64 层，每层约 300MB。但实际分配时，不同层的权重张量大小不均——Attention 的 Q/K/V/O 投影和 MLP 的上下投影占用不同。</p><p>关键预留给 KV Cache。8K 上下文的 KV Cache（FP16）约 1.5-3GB，如果开启 KV Cache 量化（Q8_0）则减半至 0.8-1.5GB。先把 KV Cache 的显存预留出来，剩余空间全分给权重层。预留不足会导致推理中途 OOM，比一开始就少放几层更糟。</p><p>MoE 模型的特殊策略：优先把 Attention 层、Shared Expert、Embedding 全部塞进 GPU——这些是每个 token 必算的&quot;全量&quot;模块，放 GPU 收益最大。稀疏的 Routed Expert 放在 CPU 上，每次只激活其中一小部分，PCIe 传输开销可控。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 第一步：测试极限——逐步增加层数直到 OOM</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">llama-cli</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> qwen3.6-32b-Q4_K_M.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4096</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 999</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -fa</span></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 观察 OOM 崩溃点（如第 28 层），安全值设崩溃点 -2~3 层</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 第二步：设定安全值 + KV Cache 量化</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">llama-cli</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> qwen3.6-32b-Q4_K_M.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 25</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8192</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ctk</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> q8_0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ctv</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> q8_0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -fa</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 第三步：观察 kv-cache 量化后释放的显存，尝试 +1~2 层</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">llama-cli</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> qwen3.6-32b-Q4_K_M.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 27</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8192</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ctk</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> q8_0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ctv</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> q8_0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -fa</span></span></code></pre></div><h3 id="cpu-端调优" tabindex="-1">CPU 端调优 <a class="header-anchor" href="#cpu-端调优" aria-label="Permalink to “CPU 端调优”">​</a></h3><p>线程数设物理核心数（Physical Cores），禁用超线程。大模型矩阵乘法是高度密集的 ALU 运算——超线程的两个逻辑核共享 L1/L2 缓存和执行单元，互相抢占资源，实测反而降低 10-20% 推理速度。对于 Intel 13/14 代异构 CPU（P-Core + E-Core），只绑定 P-Core 的数量。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 查询物理核心数</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">lscpu</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> grep</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;Core(s) per socket&quot;</span></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 假设 14 个物理核心</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">llama-cli</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> model.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 20</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -t</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 14</span></span></code></pre></div><p>内存带宽直接决定 CPU 算层的速度上限。DDR4 2400MHz 单通道约 19 GB/s，四通道约 76 GB/s——差距 4 倍。为混合推理配机时，内存通道数的重要性高于 CPU 核心数。双路服务器需要开启 NUMA 绑定（<code>--numa distribute</code>），防止 CPU 0 跨 Socket 访问 CPU 1 的内存，跨 NUMA 节点延迟比本地高 2 倍以上。</p><p><code>--mlock</code> 强制将 CPU 端的模型权重锁定在物理内存中，禁止操作系统 swap 到硬盘。被 swap 出去的页面一旦需要访问，延迟从纳秒级变成毫秒级——直接表现为 Tokens 输出卡顿。</p><h3 id="完整调优检查清单" tabindex="-1">完整调优检查清单 <a class="header-anchor" href="#完整调优检查清单" aria-label="Permalink to “完整调优检查清单”">​</a></h3><p>按顺序执行：</p><ol><li>确定极限：<code>llama-cli -m model.gguf -c 4096 -ngl 999 -fa</code>，记录 OOM 崩溃层数</li><li>设安全值：<code>-ngl</code> 降到崩溃点以下 2-3 层，为 KV Cache 留足余量</li><li>KV Cache 量化：加入 <code>-ctk q8_0 -ctv q8_0</code>，观察释放的显存，尝试加 1-2 层</li><li>绑定 CPU：<code>-t &lt;物理核心数&gt; --mlock</code>，双路服务器加 <code>--numa distribute</code></li><li>验证吞吐：对比 <code>eval time</code>（Prefill）和 <code>predict time</code>（Decode），微调 <code>-t</code> 找最高吞吐点</li><li>最终确认：<code>nvidia-smi -q -d PCI_EXPRESS</code> 确认显卡运行在正确的 PCIe 速率下（x8 或 x16）</li></ol><p>混合推理的性能天花板很明确——CPU 卸载层数每增加 10%，Decode 速度约下降 30-50%。如果卸载层数超过总数的 50%，不如考虑更强的量化（Q3_K_M 甚至 IQ2_XXS）让更多层放进 GPU。</p><h2 id="跨阶段优化" tabindex="-1">跨阶段优化 <a class="header-anchor" href="#跨阶段优化" aria-label="Permalink to “跨阶段优化”">​</a></h2><h3 id="连续批处理-填满-gpu-的等待间隙" tabindex="-1">连续批处理：填满 GPU 的等待间隙 <a class="header-anchor" href="#连续批处理-填满-gpu-的等待间隙" aria-label="Permalink to “连续批处理：填满 GPU 的等待间隙”">​</a></h3><p>并发场景下，不同请求处于不同阶段——有的在 Prefill（吃算力），有的在 Decode（等显存）。连续批处理（Continuous Batching）在每个迭代动态决定本轮 batch 中包含哪些请求：新请求的 Prefill 可以立即加入，已完成的请求立即释放资源。配合 PagedAttention 的 block 级 KV Cache 管理，请求加入和退出只需分配/释放 block 指针，无内存搬移开销。高并发场景下吞吐量提升 5-10 倍。</p><h3 id="prefill-decode-分离-为两个阶段配不同的硬件" tabindex="-1">Prefill/Decode 分离：为两个阶段配不同的硬件 <a class="header-anchor" href="#prefill-decode-分离-为两个阶段配不同的硬件" aria-label="Permalink to “Prefill/Decode 分离：为两个阶段配不同的硬件”">​</a></h3><p>解耦部署（Disaggregated Serving）将 GPU 集群物理划分为 Prefill 节点池和 Decode 节点池。Prefill 节点配高算力 GPU（如 H100），Decode 节点配大显存带宽 GPU——各自配备最适合该阶段瓶颈的硬件。Prefill 节点算完 KV Cache 后通过 RDMA（InfiniBand/RoCE）高速推送给 Decode 节点。</p><p>解耦部署在云端大厂是标准实践，但本地单机/小集群场景不推荐——它需要 400Gbps+ InfiniBand 网络传输 GB 级 KV Cache，本地 10G/25G 网卡传输时间远超计算时间。且低并发时硬件利用率暴跌——Prefill 节点在没人提问时全程空闲。Chunked Prefill 在单机内已实现计算与访存的重叠，是解耦部署在本地场景的最优替代。</p><h2 id="本地落地方阵" tabindex="-1">本地落地方阵 <a class="header-anchor" href="#本地落地方阵" aria-label="Permalink to “本地落地方阵”">​</a></h2><p>在本地单 GPU 或 PCIe 多卡环境下，优化技术按投入产出比排序：</p><p>选择自带 GQA/MLA 的模型（Qwen 2.5、DeepSeek-V3）——零成本获取 KV Cache 压缩。启动服务确保 FlashAttention-2 启用（现代框架默认）。Prefill 慢（首字延迟高）→ 开启 Prefix Caching（SGLang RadixAttention，多轮对话场景收益最大）。Decode 慢（生成速度低）→ 开启投机解码（1.5-2.5x，draft model 需同系列）。长上下文场景 → KV Cache 4-bit 量化（显存节省 &gt; 权重量化收益）。高并发 API 服务 → 连续批处理（vLLM/SGLang）。显存放不下模型 → CPU+GPU 混合推理（llama.cpp，层切分+KV Cache 量化优先）。多 GPU 场景 → 量化+DP 多实例覆盖并发，或 PP 拆分大模型（见<a href="./multi-gpu">多卡推理</a>）。</p><p>关键认知：Prefill 瓶颈加算力，Decode 瓶颈减数据。选错方向比不作为更糟——给一台 3090 加第二张卡（算力翻倍）对 Decode 速度几乎无影响。混合推理的核心不是&quot;CPU 能帮 GPU 算&quot;，而是&quot;尽量不让 CPU 算&quot;——KV Cache 量化省出 1-2GB 显存多放 8-16 层到 GPU，收益远大于调 CPU 线程数。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/deploy/multi-gpu" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>多卡推理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/deploy/serving" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>服务部署</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    
+<nav id="sitemap" aria-hidden="true">
+<pre>/abstract - 目录
+/ai - 人工智能
+/ai/app - 大模型应用
+/ai/app/arch - 应用架构
+/ai/app/arch/api - API 设计
+/ai/app/arch/caching - Prompt Caching
+/ai/app/arch/gateway - 网关与缓存
+/ai/app/arch/routing - 模型路由
+/ai/app/auto - 自动化
+/ai/app/auto/impl - 实现原理
+/ai/app/auto/traditional - 传统自动化
+/ai/app/engine - 推理引擎
+/ai/app/engine/llama/cpp
+/ai/app/engine/llama_cpp - llama.cpp
+/ai/app/engine/mistral/rs
+/ai/app/engine/mistral_rs - mistral.rs
+/ai/app/engine/rust/infer
+/ai/app/engine/rust_infer - Rust 推理引擎
+/ai/app/engine/vllm - vLLM
+/ai/app/finetune - 微调
+/ai/app/lib - 框架库
+/ai/app/lib/langchain - LangChain
+/ai/app/lib/langchain/langgraph - LangGraph
+/ai/app/lib/langchain/runnable - LCEL 与 Runnable
+/ai/app/lib/packages - 常用包
+/ai/app/multimodal - 多模态
+/ai/app/multimodal/audio - 语音交互
+/ai/app/multimodal/generation - 媒体生成
+/ai/app/multimodal/vision - 视觉理解
+/ai/app/overlay - Overlay
+/ai/app/overlay/agent - 智能体
+/ai/app/overlay/agent/a2a - A2A 协议
+/ai/app/overlay/agent/case - 应用实战
+/ai/app/overlay/agent/case/claude/code
+/ai/app/overlay/agent/case/claude_code - Claude Code
+/ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/deep/agent
+/ai/app/overlay/agent/deep_agent - Deep Agent
+/ai/app/overlay/agent/loop - Agent 循环
+/ai/app/overlay/agent/mcp - MCP Server
+/ai/app/overlay/agent/safety - 安全防护
+/ai/app/overlay/agent/safety/content - 内容安全
+/ai/app/overlay/agent/safety/guardrails - Guardrails
+/ai/app/overlay/agent/safety/injection - Prompt 注入
+/ai/app/overlay/agent/skills - Skills
+/ai/app/overlay/agent/tools - 工具调用
+/ai/app/overlay/ops - LLMOps
+/ai/app/overlay/ops/eval - 评估框架
+/ai/app/overlay/ops/monitor - 可观测性
+/ai/app/overlay/ops/test - 测试策略
+/ai/app/overlay/rag - RAG
+/ai/app/overlay/rag/agentic/rag
+/ai/app/overlay/rag/agentic_rag - Agentic RAG
+/ai/app/overlay/rag/data - 数据工程
+/ai/app/overlay/rag/data/parsing - 文档解析
+/ai/app/overlay/rag/data/processing - 数据处理
+/ai/app/overlay/rag/embedding - Embedding
+/ai/app/overlay/rag/graphrag - GraphRAG
+/ai/app/overlay/rag/retrieval - 检索质量
+/ai/app/overlay/rag/vector/db
+/ai/app/overlay/rag/vector_db - 向量数据库
+/ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/context - Context Engineering
+/ai/app/overlay/session/prompt - 提示词
+/ai/app/overlay/ui - AI UI
+/ai/compute - AI 引擎
+/ai/compute/api - 标准接口
+/ai/compute/api/cpu - SIMD
+/ai/compute/api/cuda - CUDA
+/ai/compute/api/opencl - OpenCL
+/ai/compute/api/simt - SIMT
+/ai/compute/api/triton - Triton
+/ai/compute/deploy - 部署
+/ai/compute/deploy/eco - 部署工具
+/ai/compute/deploy/hardware - 硬件
+/ai/compute/deploy/llmops - LLMOps
+/ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/optimization - 推理优化
+/ai/compute/deploy/quantization - 模型量化
+/ai/compute/deploy/serving - 服务部署
+/ai/compute/distributed - 集群
+/ai/compute/distributed/comm - 集合通信
+/ai/compute/distributed/parallel - 模型拆分
+/ai/compute/engine - 主流引擎
+/ai/compute/engine/deepspeed - DeepSpeed
+/ai/compute/engine/other - 其他
+/ai/compute/engine/pytorch - PyTorch
+/ai/compute/engine/vllm - vLLM
+/ai/compute/format - 模型格式
+/ai/compute/format/hf - HF 风格
+/ai/compute/format/onnx - ONNX
+/ai/compute/impl - 设计实现
+/ai/compute/impl/kvcache - KV Cache
+/ai/compute/impl/moe - 混合专家
+/ai/compute/impl/speculative - 投机解码
+/ai/compute/kernel - 算子
+/ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/optimization - 算子优化
+/ai/compute/kernel/quantization - 量化
+/ai/compute/stack - 计算栈
+/ai/cpp - C++
+/ai/neural - 神经网络
+/ai/neural/dl - 深度学习
+/ai/neural/dl/audio - 听觉
+/ai/neural/dl/backforward - 反向传播
+/ai/neural/dl/cnn - CNN
+/ai/neural/dl/diffusion - Diffusion
+/ai/neural/dl/multimodal - 多模态
+/ai/neural/dl/nlp - NLP
+/ai/neural/dl/recommend - 推荐
+/ai/neural/dl/rnn - RNN
+/ai/neural/dl/transformer - Transformer
+/ai/neural/dl/vision - 视觉
+/ai/neural/dl/vit - ViT
+/ai/neural/llm - LLM
+/ai/neural/llm/arch - 架构
+/ai/neural/llm/finetune - 微调
+/ai/neural/llm/memo - 记忆
+/ai/neural/llm/pretraind - 基座模型
+/ai/neural/math - 数学基础
+/ai/neural/ml - 机器学习
+/ai/neural/ml/bf - 梯度下降法
+/ai/neural/ml/loss - 损失函数
+/ai/neural/ml/reinforce - 强化学习
+/ai/neural/ml/supervised - 监督学习
+/ai/neural/ml/unsupervised - 无监督学习
+/ai/neural/numpy - Numpy
+/ai/neural/pytorch - PyTorch
+/ai/neural/sklearn - sklearn
+/ai/python - Python
+/ai/python/basic - 语言基础
+/ai/python/basic/module - 模块系统
+/ai/python/fastapi - FastAPI
+/ai/python/jupyter - jupyter
+/ai/python/uv - uv
+/ai/symbol - 符号逻辑
+/ai/symbol/expert-system - 专家系统
+/ai/symbol/logic - 数理逻辑基础
+/ai/symbol/neuralify - 神经符号融合
+/ai/symbol/outline - 学习路线
+/ai/symbol/prolog - Prolog
+/ai/symbol/reasoning - 推理引擎与搜索
+/ai/symbol/representation - 知识表示
+/basic - 理论基础
+/basic/algo - 算法
+/basic/algo/compress - 压缩
+/basic/algo/crypto - 加密和解密
+/basic/algo/model - 算法模型
+/basic/algo/model/bit - 位运算
+/basic/algo/model/dp - 动态规划
+/basic/algo/model/leetcode - leetcode 题型
+/basic/algo/model/recrusion - 递归
+/basic/algo/model/struct - 数据结构辅助
+/basic/algo/sort - 排序算法
+/basic/algo/string - 字符串算法
+/basic/algo/struct - 数据结构
+/basic/algo/struct/graph - 图
+/basic/algo/struct/tree - 树
+/basic/compile - 编译原理
+/basic/compile/advance - 高级语言
+/basic/compile/dsl - DSL
+/basic/compile/dsl/glob - glob
+/basic/compile/dsl/regex - 正则表达式
+/basic/compile/lang - 编程语言概览
+/basic/db - 数据库
+/basic/db/cmp - SQL
+/basic/db/nf - 范式
+/basic/graphic - 图形学
+/basic/graphic/2d - 2D 图形
+/basic/graphic/3d - 3D 场景渲染
+/basic/hardware - 硬件组成
+/basic/hardware/coding - 编码
+/basic/hardware/cpu - CPU
+/basic/hardware/gpu - GPU
+/basic/hardware/interrupt - 中断
+/basic/hardware/motherboard - 主板
+/basic/hardware/storage - 存储
+/basic/hardware/topo - CPU 拓扑
+/basic/network - 网络协议
+/basic/network/ether - 以太网
+/basic/network/http - HTTP
+/basic/network/ip - IP
+/basic/network/protocol - 网络协议
+/basic/network/tcp - TCP
+/basic/network/udp - UDP
+/basic/os - 操作系统
+/basic/os/mm - 内存管理
+/basic/os/schd - 调度
+/client - 客户端
+/client/art - 美术设计
+/client/art/mime - 媒体文件
+/client/art/render - 渲染
+/client/art/toolchain - 工具链
+/client/csharp - C#
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
+/client/csharp/dotnet - .NET
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet</pre>
+<pre>/client/csharp/unity - Unity
+/client/game - 游戏引擎
+/client/game/cocos - Cocos
+/client/game/godot - Godot
+/client/game/unity - Unity
+/client/game/unreal - Unreal
+/client/gui - 图形应用
+/client/gui/arch - 架构
+/client/gui/arch/observe - 可观测性
+/client/gui/cross - 跨平台
+/client/gui/cross/electron - Electron
+/client/gui/cross/flutter - Flutter
+/client/gui/cross/flutter/dart - Dart
+/client/gui/cross/framework - UI 框架
+/client/gui/cross/reactnative - ReactNative
+/client/gui/ergonomic - 人机关系
+/client/gui/ergonomic/interact - 人机交互
+/client/gui/ergonomic/screen - 屏幕
+/client/gui/platform - UI 平台
+/client/gui/platform/android - Android
+/client/gui/platform/gnome - Gnome
+/client/gui/platform/ios - Apple
+/client/gui/platform/web-env - Web 宿主
+/client/gui/platform/windows - Windows
+/client/gui/security - 安全
+/client/gui/security/access - 应用权限
+/client/gui/security/antiattack - 网络攻击
+/client/gui/security/auth - 登录鉴权
+/client/gui/security/privacy - 隐私保护
+/client/gui/security/sandbox - 沙箱
+/client/render - 渲染引擎
+/client/render/api - 标准接口
+/client/render/api/directx - DirectX
+/client/render/api/opengl - OpenGL
+/client/render/api/vulkan - Vulkan
+/client/render/api/vulkan/icd - ICD
+/client/render/api/vulkan/spirv - SPIR-V
+/client/render/api/webgl
+/client/render/api/webgpu - WebGPU
+/client/render/basic - 渲染基础
+/client/render/basic/mapping - 贴图
+/client/render/basic/scene - 3D 场景
+/client/render/engine - 主流引擎
+/client/render/engine/cycles - Cycles
+/client/render/engine/godot - Godot
+/client/render/engine/skia - Skia
+/client/render/raster - 光栅化管线
+/client/render/raster/ae - 后处理
+/client/render/raster/illumination - 光照模型
+/client/render/raster/rast - 光栅化算法
+/client/render/raytrace - 光线追踪管线
+/client/render/raytrace/bvh - 加速算法
+/client/render/raytrace/denoise - 降噪
+/client/render/raytrace/integrate - 混合渲染管线
+/client/render/shader - 着色器
+/client/render/shader/optimization - 着色器优化
+/client/render/shader/patterns - 常见模式
+/client/render/stack - 计算栈
+/client/render/vec/compose
+/client/render/vec_compose - 矢量合成管线
+/client/rust - Rust
+/client/rust/assets - 静态资源管理
+/client/rust/basic - 语言基础
+/client/rust/basic/closure - 闭包
+/client/rust/basic/macro - 宏
+/client/rust/basic/mod - 模块系统
+/client/rust/basic/ref - 智能指针
+/client/rust/basic/trait - 特性
+/client/rust/cargo - Cargo
+/client/rust/cli - CLi
+/client/rust/ld - 链接库
+/client/rust/slint - Slint
+/client/rust/tauri - Tauri
+/client/rust/wasm - WASM
+/client/web - Web
+/client/web/api - Web API
+/client/web/api/wasm - WASM
+/client/web/browser - 浏览器
+/client/web/browser/arch - 架构
+/client/web/browser/devtools - DevTools 性能分析
+/client/web/browser/eventloop - 事件循环
+/client/web/browser/http - HTTP 协议
+/client/web/browser/memleak - 内存泄漏
+/client/web/browser/optimize - 性能优化
+/client/web/browser/render - 渲染周期
+/client/web/browser/render copy - 渲染周期
+/client/web/browser/security - 浏览器安全
+/client/web/browser/security copy - 安全
+/client/web/browser/storage - 存储
+/client/web/browser/v8 - V8
+/client/web/css - CSS
+/client/web/css/basic - 语言基础
+/client/web/css/sass - Sass
+/client/web/css/tailwind - Tailwindcss
+/client/web/css/trick - CSS trick
+/client/web/css/trick/animation - CSS 动画
+/client/web/css/trick/bfc - 块级格式上下文
+/client/web/css/trick/layout - 布局
+/client/web/css/trick/layout/box-sizing - CSS盒模型
+/client/web/css/trick/layout/containing-block - 包含块
+/client/web/css/trick/layout/grid - grid布局
+/client/web/css/trick/relative - 主题定制
+/client/web/css/trick/sort - css 属性的分类
+/client/web/css/trick/z-index - 层叠上下文与 z-index
+/client/web/eng - 工程化
+/client/web/eng/bootstrap - 项目搭建
+/client/web/eng/build - 构建优化
+/client/web/eng/engineering - 工程化搭建
+/client/web/eng/migration - 迁移
+/client/web/eng/svg - svg
+/client/web/eng/vite - Vite
+/client/web/eng/vite-plugin - Vite 插件
+/client/web/eng/webpack - Webpack
+/client/web/html - HTML
+/client/web/html/basic - 语言基础
+/client/web/html/mathml - MathML
+/client/web/html/md - Markdown
+/client/web/html/seo - SEO
+/client/web/html/svg - SVG
+/client/web/html/trick - HTML trick
+/client/web/html/trick/drag - HTML 拖放 API
+/client/web/html/trick/event - 事件与尺寸获取
+/client/web/html/trick/wc - Web Component
+/client/web/js - JavaScript
+/client/web/js/basic - 语言基础
+/client/web/js/basic/async - 异步编程
+/client/web/js/basic/class - 面向对象
+/client/web/js/basic/iterable - 迭代器
+/client/web/js/basic/obj-base-ops - js 对象基本操作
+/client/web/js/basic/own-property - 属性的可枚举性和所有者
+/client/web/js/basic/proto - 原型链
+/client/web/js/basic/stream - Stream API
+/client/web/js/basic/type-transform - 隐式类型转换
+/client/web/js/npm - npm
+/client/web/js/typescript - TypeScript
+/client/web/js/typescript/basic - 语法基础
+/client/web/nodejs - Nodejs
+/client/web/nodejs/express - Express.js
+/client/web/nodejs/nestjs - Nestjs
+/client/web/nodejs/performance - Node.js 性能调优
+/client/web/react - React
+/client/web/react/fiber - Fiber 与调和
+/client/web/react/rsc - 服务端组件
+/client/web/solid - Solid
+/client/web/ssr - SSR
+/client/web/ssr/nextjs - Nextjs
+/client/web/ssr/nuxtjs - Nuxtjs
+/client/web/ssr/seo - SEO
+/client/web/ssr/ssg - SSG
+/client/web/ssr/vike - Vike
+/client/web/typical - 典型业务
+/client/web/vue - Vue
+/client/web/vue/cpc - 组件通信
+/client/web/vue/nuxt-server - 服务端组件
+/client/web/vue/vdom - 虚拟 DOM 与 Diff 算法
+/design - 软件设计
+/design/async - 异步
+/design/async/async-await - await
+/design/async/reactive - 响应式
+/design/async/schedule - 用户态调度
+/design/concurrent - 并发
+/design/concurrent/atom - 原子操作
+/design/concurrent/lock - 同步原语
+/design/concurrent/lock/free
+/design/concurrent/lock_free - 无锁并发
+/design/concurrent/thread - 多线程
+/design/fp - 函数式
+/design/fp/composition - 组合
+/design/fp/functor - 函子
+/design/fp/hint - hint
+/design/fp/immutable - 不可变
+/design/fp/io - IO
+/design/fp/state - 状态管理
+/design/oop - 面向对象
+/design/oop/aop - AOP
+/design/oop/interface - 接口与抽象
+/design/oop/ioc - IOC
+/design/oop/lifetime - 对象生命周期
+/design/oop/om - 对象模型
+/design/oop/pattern - 设计模式
+/design/oop/relationship - 类间关系
+/design/oop/solid - SOLID
+/design/spacetime - 面向时空
+/design/spacetime/domain - 主机域
+/design/spacetime/general - 通用域
+/design/spacetime/general/architecture - 架构演进
+/design/spacetime/general/container - 容器
+/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/dependency - 依赖管理
+/design/spacetime/general/tradeoff - 权衡
+/design/spacetime/network - 网络域
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process/scope - 作用域
+/design/spacetime/process/single - 单进程
+/design/spacetime/space - 体系建构
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
+/design/typical/ddd - DDD
+/design/typical/duty - 职责分配</pre>
+<pre>/design/typical/macro - 宏观指导
+/design/typical/refactor - 重构
+/design/typical/simplify - 简化原则
+/design/typical/swift - 敏捷开发
+/examples - 随便看看
+/index
+/kernel - 系统层
+/kernel/asm - 汇编
+/kernel/asm/arm - ARM 指令集
+/kernel/c - C
+/kernel/c/basic - 语言基础
+/kernel/c/basic/io - io 操作
+/kernel/c/basic/string - 字符串操作
+/kernel/c/build - 构建系统
+/kernel/c/concurrent - 并发编程
+/kernel/c/debug - 调试
+/kernel/c/lib - 库函数
+/kernel/embed - 嵌入式
+/kernel/embed/bios - BIOS
+/kernel/embed/device - 外设
+/kernel/embed/device/bus - 总线设备
+/kernel/embed/device/bus/i2c - I2C
+/kernel/embed/device/bus/pci - PCI
+/kernel/embed/device/bus/usb - USB
+/kernel/embed/device/comm - 数据面
+/kernel/embed/device/platform - 平台设备
+/kernel/embed/device/sub - 集成子设备
+/kernel/embed/elel - 硬件基础
+/kernel/embed/elel/design - 打板
+/kernel/embed/elel/fpga - FPGA
+/kernel/embed/elel/pcb - PCB
+/kernel/embed/elel/soc - SoC
+/kernel/embed/freertos - FreeRTOS
+/kernel/embed/iot - 物联网
+/kernel/embed/sbc - 开发板
+/kernel/embed/sbc/raspberry - 树莓派
+/kernel/embed/sbc/stm32 - STM32
+/kernel/embed/uboot - U-Boot
+/kernel/equip - 装机
+/kernel/equip/bmc - BMC
+/kernel/equip/gpu - GPU
+/kernel/equip/laptop/brand
+/kernel/equip/laptop_brand - 笔记本
+/kernel/equip/lte - LTE
+/kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/consumer - 消费级
+/kernel/equip/motherboard/epyc - EPYC 装机
+/kernel/equip/motherboard/ram - 内存适配
+/kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/ram - 内存
+/kernel/equip/sbc - SBC
+/kernel/equip/screen - 屏幕
+/kernel/equip/server/room
+/kernel/equip/server_room - 机房
+/kernel/equip/slot - 接口
+/kernel/equip/support - 支撑设备
+/kernel/linux - Linux
+/kernel/linux/develop - 系统开发
+/kernel/linux/develop/ctx - 内核上下文
+/kernel/linux/develop/io/uring
+/kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/ip/cli
+/kernel/linux/develop/ip_cli - ip 命令
+/kernel/linux/develop/kbuild - linux 内核构建系统
+/kernel/linux/develop/lock - 同步原语
+/kernel/linux/develop/service - 系统服务
+/kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/struct - 数据结构
+/kernel/linux/develop/struct/iov - 聚簇读写
+/kernel/linux/develop/struct/linked - 链表
+/kernel/linux/develop/systemd - systemd
+/kernel/linux/device - 设备管理
+/kernel/linux/device/dma - DMA
+/kernel/linux/device/driver - 驱动接口
+/kernel/linux/device/driver/can - CAN
+/kernel/linux/device/driver/pci - PCIe 驱动
+/kernel/linux/device/driver/usb - USB 驱动
+/kernel/linux/device/driver/virtio
+/kernel/linux/device/lifecycle - 生命周期
+/kernel/linux/device/udev - udev
+/kernel/linux/file - 文件管理
+/kernel/linux/file/block - 块设备子系统
+/kernel/linux/file/pfs - 伪文件系统
+/kernel/linux/file/vfs - 虚拟文件系统
+/kernel/linux/irq - 中断管理
+/kernel/linux/irq/clock - 时钟中断
+/kernel/linux/irq/controller - 中断控制器
+/kernel/linux/irq/handler - 中断处理
+/kernel/linux/mm - 内存管理
+/kernel/linux/mm/mmap - 虚拟内存映射
+/kernel/linux/mm/pmm - 物理内存管理
+/kernel/linux/mm/reclaim - 内存回收
+/kernel/linux/mm/swap - 内存交换
+/kernel/linux/net - 网络实现
+/kernel/linux/net/stack - 协议栈
+/kernel/linux/power - 电源管理
+/kernel/linux/power/boot - 开机上电
+/kernel/linux/power/tpm - 安全启动
+/kernel/linux/process - 进程管理
+/kernel/linux/process/ipc - IPC
+/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/schd - 调度
+/kernel/linux/process/security - 权限管理
+/kernel/linux/syscall - 系统调用
+/kernel/linux/syscall/file - 文件管理
+/kernel/linux/syscall/mm - 内存管理
+/kernel/linux/syscall/process - 进程管理
+/kernel/linux/video - 视图系统
+/kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
+/kernel/vm - 虚拟化
+/kernel/vm/basic - 基本原理
+/kernel/vm/basic/bios - BIOS
+/kernel/vm/basic/cpu - CPU
+/kernel/vm/basic/device - 设备
+/kernel/vm/basic/memory - 内存
+/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/vfio - VFIO
+/kernel/vm/virtio - VirtIO
+/sde - 工程化
+/sde/container - 容器
+/sde/container/docker - Docker
+/sde/container/principle - 实现原理
+/sde/git - Git
+/sde/git/advanced - Git 高阶用法
+/sde/git/github - Github
+/sde/git/gitlab - Gitlab
+/sde/k8s - K8s
+/sde/k8s/k3s - k3s
+/sde/k8s/network - 网络模型
+/sde/shell - Shell
+/sde/shell/basic - 语言基础
+/sde/shell/cli - 常见命令行
+/sde/sre - 运维
+/sde/sre/elk - ELK
+/sde/sre/jenkins - Jenkins
+/sde/sre/openstack - OpenStack
+/sde/test - 测试
+/sde/test/basic - 测试原理
+/sde/test/framework - 测试工具与框架
+/sde/test/tdd - 测试驱动开发
+/sde/workflow - 工作流
+/sde/workflow/devops - DevOps
+/sde/workflow/devops/cicd - CI/CD
+/sde/workflow/quality - 质量控制
+/sde/workflow/quality/docs - 文档工程
+/sde/workflow/quality/review - Code Review
+/sde/workflow/version - 版本管理
+/server - 服务端
+/server/db - 数据库
+/server/db/distributed - 集群
+/server/db/distributed/comparison - 数据库对比与选型
+/server/db/distributed/newsql - NewSQL 数据库
+/server/db/distributed/sharding - 分库分表
+/server/db/distributed/transaction - 分布式事务
+/server/db/engine - 存储引擎
+/server/db/engine/fulltext - 全文检索
+/server/db/engine/graph - 图
+/server/db/engine/innodb - innodb
+/server/db/engine/vector - 向量
+/server/db/nosql - NoSQL
+/server/db/nosql/es - ElasticSearch
+/server/db/nosql/milvus - Milvus
+/server/db/nosql/milvus/idx - 向量索引
+/server/db/nosql/milvus/storage - 分布式能力
+/server/db/nosql/milvus/usage - 使用实践
+/server/db/nosql/minio - MinIO
+/server/db/nosql/mongo - MongoDB
+/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/redis - Redis
+/server/db/practice - 工程实践
+/server/db/practice/backup - 备份与恢复
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
+/server/db/practice/monitoring - 监控与运维
+/server/db/practice/standards - 数据库规范
+/server/db/practice/tuning - 性能调优实践
+/server/db/sql - SQL
+/server/db/sql/basic - sql 基础
+/server/db/sql/basic/design - 数据库设计
+/server/db/sql/basic/integrity - 数据完整性
+/server/db/sql/basic/transaction - 事务与并发控制
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql/id - 索引
+/server/db/sql/mysql/impl - 存储引擎
+/server/db/sql/mysql/optimize - 查询优化
+/server/db/sql/pg - PostgreSQL
+/server/db/sql/sqlite - SQLite
+/server/distribute - 分布式
+/server/distribute/arch - 集群架构
+/server/distribute/basic - 分布式基础
+/server/distribute/basic/cap - CAP
+/server/distribute/basic/concurrency - 并发模型
+/server/distribute/basic/concurrency/coroutine - 协程原理
+/server/distribute/basic/concurrency/event-loop - 事件驱动架构
+/server/distribute/basic/consensus - 共识算法</pre>
+<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus/raft - Raft 算法
+/server/distribute/basic/consensus/zab - ZAB 协议
+/server/distribute/basic/id - 分布式 ID
+/server/distribute/basic/lock - 分布式锁
+/server/distribute/basic/transaction - 分布式事务
+/server/distribute/cloud - 云原生
+/server/distribute/cloud/arch - 架构
+/server/distribute/cloud/cicd - CI/CD
+/server/distribute/cloud/container - 容器技术
+/server/distribute/cloud/mesh - Service Mesh
+/server/distribute/cloud/orchestration - Kubernetes
+/server/distribute/cloud/pkg - 包管理与镜像
+/server/distribute/micro - 微服务
+/server/distribute/micro/cache - 缓存
+/server/distribute/micro/cache/consistency - 缓存一致性
+/server/distribute/micro/config - 配置中心
+/server/distribute/micro/discovery - 服务发现
+/server/distribute/micro/gateway - API 网关
+/server/distribute/micro/lb - 负载均衡
+/server/distribute/micro/observability - 可观测性
+/server/distribute/micro/observability/monitoring - 监控告警
+/server/distribute/micro/observability/tracing - 链路追踪
+/server/distribute/micro/qos - QoS
+/server/distribute/micro/qos/chaos - 混沌工程
+/server/distribute/micro/qos/fuse - 熔断限流
+/server/distribute/micro/qos/ha - 高可用与容错
+/server/distribute/micro/qos/ha/load-balance - 负载均衡
+/server/distribute/micro/qos/highes - 三高
+/server/distribute/micro/qos/monitor - 监控
+/server/distribute/micro/qos/observability - 可观测性
+/server/distribute/micro/qos/observability/monitoring - 监控指标设计
+/server/distribute/micro/qos/performance - 性能优化
+/server/distribute/micro/qos/performance/profiling - 性能分析工具
+/server/distribute/micro/qos/reliability/disaster-recovery - 容灾
+/server/distribute/micro/qos/reliability/failover - 故障转移
+/server/distribute/micro/qos/slashing - 限流降级
+/server/distribute/micro/reliability - 健壮性
+/server/distribute/micro/reliability/fusing - 熔断降级
+/server/distribute/micro/reliability/ratelimit - 限流
+/server/go - Go
+/server/go/gmp - GMP 调度器
+/server/java - Java
+/server/java/basic - 语言基础
+/server/java/jvm - JVM 内存与 GC
+/server/java/mod - 模块系统
+/server/java/mod/gradle - gradle
+/server/java/mod/maven - Maven
+/server/java/spring - Spring
+/server/middleware - 中间件
+/server/middleware/mq - 消息队列
+/server/middleware/mq/kafka - Kafka
+/server/middleware/mq/rabbitmq - RabbitMQ
+/server/middleware/mq/rocketmq - RocketMQ
+/server/middleware/mycat - MyCat
+/server/middleware/proxy - 代理
+/server/middleware/proxy/haproxy - haproxy
+/server/middleware/proxy/lvs - LVS
+/server/middleware/proxy/nginx - Nginx
+/server/middleware/srs - SRS
+/server/network - 网络编程
+/server/network/io-model - I/O 模型
+/server/network/proto - 网络协议
+/server/network/proto/http - HTTP
+/server/network/proto/quic - QUIC
+/server/network/proto/rpc - RPC 框架
+/server/network/proto/tcp - TCP
+/server/network/proto/udp - UDP
+/server/network/proto/websocket - WebSocket
+/server/network/security - 网络安全
+/server/network/tcp-tuning - TCP 调优
+/server/network/zero-copy - 零拷贝
+/server/typical - 典型业务
+/server/typical/auth - 登录鉴权
+/server/typical/flash/sale
+/server/typical/flash_sale - 秒杀活动
+/server/typical/image - 图片上传
+/server/typical/order - 订单管理
+/server/typical/search - 内容搜索
+/server/typical/setup - 快速建站
+/web3 - 去中心化
+/web3/blockchain - 区块链
+/web3/blockchain/consensus - 共识机制
+/web3/blockchain/crypto - 密码学支持
+/web3/blockchain/ethereum - 以太坊
+/web3/blockchain/zk-proof - 零知识证明
+/web3/dapp - DApp
+/web3/dapp/defi - DeFi
+/web3/dapp/tokens - 代币标准
+/web3/dapp/wallets - 账户与钱包
+/web3/solidity - Solidity
+/web3/solidity/smart-contracts - 智能合约</pre>
+</nav><style>#sitemap{display:none}</style>
+    
+    
+  </body>
+</html>
