@@ -106,12 +106,14 @@ RDMA（Remote Direct Memory Access）将协议栈处理从 CPU 卸载到网卡�
 ### SFF 接口家族
 SFF（Small Form Factor）是一组用于高速存储连接的标准，定义了从 SSD 到主板的物理连接器和引脚。
 
-| 标准     | 物理形式    | 承载        | 个人装机可见度            |
-| -------- | ----------- | ----------- | ------------------------- |
-| SFF-8639 | 2.5" 盘端   | PCIe x4     | U.2 SSD 盘体接口          |
-| SFF-8643 | Mini-SAS HD | 4× SAS/SATA | 旧款 RAID 卡到背板        |
-| SFF-8654 | SlimSAS     | PCIe x8     | 主板到 U.2 背板           |
-| SFF-8611 | OCuLink     | PCIe x4     | 外置 GPU 方案、笔记本扩展 |
+| 标准规范    | 行业简称 / 物理形式      | 信号/协议通道                 | 推荐传输速率         |
+| ----------- | ------------------------ | ----------------------------- | -------------------- |
+| SFF-8639    | "U.2 / U.3 (2.5"" 盘端)" | PCIe x4 / SAS / SATA          | PCIe 3.0 / 4.0       |
+| SFF-8643    | Mini-SAS HD              | 4× SAS/SATA 或 PCIe x4        | PCIe 3.0             |
+| SFF-8654    | SlimSAS                  | 4i (x4) / 8i (x8)             | PCIe 3.0 / 4.0       |
+| SFF-8611    | OCuLink                  | PCIe x4 (或 x8)               | PCIe 3.0 / 4.0       |
+| SFF-TA-1001 | EDSFF (E3.S / E1.S)      | PCIe x4 / x8                  | PCIe 5.0 / 6.0       |
+| SFF-TA-1016 | MCIO (Mini Cool Edge)    | 4i (x4) / 8i (x8) / 16i (x16) | PCIe 5.0 / 6.0 / CXL |
 
 U.2 (SFF-8639) 是 2.5 寸企业级 NVMe SSD 的物理接口，本质上是加了外壳和散热片的 M.2 SSD。U.2 的关键价值：热插拔——可以在不关机的情况下更换故障或容量不足的 SSD；更高容量——外壳空间大、可以容纳更多 NAND 颗粒，单盘可达 30TB+；更高写入性能——更多颗粒意味着更高的内部并行度。U.2 SSD 通过 SFF-8639 线缆连接主板上的 SlimSAS 或 OCuLink 口。
 
@@ -120,6 +122,15 @@ U.2 (SFF-8639) 是 2.5 寸企业级 NVMe SSD 的物理接口，本质上是加�
 SlimSAS（SFF-8654），也被称为 Slimline，是服务器主板上最常见的板载高速连接器，单个接口支持 PCIe x8（Gen 4 下约 16 GB/s）。常见的 SlimSAS 线缆将 x8 通道拆成 2 个 x4——分别接两块 U.2 SSD。部分高端主板的 SlimSAS x8 口也可以配置为 2 路 x4 M.2 NVMe SSD。
 
 OCuLink（SFF-8611）物理体积比 SlimSAS 更小，常用于窄空间场景——GPD Win 游戏掌机通过 OCuLink 口外接桌面显卡、笔记本通过 OCuLink 扩展坞走 PCIe 访问外置 GPU。OCuLink x4 Gen 4 约 8 GB/s，约为同代 Thunderbolt 4（40 Gbps ≈ 5 GB/s）的 1.6 倍，且延迟更低——因为 OCuLink 是原生 PCIe 信号，没有 Thunderbolt 的协议封装/解封开销。
+
+| 标准规范    | 个人装机 / DIY 场景可见度                                                                       |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| SFF-8639    | 高：U.2 / U.3 企业级固态硬盘的盘体尾部接口。                                                    |
+| SFF-8643    | 中：旧款阵列卡、服务器背板，以及早期的 U.2 转接线。                                             |
+| SFF-8654    | 中高：PCIe 4.0 时代的主板拆分插座、U.2 拆分背板、主板扩展线。                                   |
+| SFF-8611    | 极高：迷你主机（Mini-PC）扩展外接显卡（eGPU）、M.2 转接卡。                                     |
+| SFF-TA-1001 | 极低（演进中）：下一代企业级 SSD 形态，正在逐步取代 U.2。                                       |
+| SFF-TA-1016 | 快速上升：PCIe 5.0 工作站/服务器主板（如 AMD TRX50/WRX90）标配，极客玩家用来转接 PCIe 5.0 SSD。 |
 
 ### MCIO (SFF-TA-1016)
 MCIO（Multi-Channel I/O，SFF-TA-1016）是 2023 年后出现的新一代高密度板对板连接器，由 Intel 和 PCI-SIG 推动标准化。与 SlimSAS 的单一宽口设计不同，MCIO 将多个独立 PCIe 通道组聚合在一个小型连接器内，每个 MCIO 口支持 8 条或 16 条 PCIe 通道。

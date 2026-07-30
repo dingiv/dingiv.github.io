@@ -95,6 +95,39 @@ ps:
 
 总体来说，未来在 GUI 领域，除了原生语言在各家的平台有一席之地，跨平台领域就是 JavaScript、Dart 和 Rust 的天下。
 
+## UI 框架成熟度评判维度
+选框架不能只看"谁更快"或"谁更火"。以 Web 前端（HTML/CSS/JS + React/Vue 生态）作为基准标尺——这是经过二十年演进、在开发体验上最完备的参照系——可以将 UI 框架的评判拆解为多个正交维度。这些维度不是"越多越好"——不同项目对维度的权重分配完全不同。一个嵌入式温控器面板和一个企业 SaaS 后台需要的框架，在同一个维度上可能有相反的取舍。
+
+### 多维度评估体系
+**渲染能力与性能**：GPU 加速级别、帧率稳定性、渲染管线是否自研还是依赖平台控件。自绘制引擎（Flutter Impeller、Qt、iced 的 wgpu）跨平台一致性好但需要自己解决平台适配；平台原生控件（SwiftUI、WinUI）性能最优但跨平台零分。Web 的 Canvas/WebGL 经多年优化能稳住 60fps，但内存基线高（Electron 空壳 ~150MB，原生壳 ~10-40MB）。
+
+**语法与范式**：声明式还是命令式、UI 代码与业务逻辑的关系、状态管理的内置程度。JSX（React/Solid）和 Vue SFC 是当前声明式最成熟的两个方向。Flutter 的嵌套 widget 树在深层嵌套时难以阅读。Elm 架构（iced）中心化状态，类型安全但样板多。即时模式（egui、Dear ImGui）代码最少但性能上限低于保留模式。范式本身无优劣——但生态分裂（如 Rust 同时存在 Elm、即时、DSL、Signals 四种范式）会增加学习成本和切换框架的摩擦。
+
+**样式与布局**：布局引擎能力（Flexbox/Grid/绝对定位）、声明样式的便利性、主题系统。Web 的 CSS + TailwindCSS 是满分基准——样式与结构分离、媒体查询、伪类、动画全部在统一的属性系统中。Flutter 的 `Container(padding: ..., margin: ...)` 链式调用直观但深层嵌套时定位属性源头困难。Qt 的 QSS 是 CSS 子集但调试不便。原生框架（iced/egui）的样式能力最弱——布局靠链式调用或 DSL，一个"带模糊阴影 + Hover 缩放的卡片"可能需要手写 Canvas 绘制。
+
+**组件库生态**：开箱即用的高阶组件数量和质量——表格、树形视图、日期选择器、富文本编辑器、图表。Web 的 AntD/Shadcn UI/MUI 有成百上千生产级组件。Flutter 的 pub.dev 组件生态紧随其后。Qt 的 QWidget 丰富但外观陈旧。Rust 原生 UI 是最大的短板——仅提供 Button/Text 等原子组件，iced_aw 的丰富度相当于 Web 十年前。组件库的丰富度直接决定开发速度——从零写一个带筛选排序的树形表格需要对框架和 Canvas 的深入理解，而 Web 开发者在 npm install 后 10 分钟就能接入。
+
+**开发体验与工具链**：热重载速度、DevTools/Inspector、调试能力、错误提示质量。Web 的"改 CSS → 50ms 局部刷新"和 F12 Elements Inspector 是黄金标准。Flutter 的 Hot Reload（毫秒级）和 DevTools widget inspector 紧随其后。Qt Creator 的 Designer 拖拽方式对简单 UI 效率高但复杂交互力不从心。编译型语言（Rust/C++）即使增量编译也要 2-5 秒，反馈回路延迟拖垮 UI 调优节奏。
+
+**打包与分发**：二进制体积、依赖管理、安装体验、自动更新。Rust 和 Go 产出单一静态二进制——无运行时依赖、复制即运行——是打包的满分。Flutter 的 release 构建约 10-30MB（移动端）到 50-100MB（桌面端）。Electron 的 ~120MB 基线（捆绑 Chromium）是这一项的最差选手，但 Tauri（3-6MB 壳 + 复用系统 WebView）证明了 Web 技术栈也可以做到小体积。
+
+**跨平台一致性**：同一套代码在 Windows/Mac/Linux/iOS/Android 上的外观和行为差异程度。自绘制引擎（Flutter/Qt）能做到像素级一致但可能不遵循平台 UI 规范（macOS 用户期望的 Aqua 风格、Windows 用户期望的 Fluent 风格）。平台原生控件（SwiftUI/WinUI）在各自平台上完美，但跨平台需要重新编写。Web 套壳的一致性来自"浏览器的一致性"——在 99% 的场景下表现一致，但 WebView 版本差异（特别是 Linux 的 WebKitGTK）是隐藏陷阱。
+
+**原生能力与权限**：文件系统、摄像头、通知、蓝牙、剪贴板、系统托盘、全局快捷键。Web 浏览器有严格的安全沙箱——不能随意访问文件系统、不能注册全局快捷键、后台运行时可能被系统挂起。原生框架拥有完整系统权限——但权限管理依赖开发者自己实现（Electron 有内容安全策略 CSP，Tauri 有编译时权限声明）。移动端的权限模型（Android/iOS 的运行时权限弹窗）只有原生或 Flutter/React Native 等有平台桥接的框架能正确实现。
+
+**动画与交互流畅度**：内置动画原语、手势系统、过渡质量、滚动性能。SwiftUI 的 `matchedGeometryEffect` 和 `spring()` 动画是当前第一梯队——系统级动画 API，帧率稳定。Flutter 的 AnimationController + Tween 体系统一但代码量大。Web 的 CSS transition + Framer Motion 等库覆盖了大部分需求。原生框架（Qt 的 QPropertyAnimation、iced 的基础 transition）能力有限。
+
+**社区、人才与长期维护**：GitHub star 数、Stack Overflow 问答量、招聘市场供需、核心维护者数量和公司背书。React/Electron/Flutter 由 Meta/Google 主推——不会突然停更。Qt 由 Qt Company 维护——商业许可问题始终存在。SwiftUI/WinUI 由苹果/微软维护——只服务于自家平台。社区活跃度直接影响 Bug 修复速度和入门教程的丰富度。
+
+**学习曲线与团队适配**：从零到能开发一个中等复杂度的应用需要多少时间。Web 前端开发者基数最大——Electron/Tauri 的学习成本仅在于 IPC 通信和原生能力调用，UI 部分零额外成本。Flutter 需要学 Dart + Widget 树思想，从 JS 转型需 2-4 周。Qt 需要学 C++ + MOC 预处理器 + 信号槽机制，学习曲线陡峭。SwiftUI 语法简洁但 Combine/async-await + 平台绑定限制了团队迁移灵活性。
+
+### 维度没有绝对权重
+这个矩阵不是为了给出一个"总分最高"的答案——同一维度对不同类型的项目有截然不同的权重。一个企业 SaaS 后台的权重排序是：组件库 > 开发工具链 > 跨平台一致性 > 样式与布局 > 社区；渲染性能排最后——60fps 的表格和 120fps 的表格对用户无感知差异。一个嵌入式温控器面板的权重排序是：性能 > 打包体积 > 嵌入式支持 > 渲染管线透明度；组件库完全不重要——总共就几个按钮和数字显示。
+
+核心结论：**没有全维度领先的框架——只有短板可以被你承受的框架。** 评估框架的正确方式不是看总分，而是把你项目的三到五个关键维度拉出来做雷达图比对——关键维度上落后两个以上的框架直接排除，其余候选者再做 PoC 验证实际开发体验。
+
+<style scoped>
+
 <style scoped>
    td {
       width: 20%;
