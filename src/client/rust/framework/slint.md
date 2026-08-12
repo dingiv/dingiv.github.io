@@ -9,7 +9,7 @@ Slint 是 Rust 生态中唯一将"嵌入式设备"作为一等目标的 UI 框�
 ## 声明式 UI 语言
 Slint 使用自己的 `.slint` DSL 描述 UI，语法接近声明式 JSON/YAML 但加入了响应式绑定（类似 QML）。UI 和逻辑分离——`.slint` 文件定义界面结构和布局，Rust（或 C++/JS）代码处理业务逻辑。
 
-```slint
+```txt
 // ui.slint
 export component MainWindow {
     width: 400px;
