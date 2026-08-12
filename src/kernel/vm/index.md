@@ -13,3 +13,10 @@ order: 40
 + VirtualBox：Oracle 开发的开源虚拟化工具，Type-2 虚拟化管理程序，运行在主机 OS 上，用于桌面虚拟化、开发测试等；
 + Android Emulator：安卓设备模拟器，Type-2 全虚拟，用于在 PC 开发机模拟安卓设备，进行开发测试；
 + Xcode Simulator：IOS 设备模拟器，Type-2，用于在 PC 开发机模拟 IOS 设备，进行开发测试；
+
+### 调试与高性能 IO
+虚拟化不仅是运行虚拟机的技术，也是内核调试和高性能 IO 的基础设施：
+
++ [QEMU 内核调试](qemu)——GDB stub、串口控制台、oops/panic/kdump 错误捕获、调试用 initramfs
++ [虚拟机调试增强](debug)——QEMU Monitor 观察物理内存、设备寄存器访问监控（guest_errors/trace-events）、与 GDB 配合
++ [SPDK 与 DPDK](spdk-dpdk)——用户态数据面技术，绕开内核 IO 路径，虚拟化高性能网络的基石

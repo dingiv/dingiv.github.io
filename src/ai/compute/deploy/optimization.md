@@ -155,13 +155,11 @@ llama-cli -m model.gguf -ngl 20 -t 14
 混合推理的性能天花板很明确——CPU 卸载层数每增加 10%，Decode 速度约下降 30-50%。如果卸载层数超过总数的 50%，不如考虑更强的量化（Q3_K_M 甚至 IQ2_XXS）让更多层放进 GPU。
 
 ### MoE 稀疏激活：天然的卸载窗口
-
 前面讨论的传统混合推理有一个隐含假设：模型是 Dense 架构，每层每个 token 都要经过，CPU 卸载的层每个 token 都要付 PCIe 传输代价。这个假设在 MoE 模型中不成立——每个 token 只激活 256 个 routed expert 中的 top-2，99% 的 expert 权重对当前 token 完全不需要。
 
 这个架构特性打开了传统混合推理无法企及的优化窗口——不需要把所有层都放在 GPU 上，只需确保"每个 token 必经"的模块在 GPU，其余按需从 CPU 加载。而且这个方向已经从理论走到了工程落地。
 
 #### 为什么 MoE 卸载比 Dense 卸载有效得多
-
 MoE 模型天然把模型拆成了两个不同的卸载策略域：
 
 **必须在 GPU**：Attention 层、Embedding、Shared Expert（DeepSeek-V3 中每个 token 必经）。这些约占模型总参数的 10-15%——参数量不大，显存压力小。
@@ -171,7 +169,6 @@ MoE 模型天然把模型拆成了两个不同的卸载策略域：
 关键不是"少加载数据"，而是 MoE 路由分布的高度不均匀使缓存极其有效。15-20% 的 expert 接收了 ~80% 的路由流量——自然形成 hot/cold 分层。**SMOE**（IPDPS 2026）和 **HybriMoE**（DAC 2025）的实测数据证实了这个假设：大 batch 下 Prefill 加速达 8.68 倍，Decode 加速 20-70%。
 
 #### 当前落地状态（2026 年中）
-
 这个方向在 2025-2026 年从学术论文快速进入了框架实现。核心方案已经收敛为四组件组合：
 
 **Expert 缓存**：GPU 上维护固定大小的 hot expert 缓存，通过 LFRU（频率加权 LRU）驱逐策略保留高频 expert。vLLM RFC #38256 的方案用 `score = frequency / age` 计算驱逐优先级，保留接收 50%+ 流量的"hub expert"。在 8GB GPU 上实测达到 97-100% 缓存命中率，decode 速度 30 tok/s。缓存未命中时，vLLM 的设计是报错而非静默降级到 CPU 计算——保持性能预期的确定性。
@@ -183,7 +180,6 @@ MoE 模型天然把模型拆成了两个不同的卸载策略域：
 **Pinned memory + 双缓冲**：所有 expert 权重驻留在 CPU 的 pinned memory（`cudaHostRegister`）中——这不是普通的 `malloc`，而是被 GPU DMA 引擎可直接访问的内存。结合双缓冲机制（一个 buffer 被 DMA 填充时，另一个 buffer 正被 GPU 计算使用），传输和计算完全流水线化。
 
 #### 消费级硬件实测数据
-
 llama.cpp/ik 分支使用 `--override-tensor exps=CPU` 将 routed expert 放在 CPU，attention + shared expert 保持在 GPU（MLA 支持下 32K 上下文 < 24GB VRAM）。DeepSeek V3 IQ2_K_R4 量化（24GB GPU + 96GB RAM）实测：
 
 - Prefill：从全 GPU 模式（如果装得下）的数百 ms 级到 1-2s——可接受
@@ -193,7 +189,6 @@ llama.cpp/ik 分支使用 `--override-tensor exps=CPU` 将 routed expert 放在 
 双路 EPYC 服务器通过 NUMA-aware expert 分配（每个 NUMA 节点本地存储一半 expert），跨节点延迟降低 2-5×，token 生成速度提升 10-25%。
 
 #### 与传统混合推理的对比
-
 | 维度 | Dense 混合推理 | MoE Expert 卸载 |
 |------|-------------|---------------|
 | 卸载粒度 | 整层（Attention+FFN） | 单个 expert |
