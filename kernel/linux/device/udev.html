@@ -6,9 +6,9 @@
     <title>udev | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.4b19c741.js"></script>
+    <script src="/assets/site-data.dd646087.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -46,7 +46,7 @@
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 触发特定子系统的设备事件</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">udevadm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> trigger</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --subsystem-match=net</span></span></code></pre></div><h2 id="内核模块自动加载" tabindex="-1">内核模块自动加载 <a class="header-anchor" href="#内核模块自动加载" aria-label="Permalink to “内核模块自动加载”">​</a></h2><p>udev 还负责在检测到新设备时自动加载相应的内核模块。当内核检测到设备但缺少驱动时，会发送 uevent 事件，udevd 根据设备的 <code>MODALIAS</code> 属性查找匹配的内核模块并加载。</p><p>模块别名信息存储在 <code>/lib/modules/$(uname -r)/modules.alias</code> 文件中，这个文件在内核模块安装时由 depmod 工具生成。如果需要禁用某个设备的自动加载，可以在 <code>/etc/modprobe.d/</code> 目录下创建 blacklist 配置：</p><div class="language-"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span># 禁止自动加载 pcspkr 模块</span></span>
-<span class="line"><span>blacklist pcspkr</span></span></code></pre></div><h2 id="与-systemd-的集成" tabindex="-1">与 systemd 的集成 <a class="header-anchor" href="#与-systemd-的集成" aria-label="Permalink to “与 systemd 的集成”">​</a></h2><p>在现代 Linux 系统中，udevd 已经被集成到 systemd 中，成为 systemd-udevd 服务。systemd 通过 udev 规则来管理设备，同时利用设备事件来触发服务启动。例如，当某个 USB 网卡插入时，systemd 可以自动启动网络配置服务；当某个存储设备插入时，可以自动启动备份服务。</p><p>这种设备事件驱动的服务启动机制，使得系统可以根据实际硬件情况动态调整服务状态，实现了更加智能和高效的资源管理。</p><h2 id="故障排查" tabindex="-1">故障排查 <a class="header-anchor" href="#故障排查" aria-label="Permalink to “故障排查”">​</a></h2><p>udev 相关的故障通常表现为设备节点未创建、权限不正确、规则不生效等问题。排查时首先查看 udevd 日志：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">journalctl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -u</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> systemd-udevd</span></span></code></pre></div><p>使用 <code>udevadm monitor</code> 确认内核是否发送了设备事件，如果没有事件，问题可能在内核驱动层。如果有事件但规则未生效，使用 <code>udevadm test</code> 查看规则匹配过程，检查规则语法和优先级。</p><p>设备属性信息是编写规则的基础，使用 <code>udevadm info --attribute-walk</code> 可以获取设备的完整属性树，帮助找到稳定的匹配键。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/device/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>设备管理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/device/dma" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>DMA</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span>blacklist pcspkr</span></span></code></pre></div><h2 id="与-systemd-的集成" tabindex="-1">与 systemd 的集成 <a class="header-anchor" href="#与-systemd-的集成" aria-label="Permalink to “与 systemd 的集成”">​</a></h2><p>在现代 Linux 系统中，udevd 已经被集成到 systemd 中，成为 systemd-udevd 服务。systemd 通过 udev 规则来管理设备，同时利用设备事件来触发服务启动。例如，当某个 USB 网卡插入时，systemd 可以自动启动网络配置服务；当某个存储设备插入时，可以自动启动备份服务。</p><p>这种设备事件驱动的服务启动机制，使得系统可以根据实际硬件情况动态调整服务状态，实现了更加智能和高效的资源管理。</p><h2 id="故障排查" tabindex="-1">故障排查 <a class="header-anchor" href="#故障排查" aria-label="Permalink to “故障排查”">​</a></h2><p>udev 相关的故障通常表现为设备节点未创建、权限不正确、规则不生效等问题。排查时首先查看 udevd 日志：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">journalctl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -u</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> systemd-udevd</span></span></code></pre></div><p>使用 <code>udevadm monitor</code> 确认内核是否发送了设备事件，如果没有事件，问题可能在内核驱动层。如果有事件但规则未生效，使用 <code>udevadm test</code> 查看规则匹配过程，检查规则语法和优先级。</p><p>设备属性信息是编写规则的基础，使用 <code>udevadm info --attribute-walk</code> 可以获取设备的完整属性树，帮助找到稳定的匹配键。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/device/iommu" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>IOMMU</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/device/dma" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>DMA</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -126,6 +126,7 @@
 /ai/compute/deploy/hardware - 硬件
 /ai/compute/deploy/llmops - LLMOps
 /ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/onnx-deploy - ONNX 部署
 /ai/compute/deploy/optimization - 推理优化
 /ai/compute/deploy/quantization - 模型量化
 /ai/compute/deploy/serving - 服务部署
@@ -247,9 +248,9 @@
 /client/csharp/async - 异步编程
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet</pre>
-<pre>/client/csharp/unity - Unity
+/client/csharp/msbuild - MSBuild</pre>
+<pre>/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
@@ -258,15 +259,15 @@
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
-/client/gui/cross - 跨平台
-/client/gui/cross/electron - Electron
-/client/gui/cross/flutter - Flutter
-/client/gui/cross/flutter/dart - Dart
-/client/gui/cross/framework - UI 框架
-/client/gui/cross/reactnative - ReactNative
 /client/gui/ergonomic - 人机关系
 /client/gui/ergonomic/interact - 人机交互
 /client/gui/ergonomic/screen - 屏幕
+/client/gui/framework - UI 框架
+/client/gui/framework/cross - 跨平台
+/client/gui/framework/electron - Electron
+/client/gui/framework/flutter - Flutter
+/client/gui/framework/flutter/dart - Dart
+/client/gui/framework/reactnative - ReactNative
 /client/gui/platform - UI 平台
 /client/gui/platform/android - Android
 /client/gui/platform/gnome - Gnome
@@ -310,18 +311,20 @@
 /client/render/vec/compose
 /client/render/vec_compose - 矢量合成管线
 /client/rust - Rust
-/client/rust/assets - 静态资源管理
 /client/rust/basic - 语言基础
+/client/rust/basic/assets - 静态资源管理
 /client/rust/basic/closure - 闭包
+/client/rust/basic/ld - 链接库
 /client/rust/basic/macro - 宏
 /client/rust/basic/mod - 模块系统
 /client/rust/basic/ref - 智能指针
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/ld - 链接库
-/client/rust/slint - Slint
-/client/rust/tauri - Tauri
+/client/rust/framework - Rust UI 框架
+/client/rust/framework/iced - iced
+/client/rust/framework/slint - Slint
+/client/rust/framework/tauri - Tauri
 /client/rust/wasm - WASM
 /client/web - Web
 /client/web/api - Web API
@@ -445,12 +448,15 @@
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式
-/design/typical/ability - 质量属性
+/design/typical - 经典范式</pre>
+<pre>/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配</pre>
-<pre>/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/maintainability - 可读性与可维护性
 /design/typical/refactor - 重构
+/design/typical/reliability - 可靠性与可用性
+/design/typical/requirements - 需求分析
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
 /examples - 随便看看
@@ -498,7 +504,9 @@
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
 /kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/threadripper - Threadripper 装机
 /kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/motherboard/xeon - Xeon 装机
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -517,10 +525,12 @@
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
 /kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/stream-block - 流式与块式存取
 /kernel/linux/develop/struct - 数据结构
 /kernel/linux/develop/struct/iov - 聚簇读写
 /kernel/linux/develop/struct/linked - 链表
 /kernel/linux/develop/systemd - systemd
+/kernel/linux/develop/zero-copy - sendfile 零拷贝
 /kernel/linux/device - 设备管理
 /kernel/linux/device/dma - DMA
 /kernel/linux/device/driver - 驱动接口
@@ -528,6 +538,7 @@
 /kernel/linux/device/driver/pci - PCIe 驱动
 /kernel/linux/device/driver/usb - USB 驱动
 /kernel/linux/device/driver/virtio
+/kernel/linux/device/iommu - IOMMU
 /kernel/linux/device/lifecycle - 生命周期
 /kernel/linux/device/udev - udev
 /kernel/linux/file - 文件管理
@@ -549,8 +560,9 @@
 /kernel/linux/power/boot - 开机上电
 /kernel/linux/power/tpm - 安全启动
 /kernel/linux/process - 进程管理
+/kernel/linux/process/cgroup - Cgroup
 /kernel/linux/process/ipc - IPC
-/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/namespace - 命名空间
 /kernel/linux/process/schd - 调度
 /kernel/linux/process/security - 权限管理
 /kernel/linux/syscall - 系统调用
@@ -568,7 +580,9 @@
 /kernel/vm/basic/cpu - CPU
 /kernel/vm/basic/device - 设备
 /kernel/vm/basic/memory - 内存
-/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/debug - 虚拟机调试增强
+/kernel/vm/qemu - QEMU 内核调试
+/kernel/vm/spdk-dpdk - SPDK 与 DPDK
 /kernel/vm/vfio - VFIO
 /kernel/vm/virtio - VirtIO
 /sde - 工程化
@@ -634,8 +648,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL
-/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL</pre>
+<pre>/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -648,8 +662,8 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法</pre>
-<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID

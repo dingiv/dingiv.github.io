@@ -3,23 +3,40 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Qemu/KVM | Spark Notes</title>
+    <title>QEMU 内核调试 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.4b19c741.js"></script>
+    <script src="/assets/site-data.dd646087.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/kernel_vm_qemu.md.Bj2UkBEu.lean.js">
+    <link rel="modulepreload" href="/assets/kernel_vm_qemu.md.6QDktZ7m.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
   </head>
   <body>
-    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _kernel_vm_qemu" data-v-e9c23681><div><h1 id="qemu" tabindex="-1">Qemu <a class="header-anchor" href="#qemu" aria-label="Permalink to “Qemu”">​</a></h1><p>Qemu 是一个开源的跨平台模拟器，主要运行在 Linux 上。它可以模拟各种硬件设备，包括 CPU、内存、网络、存储等，从而实现了对硬件设备的虚拟化。允许用户在一台物理机器上运行多个虚拟机。</p><p>Qemu 的优点是兼容性好，可以运行各种操作系统和应用程序，缺点是性能较低，因为所有的虚拟化操作都需要通过软件来实现。</p><h2 id="kvm-硬件加速" tabindex="-1">kvm 硬件加速 <a class="header-anchor" href="#kvm-硬件加速" aria-label="Permalink to “kvm 硬件加速”">​</a></h2><p>在 linux 平台上，</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/vm/basic/memory" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>内存</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/vm/vfio" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>VFIO</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _kernel_vm_qemu" data-v-e9c23681><div><h1 id="qemu-内核调试" tabindex="-1">QEMU 内核调试 <a class="header-anchor" href="#qemu-内核调试" aria-label="Permalink to “QEMU 内核调试”">​</a></h1><p>QEMU 对内核开发者的价值远超&quot;跑一个虚拟机&quot;——它是内核调试最顺手的工具。真实的硬件调试需要 JTAG 探针、串口线缆和一块可能被调试错误烧毁的开发板，而 QEMU 把这一切虚拟化：GDB 可以附加到虚拟机内的任意状态、串口输出直接重定向到终端、物理内存和寄存器随时可以检查。内核开发中最有价值的反馈回路——&quot;修改 → 编译 → 启动 → 观察&quot;——在 QEMU 中可以被压缩到几十秒。</p><h2 id="gdb-调试内核" tabindex="-1">GDB 调试内核 <a class="header-anchor" href="#gdb-调试内核" aria-label="Permalink to “GDB 调试内核”">​</a></h2><p>QEMU 内置 GDB stub——在用户态模拟虚拟机的 CPU 状态，等待 GDB 连接。启动参数 <code>-s -S</code> 的含义：<code>-s</code> 在 TCP 1234 端口开放 GDB 服务，<code>-S</code> 让虚拟机在第一条指令处暂停等待调试器。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 启动内核调试会话</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">qemu-system-x86_64</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -kernel</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> bzImage</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -initrd</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> initramfs.cpio.gz</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -append</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;console=ttyS0 nokaslr&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -s</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -S</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -nographic</span></span></code></pre></div><p><code>nokaslr</code> 是内核调试的标配——KASLR 让内核地址每次启动随机化，调试符号和断点会全部失效。在另一个终端连接 GDB：</p><div class="language-gdb"><button title="Copy Code" class="copy"></button><span class="lang">gdb</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span># gdb vmlinux</span></span>
+<span class="line"><span>(gdb) target remote :1234</span></span>
+<span class="line"><span>(gdb) b start_kernel</span></span>
+<span class="line"><span>(gdb) c</span></span></code></pre></div><p>断点命中后，<code>bt</code> 查看调用栈、<code>info registers</code> 查看寄存器、<code>x/20x $rsp</code> 查看栈内容——与调试普通用户态程序完全相同的体验，但被调试对象是内核启动早期的代码。</p><p>调试内核模块的常用技巧：模块在加载时地址动态分配，断点需要延迟设置。先在 <code>module_init</code> 函数入口打断点确认模块代码段基址，再根据符号偏移计算内部函数的实际地址：</p><div class="language-gdb"><button title="Copy Code" class="copy"></button><span class="lang">gdb</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span># 模块加载后</span></span>
+<span class="line"><span>(gdb) p &amp;my_module_init      # 得到模块加载基址</span></span>
+<span class="line"><span>(gdb) b *($lx_symbol(&quot;my_driver_ioctl&quot;) )   # 计算偏移后的实际地址</span></span></code></pre></div><h2 id="串口控制台-内核的眼睛" tabindex="-1">串口控制台：内核的眼睛 <a class="header-anchor" href="#串口控制台-内核的眼睛" aria-label="Permalink to “串口控制台：内核的眼睛”">​</a></h2><p><code>-nographic</code> 把虚拟串口重定向到当前终端，内核启动参数 <code>console=ttyS0</code> 让内核的 printk 输出走串口。这解决了内核调试最基础的痛点——内核启动早期的日志在图形控制台上稍纵即逝，串口输出则可以完整捕获、搜索、保存。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 将串口输出同时保存到文件</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">qemu-system-x86_64</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -kernel</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> bzImage</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -initrd</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> initramfs.cpio.gz</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -append</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;console=ttyS0 nokaslr&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -nographic</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> tee</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> boot.log</span></span></code></pre></div><p>对于调试 panic 场景，串口是唯一可靠的输出通道——panic 时图形栈和网络栈都可能已经损坏，但串口驱动是内核中最早初始化、最晚失效的组件。<code>panic=-1</code> 参数让内核 panic 后立即重启，配合串口日志可以自动化&quot;反复崩溃采集&quot;的循环。</p><h2 id="内核错误捕获机制" tabindex="-1">内核错误捕获机制 <a class="header-anchor" href="#内核错误捕获机制" aria-label="Permalink to “内核错误捕获机制”">​</a></h2><p>QEMU 环境适合练习内核的各种错误捕获手段，因为可以安全地制造崩溃。</p><p><strong>oops 消息</strong>：内核在非致命错误（空指针解引用、栈溢出）时打印的调用栈回溯。<code>oops=panic</code> 让 oops 升级为 panic，避免状态继续恶化。oops 输出的函数地址可以用 <code>scripts/faddr2line</code> 工具解析为源码位置。</p><p><strong>panic 与 kdump</strong>：panic 是内核检测到不可恢复错误后的停机。kdump 机制在 panic 时用 kexec 启动一个专门的内核（dump 内核）来保存崩溃现场的内存镜像（vmcore），供事后用 crash 工具分析。QEMU 中练习 kdump 需要额外传递 crashkernel 参数：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">-append</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;console=ttyS0 nokaslr crashkernel=128M&quot;</span></span></code></pre></div><p><strong>动态探针</strong>：ftrace 和 kprobe 在运行中的内核插入探测点，不需要重新编译。kprobe 可以在任意函数的入口和返回点打印参数：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">echo</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &#39;p:my_probe do_sys_open filename=+0(%si):string&#39;</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &gt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> /sys/kernel/debug/tracing/kprobe_events</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">echo</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &gt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> /sys/kernel/debug/tracing/events/kprobes/my_probe/enable</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">cat</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> /sys/kernel/debug/tracing/trace</span></span></code></pre></div><p>这些机制在 QEMU 中的价值是练习&quot;如何定位问题&quot;——真实生产环境的内核崩溃只会给你一份 vmcore 或一段 oops，在 QEMU 中熟悉了分析工具的使用，生产排障时才不会手忙脚乱。</p><h2 id="调试用-initramfs" tabindex="-1">调试用 initramfs <a class="header-anchor" href="#调试用-initramfs" aria-label="Permalink to “调试用 initramfs”">​</a></h2><p>内核调试的另一个基础设施是定制 initramfs。BusyBox 编译的最小 initramfs（几 MB）启动快、行为可控，是内核启动早期调试的标准环境。对于文件系统层的调试，QEMU 的 <code>-drive</code> 挂载磁盘镜像可以模拟任意块设备行为，而 <code>-virtfs</code> 通过 9p 协议直通宿主机目录，让虚拟机内的操作直接反映到宿主机文件系统——这在内核模块开发和测试时极其方便。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 9p 共享目录：虚拟机内 mount -t 9p hostshare /mnt</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">qemu-system-x86_64</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -kernel</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> bzImage</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -initrd</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> initramfs.cpio.gz</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -virtfs</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> local,path=./shared,mount_tag=hostshare,security_model=none</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -append</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;console=ttyS0 nokaslr&quot;</span></span></code></pre></div><p>一个值得建立的工程习惯：为内核调试维护一份专用的 QEMU 启动脚本和 initramfs——脚本固定所有参数（GDB 端口、串口重定向、调试内核参数），initramfs 预装调试工具（crash、perf、调试符号）。内核调试的频率远低于应用调试，如果不预先准备好环境，每次调试都要重新摸索参数——环境的不确定性会在最需要专注的时候消耗注意力。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/vm/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>虚拟化</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/vm/debug" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>虚拟机调试增强</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -99,6 +116,7 @@
 /ai/compute/deploy/hardware - 硬件
 /ai/compute/deploy/llmops - LLMOps
 /ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/onnx-deploy - ONNX 部署
 /ai/compute/deploy/optimization - 推理优化
 /ai/compute/deploy/quantization - 模型量化
 /ai/compute/deploy/serving - 服务部署
@@ -220,9 +238,9 @@
 /client/csharp/async - 异步编程
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet</pre>
-<pre>/client/csharp/unity - Unity
+/client/csharp/msbuild - MSBuild</pre>
+<pre>/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
@@ -231,15 +249,15 @@
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
-/client/gui/cross - 跨平台
-/client/gui/cross/electron - Electron
-/client/gui/cross/flutter - Flutter
-/client/gui/cross/flutter/dart - Dart
-/client/gui/cross/framework - UI 框架
-/client/gui/cross/reactnative - ReactNative
 /client/gui/ergonomic - 人机关系
 /client/gui/ergonomic/interact - 人机交互
 /client/gui/ergonomic/screen - 屏幕
+/client/gui/framework - UI 框架
+/client/gui/framework/cross - 跨平台
+/client/gui/framework/electron - Electron
+/client/gui/framework/flutter - Flutter
+/client/gui/framework/flutter/dart - Dart
+/client/gui/framework/reactnative - ReactNative
 /client/gui/platform - UI 平台
 /client/gui/platform/android - Android
 /client/gui/platform/gnome - Gnome
@@ -283,18 +301,20 @@
 /client/render/vec/compose
 /client/render/vec_compose - 矢量合成管线
 /client/rust - Rust
-/client/rust/assets - 静态资源管理
 /client/rust/basic - 语言基础
+/client/rust/basic/assets - 静态资源管理
 /client/rust/basic/closure - 闭包
+/client/rust/basic/ld - 链接库
 /client/rust/basic/macro - 宏
 /client/rust/basic/mod - 模块系统
 /client/rust/basic/ref - 智能指针
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/ld - 链接库
-/client/rust/slint - Slint
-/client/rust/tauri - Tauri
+/client/rust/framework - Rust UI 框架
+/client/rust/framework/iced - iced
+/client/rust/framework/slint - Slint
+/client/rust/framework/tauri - Tauri
 /client/rust/wasm - WASM
 /client/web - Web
 /client/web/api - Web API
@@ -418,12 +438,15 @@
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式
-/design/typical/ability - 质量属性
+/design/typical - 经典范式</pre>
+<pre>/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配</pre>
-<pre>/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/maintainability - 可读性与可维护性
 /design/typical/refactor - 重构
+/design/typical/reliability - 可靠性与可用性
+/design/typical/requirements - 需求分析
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
 /examples - 随便看看
@@ -471,7 +494,9 @@
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
 /kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/threadripper - Threadripper 装机
 /kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/motherboard/xeon - Xeon 装机
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -490,10 +515,12 @@
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
 /kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/stream-block - 流式与块式存取
 /kernel/linux/develop/struct - 数据结构
 /kernel/linux/develop/struct/iov - 聚簇读写
 /kernel/linux/develop/struct/linked - 链表
 /kernel/linux/develop/systemd - systemd
+/kernel/linux/develop/zero-copy - sendfile 零拷贝
 /kernel/linux/device - 设备管理
 /kernel/linux/device/dma - DMA
 /kernel/linux/device/driver - 驱动接口
@@ -501,6 +528,7 @@
 /kernel/linux/device/driver/pci - PCIe 驱动
 /kernel/linux/device/driver/usb - USB 驱动
 /kernel/linux/device/driver/virtio
+/kernel/linux/device/iommu - IOMMU
 /kernel/linux/device/lifecycle - 生命周期
 /kernel/linux/device/udev - udev
 /kernel/linux/file - 文件管理
@@ -522,8 +550,9 @@
 /kernel/linux/power/boot - 开机上电
 /kernel/linux/power/tpm - 安全启动
 /kernel/linux/process - 进程管理
+/kernel/linux/process/cgroup - Cgroup
 /kernel/linux/process/ipc - IPC
-/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/namespace - 命名空间
 /kernel/linux/process/schd - 调度
 /kernel/linux/process/security - 权限管理
 /kernel/linux/syscall - 系统调用
@@ -541,7 +570,9 @@
 /kernel/vm/basic/cpu - CPU
 /kernel/vm/basic/device - 设备
 /kernel/vm/basic/memory - 内存
-/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/debug - 虚拟机调试增强
+/kernel/vm/qemu - QEMU 内核调试
+/kernel/vm/spdk-dpdk - SPDK 与 DPDK
 /kernel/vm/vfio - VFIO
 /kernel/vm/virtio - VirtIO
 /sde - 工程化
@@ -607,8 +638,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL
-/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL</pre>
+<pre>/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -621,8 +652,8 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法</pre>
-<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID

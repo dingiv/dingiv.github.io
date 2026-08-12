@@ -6,45 +6,49 @@
     <title>ONNX | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.4b19c741.js"></script>
+    <script src="/assets/site-data.dd646087.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/ai_compute_format_onnx.md.uVTt4zLD.lean.js">
+    <link rel="modulepreload" href="/assets/ai_compute_format_onnx.md.DGoYp61s.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
   </head>
   <body>
-    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _ai_compute_format_onnx" data-v-e9c23681><div><h1 id="onnx" tabindex="-1">ONNX <a class="header-anchor" href="#onnx" aria-label="Permalink to “ONNX”">​</a></h1><p>ONNX（Open Neural Network Exchange）是 Microsoft 和 Facebook 主推的开放式神经网络交换格式，旨在实现 AI 模型的跨框架互操作性。ONNX 定义了一套标准的算子集合和序列化格式，使得在一个框架（如 PyTorch）中训练的模型可以导出到另一个框架（如 TensorFlow、ONNX Runtime）中进行推理。</p><h2 id="onnx-生态" tabindex="-1">ONNX 生态 <a class="header-anchor" href="#onnx-生态" aria-label="Permalink to “ONNX 生态”">​</a></h2><p>ONNX 生态包含三个核心组件：ONNX 格式（模型序列化）、ONNX Operators（标准算子集）、ONNX Runtime（高性能推理引擎）。ONNX 格式使用 Protocol Buffers 序列化，包含模型结构（计算图）、权重、元数据。ONNX Operators 定义了数百个标准算子（如 Conv、MatMul、Softmax），各推理引擎只需实现这些算子即可运行任何 ONNX 模型。</p><p>ONNX 的核心价值在于<strong>解耦</strong>——训练框架和推理引擎可以独立演进。研究者可以用 PyTorch 快速实验，工程师用 ONNX Runtime 部署到生产环境，企业用 TensorRT 加速到 NVIDIA GPU，医生用 CoreML 部署到 iPhone。这种解耦极大降低了模型迁移成本。</p><div class="language-python"><button title="Copy Code" class="copy"></button><span class="lang">python</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 将 PyTorch 模型导出为 ONNX</span></span>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _ai_compute_format_onnx" data-v-e9c23681><div><h1 id="onnx" tabindex="-1">ONNX <a class="header-anchor" href="#onnx" aria-label="Permalink to “ONNX”">​</a></h1><p>ONNX（Open Neural Network Exchange）是 Microsoft 和 Meta 主推的开放式神经网络交换格式。它与当前 HuggingFace safetensors + GGUF 的 LLM 生态呈现出一条清晰的分界线——ONNX 源于传统深度学习时代（ResNet/BERT/YOLO），HF 生态源于大模型时代（Llama/Qwen/DeepSeek）。两者不是替代关系，而是在不同模型规模、不同部署场景下各自占据最优位置。</p><p>理解这条分界线是理解 ONNX 价值的起点。</p><h2 id="两个时代的模型格式" tabindex="-1">两个时代的模型格式 <a class="header-anchor" href="#两个时代的模型格式" aria-label="Permalink to “两个时代的模型格式”">​</a></h2><p>2016-2020 年的深度学习世界由 CV（ResNet、YOLO、EfficientNet）和传统 NLP（BERT、GPT-2、T5）主导。这些模型的共同特征：参数量在百万到亿级、输入输出结构固定（图像→分类、文本→向量）、推理引擎需要嵌入到各种异构硬件中（手机 NPU、汽车芯片、IoT MCU）。ONNX 在这个背景下诞生——它的核心价值是&quot;一次导出，到处运行&quot;。</p><p>2023 年后的 LLM 时代完全不同：模型参数量跳跃到十亿到千亿级别、输入输出是变长 token 序列而非固定张量、自回归生成的 KV Cache 管理比单次前向传播的计算图复杂一个数量级。HF 的 safetensors + config.json 成为这个时代的事实标准——不是因为它比 ONNX 更&quot;先进&quot;，而是因为它更&quot;薄&quot;。safetensors 只是权重容器，模型结构由 config.json 和框架代码定义——不需要预先将计算图固化为 ONNX 的静态算子序列。</p><p>ONNX 的静态计算图思想恰恰是它在传统 AI 中优势的来源，也是它在 LLM 中不适的来源。传统模型的推理是确定性的单次前向传播——输入固定形状，输出固定形状，没有 KV Cache，没有自回归循环。这种场景下，静态图编译优化（算子融合、常量折叠、内存规划）的收益巨大。LLM 的推理是动态的自回归循环——每步生成改变 KV Cache，batch 中的请求随时加入退出——静态图预设的优化策略无法适应这种动态性。</p><p>这不是 ONNX 的失败，只是场景不匹配。就像叉车不能在高速公路上跑——不是叉车不好，是场景错了。</p><h2 id="onnx-的核心设计" tabindex="-1">ONNX 的核心设计 <a class="header-anchor" href="#onnx-的核心设计" aria-label="Permalink to “ONNX 的核心设计”">​</a></h2><p>ONNX 使用 Protocol Buffers 序列化模型，包含三部分：</p><p><strong>计算图（Graph）</strong>：用节点（Node）和边（Tensor）描述模型的前向传播路径。每个节点对应一个标准算子（Conv、MatMul、Softmax 等）。图是静态的——导出时形状和控制流已确定（dynamic axes 支持 batch 维度可变，但不支持变化的分支逻辑）。</p><p><strong>算子集（Opset）</strong>：ONNX 的版本控制机制。每个 opset 版本定义了一组标准算子的语义。截至 2026 年最新 opset 约 22，覆盖了传统 CV/NLP 的绝大多数需求，但对 LLM 特有的操作（FlashAttention、RoPE、RMSNorm、SiLU activation）覆盖有限——这些算子在 opset 17+ 才逐步加入。</p><p><strong>权重与元数据</strong>：模型的训练参数（FP32/FP16）和可选的模型描述信息（作者、版本、输入输出名称）。</p><div class="language-python"><button title="Copy Code" class="copy"></button><span class="lang">python</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># PyTorch → ONNX 导出</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> torch</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> torch.onnx</span></span>
 <span class="line"></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">model </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> MyModel()</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">model </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> MyVisionModel()</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">dummy_input </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> torch.randn(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">224</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">224</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">torch.onnx.export(</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    model,</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    dummy_input,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    model, dummy_input, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;model.onnx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    input_names</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;image&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">], </span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">output_names</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;logits&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">],</span></span>
+<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    dynamic_axes</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;image&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: {</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batch&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;logits&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: {</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batch&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}},</span></span>
+<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    opset_version</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">17</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><p>导出的 <code>.onnx</code> 文件是一个自包含的 protobuf 二进制——包含模型结构、权重和元数据。任何支持 ONNX 的运行时都可以加载它，不需要原始训练框架。</p><h2 id="onnx-runtime-解耦训练与推理" tabindex="-1">ONNX Runtime：解耦训练与推理 <a class="header-anchor" href="#onnx-runtime-解耦训练与推理" aria-label="Permalink to “ONNX Runtime：解耦训练与推理”">​</a></h2><p>ONNX Runtime（ORT）是微软开发的 ONNX 官方推理引擎。与 PyTorch/TensorFlow 的推理模式不同，ORT 只做推理——不需要 autograd 图、不需要优化器状态、不需要分布式训练基础设施。这种专注让它能做 PyTorch 无法做的激进优化：整图级别的算子融合（将 Conv+BN+ReLU 融合为单个 kernel）、跨层的内存复用（两个不再同时存在的中间张量共享同一块显存）、计算图重排（将独立的分支并行执行）。</p><p>ORT 的硬件后端（Execution Provider）覆盖 CPU（MLAS 库优化）、GPU（CUDA/TensorRT/ROCm）、NPU（Qualcomm QNN、Apple CoreML）、边缘设备（ARM NN、XNNPACK）、Web 端（ONNX Runtime Web，通过 WASM + WebGPU）。这和 HF 生态形成鲜明对比——HF 模型只能在 PyTorch/TF/JAX 等训练框架的推理模式下运行，硬件后端受限于框架本身的支持。</p><div class="language-python"><button title="Copy Code" class="copy"></button><span class="lang">python</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> onnxruntime </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">as</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ort</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> numpy </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">as</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> np</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 选择后端——CPU、CUDA、TensorRT 等</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">session </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ort.InferenceSession(</span></span>
 <span class="line"><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    &quot;model.onnx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
-<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    input_names</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;image&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">],</span></span>
-<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    output_names</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;output&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">],</span></span>
-<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    dynamic_axes</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;image&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: {</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batch_size&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;output&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: {</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batch_size&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}},</span></span>
-<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    opset_version</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">17</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><h2 id="onnx-runtime" tabindex="-1">ONNX Runtime <a class="header-anchor" href="#onnx-runtime" aria-label="Permalink to “ONNX Runtime”">​</a></h2><p>ONNX Runtime 是微软开发的高性能推理引擎，支持 CPU、GPU（CUDA、ROCm、TensorRT）、NPU、TPU 等多种硬件后端。ONNX Runtime 的核心优化包括：算子融合（将多个连续算子合并为一个）、图优化（常量折叠、死代码消除）、内存规划（减少内存分配和拷贝）。</p><p>ONNX Runtime 的性能通常优于原生框架。对于 ResNet-50，ONNX Runtime 在 NVIDIA GPU 上的推理性能比 PyTorch 高 1.5-2 倍，比 TensorFlow 高 2-3 倍。这得益于 ONNX Runtime 的针对性优化——它只关注推理，无需考虑训练需求，因此可以更激进地优化计算图。</p><div class="language-python"><button title="Copy Code" class="copy"></button><span class="lang">python</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> onnxruntime </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">as</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ort</span></span>
+<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    providers</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;CUDAExecutionProvider&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;CPUExecutionProvider&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]  </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># fallback 链</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
 <span class="line"></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 创建推理 session</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">session </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ort.InferenceSession(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;model.onnx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">providers</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;CUDAExecutionProvider&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">])</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 获取输入输出信息</span></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 推理——输入 numpy 数组，输出 numpy 数组</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">input_name </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> session.get_inputs()[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">].name</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">output_name </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> session.get_outputs()[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">].name</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">outputs </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> session.run(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">None</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, {input_name: np.random.randn(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">224</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">224</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">).astype(np.float32)})</span></span></code></pre></div><p>对于传统 CV 模型，ORT + TensorRT 的推理性能通常比 PyTorch 高 1.5-3 倍。这个差距主要来自算子融合和内存优化——PyTorch 的 eager mode 每层独立执行，中间张量反复分配释放；ORT 将多层合并为单个 GPU kernel，中间结果留在寄存器/L1 缓存。</p><h2 id="onnx-在-llm-时代的角色" tabindex="-1">ONNX 在 LLM 时代的角色 <a class="header-anchor" href="#onnx-在-llm-时代的角色" aria-label="Permalink to “ONNX 在 LLM 时代的角色”">​</a></h2><p>ONNX 在 LLM 生态中的位置是&quot;补充&quot;而非&quot;替代&quot;。HF 的 safetensors + transformers 对于训练、微调、快速实验是最佳选择——不需要导出步骤，修改模型代码后立即生效。GGUF 对于消费级硬件的本地推理是最佳选择——CPU+GPU 混合推理、K-quant 量化、单文件分发。ONNX Runtime GenAI（ort-genai）是微软推出的 LLM 推理 API——直接在 ORT 上加载 HF 模型，支持 continuous batching、KV Cache 管理、beam search 等 LLM 必需的特性。</p><p>ort-genai 的价值场景是&quot;已经在用 ORT 部署传统模型的团队，希望用同一套基础设施部署 LLM&quot;。如果你不需要这个统一性，HF + vLLM/llama.cpp 的生态更成熟。如果你需要在 Windows 生态中部署 LLM（DirectML 后端、ONNX Runtime 的 Windows ARM64 原生支持），ort-genai 是 DirectML 的原生路径。</p><h2 id="模型优化管线" tabindex="-1">模型优化管线 <a class="header-anchor" href="#模型优化管线" aria-label="Permalink to “模型优化管线”">​</a></h2><p>ONNX 生态的优化工具链是它相比 HF 生态的独特优势——静态图格式使得离线优化成为可能：</p><p><strong>ONNX Simplifier（onnxsim）</strong>：自动简化计算图——常量折叠、去除无用节点、合并连续运算。通常在导出后第一步运行，可将模型体积减小 10-30%。</p><p><strong>Olive（Microsoft）</strong>：自动化的模型优化管线——将 PyTorch/HF 模型转换为 ONNX → 图优化 → 量化（INT8/INT4）→ 架构特定优化（TensorRT/OpenVINO/QNN）→ 输出最优配置。Olive 的核心价值是自动化搜索——尝试不同组合（量化方案 × 算子融合策略 × 硬件后端），选取推理速度最快的配置。</p><p><strong>量化工具</strong>：ORT 内置静态量化（需要校准数据集）和动态量化（推理时在线量化）。对于 CV 模型，INT8 量化后精度损失 &lt; 0.5%，推理速度提升 2-3 倍。</p><div class="language-python"><button title="Copy Code" class="copy"></button><span class="lang">python</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">from</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> onnxruntime.quantization </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> quantize_static, QuantType</span></span>
 <span class="line"></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 推理</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">output </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> session.run([output_name], {input_name: dummy_input.numpy()})</span></span></code></pre></div><h2 id="onnx-算子集版本" tabindex="-1">ONNX 算子集版本 <a class="header-anchor" href="#onnx-算子集版本" aria-label="Permalink to “ONNX 算子集版本”">​</a></h2><p>ONNX 算子集（Opset）是 ONNX 的版本控制机制，每个新版本会增加新算子或修改现有算子的行为。截至 2024 年，ONNX 的最新 Opset 版本是 19。导出 ONNX 模型时，需要选择合适的 Opset 版本。</p><table tabindex="0"><thead><tr><th>Opset 版本</th><th>发布年份</th><th>主要特性</th></tr></thead><tbody><tr><td>Opset 7</td><td>2017</td><td>早期版本，算子有限</td></tr><tr><td>Opset 11</td><td>2019</td><td>支持 dynamic axes、算子标准化</td></tr><tr><td>Opset 13</td><td>2020</td><td>改进 RNN 支持、标准化常量传播</td></tr><tr><td>Opset 17</td><td>2023</td><td>支持 FlashAttention、GPTQ 量化</td></tr><tr><td>Opset 19</td><td>2024</td><td>支持 Stable Diffusion 优化</td></tr></tbody></table><p>选择 Opset 版本时需要权衡：新版本支持更多算子和优化，但旧推理引擎可能不支持。生产环境中建议选择推理引擎支持的最新 Opset 版本，以获得最佳性能。</p><h2 id="onnx-的局限" tabindex="-1">ONNX 的局限 <a class="header-anchor" href="#onnx-的局限" aria-label="Permalink to “ONNX 的局限”">​</a></h2><p>ONNX 的主要挑战在于<strong>算子覆盖不完整</strong>。虽然 ONNX 定义了数百个算子，但各框架的自定义算子（如 PyTorch 的 <code>torch.complex</code>、TensorFlow 的 <code>tf.nn.depthwise_conv2d_native</code>）可能无法直接导出。解决方案包括：使用 ONNX 的自定义算子（Custom Operator）机制、将自定义算子分解为标准算子组合、等待 ONNX 新版本支持。</p><p>另一个挑战是<strong>动态图支持有限</strong>。ONNX 的计算图是静态的，导出时需要固定输入形状（虽然 dynamic axes 可以支持部分维度动态，但并非所有算子都支持）。对于控制流（如 if-else、for loop），ONNX 提供了 If 和 Loop 算子，但 PyTorch 的动态控制流导出时可能失败。</p><h2 id="未来展望" tabindex="-1">未来展望 <a class="header-anchor" href="#未来展望" aria-label="Permalink to “未来展望”">​</a></h2><p>ONNX 的未来发展方向包括：更好的算子覆盖（支持最新的 Transformer 架构，如 Mixture of Experts）、更强的动态图支持（通过 ONNX Script 定义可微分函数）、更丰富的量化支持（INT4、GPTQ、AWQ）。ONNX Runtime 也在向边缘设备扩展（ONNX Runtime Mobile、ONNX Runtime for Microcontrollers），满足 IoT 和嵌入式场景的需求。</p><p>ONNX 的成功在于它是<strong>真正开放的标准</strong>——任何人都可以实现 ONNX Runtime，任何人都可以扩展 ONNX 算子。这与 TensorFlow 的 SavedModel（只能用 TensorFlow 运行）和 PyTorch 的 TorchScript（PyTorch 特有）形成鲜明对比。虽然 ONNX 在学术研究中使用较少（研究者更习惯原生框架），但在工业部署中，ONNX 已成为跨平台推理的事实标准。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/format/hf" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>HF 风格</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/distributed/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>集群</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 静态 INT8 量化——需要校准数据</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">quantize_static(</span></span>
+<span class="line"><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    &quot;model.onnx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;model_int8.onnx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    calibration_data_reader</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">MyDataReader(),</span></span>
+<span class="line"><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">    quant_format</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">QuantType.QInt8,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><h2 id="onnx-的适用边界" tabindex="-1">ONNX 的适用边界 <a class="header-anchor" href="#onnx-的适用边界" aria-label="Permalink to “ONNX 的适用边界”">​</a></h2><p><strong>最适合</strong>：传统 CV 模型部署到异构硬件（ResNet/YOLO/EfficientNet → 手机/嵌入式/浏览器）、多框架混合的推理管线（PyTorch 训练 → ONNX 导出 → TensorRT 加速）、需要离线图优化的确定性推理、Windows 生态的 AI 推理。</p><p><strong>不太适合</strong>：LLM 的自回归推理（HF + vLLM/llama.cpp 更成熟）、频繁修改模型结构的实验阶段（导出步骤增加迭代摩擦）、训练和微调（ONNX 只能做推理）。</p><p>ONNX 和 HF 生态在未来会继续共存——LLM 社区不会放弃 transformers 的灵活性，传统 CV 和工业部署不会放弃 ONNX 的跨硬件能力。ort-genai 试图在两者之间架桥，但目前 HF + 专用推理引擎（vLLM/SGLang/llama.cpp）的成熟度仍然领先。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/format/hf" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>HF 风格</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/distributed/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>集群</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -124,6 +128,7 @@
 /ai/compute/deploy/hardware - 硬件
 /ai/compute/deploy/llmops - LLMOps
 /ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/onnx-deploy - ONNX 部署
 /ai/compute/deploy/optimization - 推理优化
 /ai/compute/deploy/quantization - 模型量化
 /ai/compute/deploy/serving - 服务部署
@@ -245,9 +250,9 @@
 /client/csharp/async - 异步编程
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet</pre>
-<pre>/client/csharp/unity - Unity
+/client/csharp/msbuild - MSBuild</pre>
+<pre>/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
@@ -256,15 +261,15 @@
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
-/client/gui/cross - 跨平台
-/client/gui/cross/electron - Electron
-/client/gui/cross/flutter - Flutter
-/client/gui/cross/flutter/dart - Dart
-/client/gui/cross/framework - UI 框架
-/client/gui/cross/reactnative - ReactNative
 /client/gui/ergonomic - 人机关系
 /client/gui/ergonomic/interact - 人机交互
 /client/gui/ergonomic/screen - 屏幕
+/client/gui/framework - UI 框架
+/client/gui/framework/cross - 跨平台
+/client/gui/framework/electron - Electron
+/client/gui/framework/flutter - Flutter
+/client/gui/framework/flutter/dart - Dart
+/client/gui/framework/reactnative - ReactNative
 /client/gui/platform - UI 平台
 /client/gui/platform/android - Android
 /client/gui/platform/gnome - Gnome
@@ -308,18 +313,20 @@
 /client/render/vec/compose
 /client/render/vec_compose - 矢量合成管线
 /client/rust - Rust
-/client/rust/assets - 静态资源管理
 /client/rust/basic - 语言基础
+/client/rust/basic/assets - 静态资源管理
 /client/rust/basic/closure - 闭包
+/client/rust/basic/ld - 链接库
 /client/rust/basic/macro - 宏
 /client/rust/basic/mod - 模块系统
 /client/rust/basic/ref - 智能指针
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/ld - 链接库
-/client/rust/slint - Slint
-/client/rust/tauri - Tauri
+/client/rust/framework - Rust UI 框架
+/client/rust/framework/iced - iced
+/client/rust/framework/slint - Slint
+/client/rust/framework/tauri - Tauri
 /client/rust/wasm - WASM
 /client/web - Web
 /client/web/api - Web API
@@ -443,12 +450,15 @@
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式
-/design/typical/ability - 质量属性
+/design/typical - 经典范式</pre>
+<pre>/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配</pre>
-<pre>/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/maintainability - 可读性与可维护性
 /design/typical/refactor - 重构
+/design/typical/reliability - 可靠性与可用性
+/design/typical/requirements - 需求分析
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
 /examples - 随便看看
@@ -496,7 +506,9 @@
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
 /kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/threadripper - Threadripper 装机
 /kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/motherboard/xeon - Xeon 装机
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -515,10 +527,12 @@
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
 /kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/stream-block - 流式与块式存取
 /kernel/linux/develop/struct - 数据结构
 /kernel/linux/develop/struct/iov - 聚簇读写
 /kernel/linux/develop/struct/linked - 链表
 /kernel/linux/develop/systemd - systemd
+/kernel/linux/develop/zero-copy - sendfile 零拷贝
 /kernel/linux/device - 设备管理
 /kernel/linux/device/dma - DMA
 /kernel/linux/device/driver - 驱动接口
@@ -526,6 +540,7 @@
 /kernel/linux/device/driver/pci - PCIe 驱动
 /kernel/linux/device/driver/usb - USB 驱动
 /kernel/linux/device/driver/virtio
+/kernel/linux/device/iommu - IOMMU
 /kernel/linux/device/lifecycle - 生命周期
 /kernel/linux/device/udev - udev
 /kernel/linux/file - 文件管理
@@ -547,8 +562,9 @@
 /kernel/linux/power/boot - 开机上电
 /kernel/linux/power/tpm - 安全启动
 /kernel/linux/process - 进程管理
+/kernel/linux/process/cgroup - Cgroup
 /kernel/linux/process/ipc - IPC
-/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/namespace - 命名空间
 /kernel/linux/process/schd - 调度
 /kernel/linux/process/security - 权限管理
 /kernel/linux/syscall - 系统调用
@@ -566,7 +582,9 @@
 /kernel/vm/basic/cpu - CPU
 /kernel/vm/basic/device - 设备
 /kernel/vm/basic/memory - 内存
-/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/debug - 虚拟机调试增强
+/kernel/vm/qemu - QEMU 内核调试
+/kernel/vm/spdk-dpdk - SPDK 与 DPDK
 /kernel/vm/vfio - VFIO
 /kernel/vm/virtio - VirtIO
 /sde - 工程化
@@ -632,8 +650,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL
-/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL</pre>
+<pre>/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -646,8 +664,8 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法</pre>
-<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID

@@ -6,9 +6,9 @@
     <title>k3s | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.4b19c741.js"></script>
+    <script src="/assets/site-data.dd646087.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -99,6 +99,7 @@
 /ai/compute/deploy/hardware - 硬件
 /ai/compute/deploy/llmops - LLMOps
 /ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/onnx-deploy - ONNX 部署
 /ai/compute/deploy/optimization - 推理优化
 /ai/compute/deploy/quantization - 模型量化
 /ai/compute/deploy/serving - 服务部署
@@ -220,9 +221,9 @@
 /client/csharp/async - 异步编程
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet</pre>
-<pre>/client/csharp/unity - Unity
+/client/csharp/msbuild - MSBuild</pre>
+<pre>/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
@@ -231,15 +232,15 @@
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
-/client/gui/cross - 跨平台
-/client/gui/cross/electron - Electron
-/client/gui/cross/flutter - Flutter
-/client/gui/cross/flutter/dart - Dart
-/client/gui/cross/framework - UI 框架
-/client/gui/cross/reactnative - ReactNative
 /client/gui/ergonomic - 人机关系
 /client/gui/ergonomic/interact - 人机交互
 /client/gui/ergonomic/screen - 屏幕
+/client/gui/framework - UI 框架
+/client/gui/framework/cross - 跨平台
+/client/gui/framework/electron - Electron
+/client/gui/framework/flutter - Flutter
+/client/gui/framework/flutter/dart - Dart
+/client/gui/framework/reactnative - ReactNative
 /client/gui/platform - UI 平台
 /client/gui/platform/android - Android
 /client/gui/platform/gnome - Gnome
@@ -283,18 +284,20 @@
 /client/render/vec/compose
 /client/render/vec_compose - 矢量合成管线
 /client/rust - Rust
-/client/rust/assets - 静态资源管理
 /client/rust/basic - 语言基础
+/client/rust/basic/assets - 静态资源管理
 /client/rust/basic/closure - 闭包
+/client/rust/basic/ld - 链接库
 /client/rust/basic/macro - 宏
 /client/rust/basic/mod - 模块系统
 /client/rust/basic/ref - 智能指针
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/ld - 链接库
-/client/rust/slint - Slint
-/client/rust/tauri - Tauri
+/client/rust/framework - Rust UI 框架
+/client/rust/framework/iced - iced
+/client/rust/framework/slint - Slint
+/client/rust/framework/tauri - Tauri
 /client/rust/wasm - WASM
 /client/web - Web
 /client/web/api - Web API
@@ -418,12 +421,15 @@
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式
-/design/typical/ability - 质量属性
+/design/typical - 经典范式</pre>
+<pre>/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配</pre>
-<pre>/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/maintainability - 可读性与可维护性
 /design/typical/refactor - 重构
+/design/typical/reliability - 可靠性与可用性
+/design/typical/requirements - 需求分析
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
 /examples - 随便看看
@@ -471,7 +477,9 @@
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
 /kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/threadripper - Threadripper 装机
 /kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/motherboard/xeon - Xeon 装机
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -490,10 +498,12 @@
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
 /kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/stream-block - 流式与块式存取
 /kernel/linux/develop/struct - 数据结构
 /kernel/linux/develop/struct/iov - 聚簇读写
 /kernel/linux/develop/struct/linked - 链表
 /kernel/linux/develop/systemd - systemd
+/kernel/linux/develop/zero-copy - sendfile 零拷贝
 /kernel/linux/device - 设备管理
 /kernel/linux/device/dma - DMA
 /kernel/linux/device/driver - 驱动接口
@@ -501,6 +511,7 @@
 /kernel/linux/device/driver/pci - PCIe 驱动
 /kernel/linux/device/driver/usb - USB 驱动
 /kernel/linux/device/driver/virtio
+/kernel/linux/device/iommu - IOMMU
 /kernel/linux/device/lifecycle - 生命周期
 /kernel/linux/device/udev - udev
 /kernel/linux/file - 文件管理
@@ -522,8 +533,9 @@
 /kernel/linux/power/boot - 开机上电
 /kernel/linux/power/tpm - 安全启动
 /kernel/linux/process - 进程管理
+/kernel/linux/process/cgroup - Cgroup
 /kernel/linux/process/ipc - IPC
-/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/namespace - 命名空间
 /kernel/linux/process/schd - 调度
 /kernel/linux/process/security - 权限管理
 /kernel/linux/syscall - 系统调用
@@ -541,7 +553,9 @@
 /kernel/vm/basic/cpu - CPU
 /kernel/vm/basic/device - 设备
 /kernel/vm/basic/memory - 内存
-/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/debug - 虚拟机调试增强
+/kernel/vm/qemu - QEMU 内核调试
+/kernel/vm/spdk-dpdk - SPDK 与 DPDK
 /kernel/vm/vfio - VFIO
 /kernel/vm/virtio - VirtIO
 /sde - 工程化
@@ -607,8 +621,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL
-/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL</pre>
+<pre>/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -621,8 +635,8 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法</pre>
-<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID

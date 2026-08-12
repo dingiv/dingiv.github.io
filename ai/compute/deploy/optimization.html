@@ -6,14 +6,14 @@
     <title>推理优化 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.S6tKEJEo.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.4b19c741.js"></script>
+    <script src="/assets/site-data.dd646087.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/ai_compute_deploy_optimization.md.BNXOUkit.lean.js">
+    <link rel="modulepreload" href="/assets/ai_compute_deploy_optimization.md.1jIMbIRO.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
@@ -42,7 +42,7 @@
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 27</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 8192</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ctk</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> q8_0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ctv</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> q8_0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -fa</span></span></code></pre></div><h3 id="cpu-端调优" tabindex="-1">CPU 端调优 <a class="header-anchor" href="#cpu-端调优" aria-label="Permalink to “CPU 端调优”">​</a></h3><p>线程数设物理核心数（Physical Cores），禁用超线程。大模型矩阵乘法是高度密集的 ALU 运算——超线程的两个逻辑核共享 L1/L2 缓存和执行单元，互相抢占资源，实测反而降低 10-20% 推理速度。对于 Intel 13/14 代异构 CPU（P-Core + E-Core），只绑定 P-Core 的数量。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 查询物理核心数</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">lscpu</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> grep</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;Core(s) per socket&quot;</span></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 假设 14 个物理核心</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">llama-cli</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> model.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 20</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -t</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 14</span></span></code></pre></div><p>内存带宽直接决定 CPU 算层的速度上限。DDR4 2400MHz 单通道约 19 GB/s，四通道约 76 GB/s——差距 4 倍。为混合推理配机时，内存通道数的重要性高于 CPU 核心数。双路服务器需要开启 NUMA 绑定（<code>--numa distribute</code>），防止 CPU 0 跨 Socket 访问 CPU 1 的内存，跨 NUMA 节点延迟比本地高 2 倍以上。</p><p><code>--mlock</code> 强制将 CPU 端的模型权重锁定在物理内存中，禁止操作系统 swap 到硬盘。被 swap 出去的页面一旦需要访问，延迟从纳秒级变成毫秒级——直接表现为 Tokens 输出卡顿。</p><h3 id="完整调优检查清单" tabindex="-1">完整调优检查清单 <a class="header-anchor" href="#完整调优检查清单" aria-label="Permalink to “完整调优检查清单”">​</a></h3><p>按顺序执行：</p><ol><li>确定极限：<code>llama-cli -m model.gguf -c 4096 -ngl 999 -fa</code>，记录 OOM 崩溃层数</li><li>设安全值：<code>-ngl</code> 降到崩溃点以下 2-3 层，为 KV Cache 留足余量</li><li>KV Cache 量化：加入 <code>-ctk q8_0 -ctv q8_0</code>，观察释放的显存，尝试加 1-2 层</li><li>绑定 CPU：<code>-t &lt;物理核心数&gt; --mlock</code>，双路服务器加 <code>--numa distribute</code></li><li>验证吞吐：对比 <code>eval time</code>（Prefill）和 <code>predict time</code>（Decode），微调 <code>-t</code> 找最高吞吐点</li><li>最终确认：<code>nvidia-smi -q -d PCI_EXPRESS</code> 确认显卡运行在正确的 PCIe 速率下（x8 或 x16）</li></ol><p>混合推理的性能天花板很明确——CPU 卸载层数每增加 10%，Decode 速度约下降 30-50%。如果卸载层数超过总数的 50%，不如考虑更强的量化（Q3_K_M 甚至 IQ2_XXS）让更多层放进 GPU。</p><h2 id="跨阶段优化" tabindex="-1">跨阶段优化 <a class="header-anchor" href="#跨阶段优化" aria-label="Permalink to “跨阶段优化”">​</a></h2><h3 id="连续批处理-填满-gpu-的等待间隙" tabindex="-1">连续批处理：填满 GPU 的等待间隙 <a class="header-anchor" href="#连续批处理-填满-gpu-的等待间隙" aria-label="Permalink to “连续批处理：填满 GPU 的等待间隙”">​</a></h3><p>并发场景下，不同请求处于不同阶段——有的在 Prefill（吃算力），有的在 Decode（等显存）。连续批处理（Continuous Batching）在每个迭代动态决定本轮 batch 中包含哪些请求：新请求的 Prefill 可以立即加入，已完成的请求立即释放资源。配合 PagedAttention 的 block 级 KV Cache 管理，请求加入和退出只需分配/释放 block 指针，无内存搬移开销。高并发场景下吞吐量提升 5-10 倍。</p><h3 id="prefill-decode-分离-为两个阶段配不同的硬件" tabindex="-1">Prefill/Decode 分离：为两个阶段配不同的硬件 <a class="header-anchor" href="#prefill-decode-分离-为两个阶段配不同的硬件" aria-label="Permalink to “Prefill/Decode 分离：为两个阶段配不同的硬件”">​</a></h3><p>解耦部署（Disaggregated Serving）将 GPU 集群物理划分为 Prefill 节点池和 Decode 节点池。Prefill 节点配高算力 GPU（如 H100），Decode 节点配大显存带宽 GPU——各自配备最适合该阶段瓶颈的硬件。Prefill 节点算完 KV Cache 后通过 RDMA（InfiniBand/RoCE）高速推送给 Decode 节点。</p><p>解耦部署在云端大厂是标准实践，但本地单机/小集群场景不推荐——它需要 400Gbps+ InfiniBand 网络传输 GB 级 KV Cache，本地 10G/25G 网卡传输时间远超计算时间。且低并发时硬件利用率暴跌——Prefill 节点在没人提问时全程空闲。Chunked Prefill 在单机内已实现计算与访存的重叠，是解耦部署在本地场景的最优替代。</p><h2 id="本地落地方阵" tabindex="-1">本地落地方阵 <a class="header-anchor" href="#本地落地方阵" aria-label="Permalink to “本地落地方阵”">​</a></h2><p>在本地单 GPU 或 PCIe 多卡环境下，优化技术按投入产出比排序：</p><p>选择自带 GQA/MLA 的模型（Qwen 2.5、DeepSeek-V3）——零成本获取 KV Cache 压缩。启动服务确保 FlashAttention-2 启用（现代框架默认）。Prefill 慢（首字延迟高）→ 开启 Prefix Caching（SGLang RadixAttention，多轮对话场景收益最大）。Decode 慢（生成速度低）→ 开启投机解码（1.5-2.5x，draft model 需同系列）。长上下文场景 → KV Cache 4-bit 量化（显存节省 &gt; 权重量化收益）。高并发 API 服务 → 连续批处理（vLLM/SGLang）。显存放不下模型 → CPU+GPU 混合推理（llama.cpp，层切分+KV Cache 量化优先）。多 GPU 场景 → 量化+DP 多实例覆盖并发，或 PP 拆分大模型（见<a href="./multi-gpu">多卡推理</a>）。</p><p>关键认知：Prefill 瓶颈加算力，Decode 瓶颈减数据。选错方向比不作为更糟——给一台 3090 加第二张卡（算力翻倍）对 Decode 速度几乎无影响。混合推理的核心不是&quot;CPU 能帮 GPU 算&quot;，而是&quot;尽量不让 CPU 算&quot;——KV Cache 量化省出 1-2GB 显存多放 8-16 层到 GPU，收益远大于调 CPU 线程数。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/deploy/multi-gpu" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>多卡推理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/deploy/serving" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>服务部署</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">llama-cli</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> model.gguf</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ngl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 20</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -t</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 14</span></span></code></pre></div><p>内存带宽直接决定 CPU 算层的速度上限。DDR4 2400MHz 单通道约 19 GB/s，四通道约 76 GB/s——差距 4 倍。为混合推理配机时，内存通道数的重要性高于 CPU 核心数。双路服务器需要开启 NUMA 绑定（<code>--numa distribute</code>），防止 CPU 0 跨 Socket 访问 CPU 1 的内存，跨 NUMA 节点延迟比本地高 2 倍以上。</p><p><code>--mlock</code> 强制将 CPU 端的模型权重锁定在物理内存中，禁止操作系统 swap 到硬盘。被 swap 出去的页面一旦需要访问，延迟从纳秒级变成毫秒级——直接表现为 Tokens 输出卡顿。</p><h3 id="完整调优检查清单" tabindex="-1">完整调优检查清单 <a class="header-anchor" href="#完整调优检查清单" aria-label="Permalink to “完整调优检查清单”">​</a></h3><p>按顺序执行：</p><ol><li>确定极限：<code>llama-cli -m model.gguf -c 4096 -ngl 999 -fa</code>，记录 OOM 崩溃层数</li><li>设安全值：<code>-ngl</code> 降到崩溃点以下 2-3 层，为 KV Cache 留足余量</li><li>KV Cache 量化：加入 <code>-ctk q8_0 -ctv q8_0</code>，观察释放的显存，尝试加 1-2 层</li><li>绑定 CPU：<code>-t &lt;物理核心数&gt; --mlock</code>，双路服务器加 <code>--numa distribute</code></li><li>验证吞吐：对比 <code>eval time</code>（Prefill）和 <code>predict time</code>（Decode），微调 <code>-t</code> 找最高吞吐点</li><li>最终确认：<code>nvidia-smi -q -d PCI_EXPRESS</code> 确认显卡运行在正确的 PCIe 速率下（x8 或 x16）</li></ol><p>混合推理的性能天花板很明确——CPU 卸载层数每增加 10%，Decode 速度约下降 30-50%。如果卸载层数超过总数的 50%，不如考虑更强的量化（Q3_K_M 甚至 IQ2_XXS）让更多层放进 GPU。</p><h3 id="moe-稀疏激活-天然的卸载窗口" tabindex="-1">MoE 稀疏激活：天然的卸载窗口 <a class="header-anchor" href="#moe-稀疏激活-天然的卸载窗口" aria-label="Permalink to “MoE 稀疏激活：天然的卸载窗口”">​</a></h3><p>前面讨论的传统混合推理有一个隐含假设：模型是 Dense 架构，每层每个 token 都要经过，CPU 卸载的层每个 token 都要付 PCIe 传输代价。这个假设在 MoE 模型中不成立——每个 token 只激活 256 个 routed expert 中的 top-2，99% 的 expert 权重对当前 token 完全不需要。</p><p>这个架构特性打开了传统混合推理无法企及的优化窗口——不需要把所有层都放在 GPU 上，只需确保&quot;每个 token 必经&quot;的模块在 GPU，其余按需从 CPU 加载。而且这个方向已经从理论走到了工程落地。</p><h4 id="为什么-moe-卸载比-dense-卸载有效得多" tabindex="-1">为什么 MoE 卸载比 Dense 卸载有效得多 <a class="header-anchor" href="#为什么-moe-卸载比-dense-卸载有效得多" aria-label="Permalink to “为什么 MoE 卸载比 Dense 卸载有效得多”">​</a></h4><p>MoE 模型天然把模型拆成了两个不同的卸载策略域：</p><p><strong>必须在 GPU</strong>：Attention 层、Embedding、Shared Expert（DeepSeek-V3 中每个 token 必经）。这些约占模型总参数的 10-15%——参数量不大，显存压力小。</p><p><strong>可以卸载到 CPU</strong>：Routed Expert。这些占总参数的 70-85%，但每个 token 只激活其中 ~0.8%。如果将 routed expert 放在 CPU 内存中，GPU 显存需求从 24GB+ 骤降到 8-12GB——消费级显卡就能跑 671B 模型。</p><p>关键不是&quot;少加载数据&quot;，而是 MoE 路由分布的高度不均匀使缓存极其有效。15-20% 的 expert 接收了 ~80% 的路由流量——自然形成 hot/cold 分层。<strong>SMOE</strong>（IPDPS 2026）和 <strong>HybriMoE</strong>（DAC 2025）的实测数据证实了这个假设：大 batch 下 Prefill 加速达 8.68 倍，Decode 加速 20-70%。</p><h4 id="当前落地状态-2026-年中" tabindex="-1">当前落地状态（2026 年中） <a class="header-anchor" href="#当前落地状态-2026-年中" aria-label="Permalink to “当前落地状态（2026 年中）”">​</a></h4><p>这个方向在 2025-2026 年从学术论文快速进入了框架实现。核心方案已经收敛为四组件组合：</p><p><strong>Expert 缓存</strong>：GPU 上维护固定大小的 hot expert 缓存，通过 LFRU（频率加权 LRU）驱逐策略保留高频 expert。vLLM RFC #38256 的方案用 <code>score = frequency / age</code> 计算驱逐优先级，保留接收 50%+ 流量的&quot;hub expert&quot;。在 8GB GPU 上实测达到 97-100% 缓存命中率，decode 速度 30 tok/s。缓存未命中时，vLLM 的设计是报错而非静默降级到 CPU 计算——保持性能预期的确定性。</p><p><strong>异步预取</strong>：在处理当前 token 的 Attention 层时，同时通过 CUDA stream 从 CPU 预取下一层可能激活的 expert。Ollama PR #15988 实现了双缓冲预取——用两个 CUDA staging buffer 交替接收预取数据，Attention 计算和 PCIe 传输完全重叠。RTX 3090 实测 prefill 从 2072ms 降到 1230ms（1.68×），3-4× decode 加速。llama.cpp 通过 <code>--n-cpu-moe</code> 参数控制 MoE 层放置，experts 在 CPU 上计算（AVX/AMX 内核），而非单纯传输到 GPU——CPU 计算 expert 的延迟可能低于 PCIe 传输 FP16 权重的延迟。</p><p><strong>投机 expert 预测</strong>：2026 年 arXiv 论文 &quot;Speculating Experts&quot; 提出从当前层的 hidden state 预测下一层会激活哪些 expert，在 router 实际计算前就发起预取。使用极轻量预测器（4-45M 参数），TPOT 降低 5-14%。这个方向的价值在于——Router 本身的计算耗时很短（&lt; 1ms），但 router 结果出来后 PCIe 传输才开始，延迟叠加。投机预测让预取&quot;赶在 router 之前出发&quot;，消除这个等待。</p><p><strong>Pinned memory + 双缓冲</strong>：所有 expert 权重驻留在 CPU 的 pinned memory（<code>cudaHostRegister</code>）中——这不是普通的 <code>malloc</code>，而是被 GPU DMA 引擎可直接访问的内存。结合双缓冲机制（一个 buffer 被 DMA 填充时，另一个 buffer 正被 GPU 计算使用），传输和计算完全流水线化。</p><h4 id="消费级硬件实测数据" tabindex="-1">消费级硬件实测数据 <a class="header-anchor" href="#消费级硬件实测数据" aria-label="Permalink to “消费级硬件实测数据”">​</a></h4><p>llama.cpp/ik 分支使用 <code>--override-tensor exps=CPU</code> 将 routed expert 放在 CPU，attention + shared expert 保持在 GPU（MLA 支持下 32K 上下文 &lt; 24GB VRAM）。DeepSeek V3 IQ2_K_R4 量化（24GB GPU + 96GB RAM）实测：</p><ul><li>Prefill：从全 GPU 模式（如果装得下）的数百 ms 级到 1-2s——可接受</li><li>Decode：混合 GPU+CPU 模式 3-12 tok/s（全 CPU 模式仅 1-3 tok/s）</li><li>4× RTX 4090（96GB VRAM + 256GB DDR5）跑 DeepSeek V3/R1 671B：2-4 tok/s</li></ul><p>双路 EPYC 服务器通过 NUMA-aware expert 分配（每个 NUMA 节点本地存储一半 expert），跨节点延迟降低 2-5×，token 生成速度提升 10-25%。</p><h4 id="与传统混合推理的对比" tabindex="-1">与传统混合推理的对比 <a class="header-anchor" href="#与传统混合推理的对比" aria-label="Permalink to “与传统混合推理的对比”">​</a></h4><table tabindex="0"><thead><tr><th>维度</th><th>Dense 混合推理</th><th>MoE Expert 卸载</th></tr></thead><tbody><tr><td>卸载粒度</td><td>整层（Attention+FFN）</td><td>单个 expert</td></tr><tr><td>每 token PCIe 负担</td><td>所有卸载层的所有权重</td><td>仅激活的 2 个 expert</td></tr><tr><td>缓存命中率</td><td>不适用（每 token 必经）</td><td>97-100%（hot expert 常驻 GPU）</td></tr><tr><td>预取重叠</td><td>有限（Attention+FFN 串行）</td><td>充分（Attention 计算与 expert 预取并行）</td></tr><tr><td>框架支持</td><td>llama.cpp <code>-ngl</code> 成熟</td><td>各框架快速推进中</td></tr><tr><td>Decode 速度</td><td>卸载 30% 层 → 掉 50%+</td><td>卸载 80% expert → 掉 20-30%</td></tr></tbody></table><p>MoE 卸载不是让 671B 模型在 8GB 显卡上跑到 60 tok/s——那不可能。它做的是让 671B 模型在 8GB 显卡上能跑到 5-12 tok/s，从&quot;完全跑不了&quot;变成&quot;勉强可用&quot;。对个人部署大模型来说，这是门槛级的突破。</p><h2 id="跨阶段优化" tabindex="-1">跨阶段优化 <a class="header-anchor" href="#跨阶段优化" aria-label="Permalink to “跨阶段优化”">​</a></h2><h3 id="连续批处理-填满-gpu-的等待间隙" tabindex="-1">连续批处理：填满 GPU 的等待间隙 <a class="header-anchor" href="#连续批处理-填满-gpu-的等待间隙" aria-label="Permalink to “连续批处理：填满 GPU 的等待间隙”">​</a></h3><p>并发场景下，不同请求处于不同阶段——有的在 Prefill（吃算力），有的在 Decode（等显存）。连续批处理（Continuous Batching）在每个迭代动态决定本轮 batch 中包含哪些请求：新请求的 Prefill 可以立即加入，已完成的请求立即释放资源。配合 PagedAttention 的 block 级 KV Cache 管理，请求加入和退出只需分配/释放 block 指针，无内存搬移开销。高并发场景下吞吐量提升 5-10 倍。</p><h3 id="prefill-decode-分离-为两个阶段配不同的硬件" tabindex="-1">Prefill/Decode 分离：为两个阶段配不同的硬件 <a class="header-anchor" href="#prefill-decode-分离-为两个阶段配不同的硬件" aria-label="Permalink to “Prefill/Decode 分离：为两个阶段配不同的硬件”">​</a></h3><p>解耦部署（Disaggregated Serving）将 GPU 集群物理划分为 Prefill 节点池和 Decode 节点池。Prefill 节点配高算力 GPU（如 H100），Decode 节点配大显存带宽 GPU——各自配备最适合该阶段瓶颈的硬件。Prefill 节点算完 KV Cache 后通过 RDMA（InfiniBand/RoCE）高速推送给 Decode 节点。</p><p>解耦部署在云端大厂是标准实践，但本地单机/小集群场景不推荐——它需要 400Gbps+ InfiniBand 网络传输 GB 级 KV Cache，本地 10G/25G 网卡传输时间远超计算时间。且低并发时硬件利用率暴跌——Prefill 节点在没人提问时全程空闲。Chunked Prefill 在单机内已实现计算与访存的重叠，是解耦部署在本地场景的最优替代。</p><h2 id="本地落地方阵" tabindex="-1">本地落地方阵 <a class="header-anchor" href="#本地落地方阵" aria-label="Permalink to “本地落地方阵”">​</a></h2><p>在本地单 GPU 或 PCIe 多卡环境下，优化技术按投入产出比排序：</p><p>选择自带 GQA/MLA 的模型（Qwen 2.5、DeepSeek-V3）——零成本获取 KV Cache 压缩。启动服务确保 FlashAttention-2 启用（现代框架默认）。Prefill 慢（首字延迟高）→ 开启 Prefix Caching（SGLang RadixAttention，多轮对话场景收益最大）。Decode 慢（生成速度低）→ 开启投机解码（1.5-2.5x，draft model 需同系列）或 MTP（模型内置时零额外成本）。长上下文场景 → KV Cache 4-bit 量化（显存节省 &gt; 权重量化收益）。高并发 API 服务 → 连续批处理（vLLM/SGLang）。显存放不下模型 → CPU+GPU 混合推理（llama.cpp，层切分+KV Cache 量化优先）；如果是 MoE 模型 → Expert 卸载优先（Attention 留 GPU，Routed Expert 放 CPU，通过 expert 缓存+异步预取 3-12 tok/s）。多 GPU 场景 → 量化+DP 多实例覆盖并发，或 PP 拆分大模型（见<a href="./multi-gpu">多卡推理</a>）。</p><p>关键认知：Prefill 瓶颈加算力，Decode 瓶颈减数据。选错方向比不作为更糟——给一台 3090 加第二张卡（算力翻倍）对 Decode 速度几乎无影响。混合推理的核心不是&quot;CPU 能帮 GPU 算&quot;，而是&quot;尽量不让 CPU 算&quot;——KV Cache 量化省出 1-2GB 显存多放 8-16 层到 GPU，收益远大于调 CPU 线程数。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/deploy/multi-gpu" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>多卡推理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/deploy/serving" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>服务部署</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -122,6 +122,7 @@
 /ai/compute/deploy/hardware - 硬件
 /ai/compute/deploy/llmops - LLMOps
 /ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/onnx-deploy - ONNX 部署
 /ai/compute/deploy/optimization - 推理优化
 /ai/compute/deploy/quantization - 模型量化
 /ai/compute/deploy/serving - 服务部署
@@ -243,9 +244,9 @@
 /client/csharp/async - 异步编程
 /client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild
-/client/csharp/nuget - NuGet</pre>
-<pre>/client/csharp/unity - Unity
+/client/csharp/msbuild - MSBuild</pre>
+<pre>/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
 /client/game/godot - Godot
@@ -254,15 +255,15 @@
 /client/gui - 图形应用
 /client/gui/arch - 架构
 /client/gui/arch/observe - 可观测性
-/client/gui/cross - 跨平台
-/client/gui/cross/electron - Electron
-/client/gui/cross/flutter - Flutter
-/client/gui/cross/flutter/dart - Dart
-/client/gui/cross/framework - UI 框架
-/client/gui/cross/reactnative - ReactNative
 /client/gui/ergonomic - 人机关系
 /client/gui/ergonomic/interact - 人机交互
 /client/gui/ergonomic/screen - 屏幕
+/client/gui/framework - UI 框架
+/client/gui/framework/cross - 跨平台
+/client/gui/framework/electron - Electron
+/client/gui/framework/flutter - Flutter
+/client/gui/framework/flutter/dart - Dart
+/client/gui/framework/reactnative - ReactNative
 /client/gui/platform - UI 平台
 /client/gui/platform/android - Android
 /client/gui/platform/gnome - Gnome
@@ -306,18 +307,20 @@
 /client/render/vec/compose
 /client/render/vec_compose - 矢量合成管线
 /client/rust - Rust
-/client/rust/assets - 静态资源管理
 /client/rust/basic - 语言基础
+/client/rust/basic/assets - 静态资源管理
 /client/rust/basic/closure - 闭包
+/client/rust/basic/ld - 链接库
 /client/rust/basic/macro - 宏
 /client/rust/basic/mod - 模块系统
 /client/rust/basic/ref - 智能指针
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/ld - 链接库
-/client/rust/slint - Slint
-/client/rust/tauri - Tauri
+/client/rust/framework - Rust UI 框架
+/client/rust/framework/iced - iced
+/client/rust/framework/slint - Slint
+/client/rust/framework/tauri - Tauri
 /client/rust/wasm - WASM
 /client/web - Web
 /client/web/api - Web API
@@ -441,12 +444,15 @@
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式
-/design/typical/ability - 质量属性
+/design/typical - 经典范式</pre>
+<pre>/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
-/design/typical/duty - 职责分配</pre>
-<pre>/design/typical/macro - 宏观指导
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/maintainability - 可读性与可维护性
 /design/typical/refactor - 重构
+/design/typical/reliability - 可靠性与可用性
+/design/typical/requirements - 需求分析
 /design/typical/simplify - 简化原则
 /design/typical/swift - 敏捷开发
 /examples - 随便看看
@@ -494,7 +500,9 @@
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
 /kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/threadripper - Threadripper 装机
 /kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/motherboard/xeon - Xeon 装机
 /kernel/equip/ram - 内存
 /kernel/equip/sbc - SBC
 /kernel/equip/screen - 屏幕
@@ -513,10 +521,12 @@
 /kernel/linux/develop/lock - 同步原语
 /kernel/linux/develop/service - 系统服务
 /kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/stream-block - 流式与块式存取
 /kernel/linux/develop/struct - 数据结构
 /kernel/linux/develop/struct/iov - 聚簇读写
 /kernel/linux/develop/struct/linked - 链表
 /kernel/linux/develop/systemd - systemd
+/kernel/linux/develop/zero-copy - sendfile 零拷贝
 /kernel/linux/device - 设备管理
 /kernel/linux/device/dma - DMA
 /kernel/linux/device/driver - 驱动接口
@@ -524,6 +534,7 @@
 /kernel/linux/device/driver/pci - PCIe 驱动
 /kernel/linux/device/driver/usb - USB 驱动
 /kernel/linux/device/driver/virtio
+/kernel/linux/device/iommu - IOMMU
 /kernel/linux/device/lifecycle - 生命周期
 /kernel/linux/device/udev - udev
 /kernel/linux/file - 文件管理
@@ -545,8 +556,9 @@
 /kernel/linux/power/boot - 开机上电
 /kernel/linux/power/tpm - 安全启动
 /kernel/linux/process - 进程管理
+/kernel/linux/process/cgroup - Cgroup
 /kernel/linux/process/ipc - IPC
-/kernel/linux/process/ns - 命名空间
+/kernel/linux/process/namespace - 命名空间
 /kernel/linux/process/schd - 调度
 /kernel/linux/process/security - 权限管理
 /kernel/linux/syscall - 系统调用
@@ -564,7 +576,9 @@
 /kernel/vm/basic/cpu - CPU
 /kernel/vm/basic/device - 设备
 /kernel/vm/basic/memory - 内存
-/kernel/vm/qemu - Qemu/KVM
+/kernel/vm/debug - 虚拟机调试增强
+/kernel/vm/qemu - QEMU 内核调试
+/kernel/vm/spdk-dpdk - SPDK 与 DPDK
 /kernel/vm/vfio - VFIO
 /kernel/vm/virtio - VirtIO
 /sde - 工程化
@@ -630,8 +644,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL
-/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL</pre>
+<pre>/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -644,8 +658,8 @@
 /server/distribute/basic/concurrency - 并发模型
 /server/distribute/basic/concurrency/coroutine - 协程原理
 /server/distribute/basic/concurrency/event-loop - 事件驱动架构
-/server/distribute/basic/consensus - 共识算法</pre>
-<pre>/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
 /server/distribute/basic/consensus/raft - Raft 算法
 /server/distribute/basic/consensus/zab - ZAB 协议
 /server/distribute/basic/id - 分布式 ID
