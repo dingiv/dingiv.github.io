@@ -154,6 +154,57 @@ llama-cli -m model.gguf -ngl 20 -t 14
 
 混合推理的性能天花板很明确——CPU 卸载层数每增加 10%，Decode 速度约下降 30-50%。如果卸载层数超过总数的 50%，不如考虑更强的量化（Q3_K_M 甚至 IQ2_XXS）让更多层放进 GPU。
 
+### MoE 稀疏激活：天然的卸载窗口
+
+前面讨论的传统混合推理有一个隐含假设：模型是 Dense 架构，每层每个 token 都要经过，CPU 卸载的层每个 token 都要付 PCIe 传输代价。这个假设在 MoE 模型中不成立——每个 token 只激活 256 个 routed expert 中的 top-2，99% 的 expert 权重对当前 token 完全不需要。
+
+这个架构特性打开了传统混合推理无法企及的优化窗口——不需要把所有层都放在 GPU 上，只需确保"每个 token 必经"的模块在 GPU，其余按需从 CPU 加载。而且这个方向已经从理论走到了工程落地。
+
+#### 为什么 MoE 卸载比 Dense 卸载有效得多
+
+MoE 模型天然把模型拆成了两个不同的卸载策略域：
+
+**必须在 GPU**：Attention 层、Embedding、Shared Expert（DeepSeek-V3 中每个 token 必经）。这些约占模型总参数的 10-15%——参数量不大，显存压力小。
+
+**可以卸载到 CPU**：Routed Expert。这些占总参数的 70-85%，但每个 token 只激活其中 ~0.8%。如果将 routed expert 放在 CPU 内存中，GPU 显存需求从 24GB+ 骤降到 8-12GB——消费级显卡就能跑 671B 模型。
+
+关键不是"少加载数据"，而是 MoE 路由分布的高度不均匀使缓存极其有效。15-20% 的 expert 接收了 ~80% 的路由流量——自然形成 hot/cold 分层。**SMOE**（IPDPS 2026）和 **HybriMoE**（DAC 2025）的实测数据证实了这个假设：大 batch 下 Prefill 加速达 8.68 倍，Decode 加速 20-70%。
+
+#### 当前落地状态（2026 年中）
+
+这个方向在 2025-2026 年从学术论文快速进入了框架实现。核心方案已经收敛为四组件组合：
+
+**Expert 缓存**：GPU 上维护固定大小的 hot expert 缓存，通过 LFRU（频率加权 LRU）驱逐策略保留高频 expert。vLLM RFC #38256 的方案用 `score = frequency / age` 计算驱逐优先级，保留接收 50%+ 流量的"hub expert"。在 8GB GPU 上实测达到 97-100% 缓存命中率，decode 速度 30 tok/s。缓存未命中时，vLLM 的设计是报错而非静默降级到 CPU 计算——保持性能预期的确定性。
+
+**异步预取**：在处理当前 token 的 Attention 层时，同时通过 CUDA stream 从 CPU 预取下一层可能激活的 expert。Ollama PR #15988 实现了双缓冲预取——用两个 CUDA staging buffer 交替接收预取数据，Attention 计算和 PCIe 传输完全重叠。RTX 3090 实测 prefill 从 2072ms 降到 1230ms（1.68×），3-4× decode 加速。llama.cpp 通过 `--n-cpu-moe` 参数控制 MoE 层放置，experts 在 CPU 上计算（AVX/AMX 内核），而非单纯传输到 GPU——CPU 计算 expert 的延迟可能低于 PCIe 传输 FP16 权重的延迟。
+
+**投机 expert 预测**：2026 年 arXiv 论文 "Speculating Experts" 提出从当前层的 hidden state 预测下一层会激活哪些 expert，在 router 实际计算前就发起预取。使用极轻量预测器（4-45M 参数），TPOT 降低 5-14%。这个方向的价值在于——Router 本身的计算耗时很短（< 1ms），但 router 结果出来后 PCIe 传输才开始，延迟叠加。投机预测让预取"赶在 router 之前出发"，消除这个等待。
+
+**Pinned memory + 双缓冲**：所有 expert 权重驻留在 CPU 的 pinned memory（`cudaHostRegister`）中——这不是普通的 `malloc`，而是被 GPU DMA 引擎可直接访问的内存。结合双缓冲机制（一个 buffer 被 DMA 填充时，另一个 buffer 正被 GPU 计算使用），传输和计算完全流水线化。
+
+#### 消费级硬件实测数据
+
+llama.cpp/ik 分支使用 `--override-tensor exps=CPU` 将 routed expert 放在 CPU，attention + shared expert 保持在 GPU（MLA 支持下 32K 上下文 < 24GB VRAM）。DeepSeek V3 IQ2_K_R4 量化（24GB GPU + 96GB RAM）实测：
+
+- Prefill：从全 GPU 模式（如果装得下）的数百 ms 级到 1-2s——可接受
+- Decode：混合 GPU+CPU 模式 3-12 tok/s（全 CPU 模式仅 1-3 tok/s）
+- 4× RTX 4090（96GB VRAM + 256GB DDR5）跑 DeepSeek V3/R1 671B：2-4 tok/s
+
+双路 EPYC 服务器通过 NUMA-aware expert 分配（每个 NUMA 节点本地存储一半 expert），跨节点延迟降低 2-5×，token 生成速度提升 10-25%。
+
+#### 与传统混合推理的对比
+
+| 维度 | Dense 混合推理 | MoE Expert 卸载 |
+|------|-------------|---------------|
+| 卸载粒度 | 整层（Attention+FFN） | 单个 expert |
+| 每 token PCIe 负担 | 所有卸载层的所有权重 | 仅激活的 2 个 expert |
+| 缓存命中率 | 不适用（每 token 必经） | 97-100%（hot expert 常驻 GPU） |
+| 预取重叠 | 有限（Attention+FFN 串行） | 充分（Attention 计算与 expert 预取并行） |
+| 框架支持 | llama.cpp `-ngl` 成熟 | 各框架快速推进中 |
+| Decode 速度 | 卸载 30% 层 → 掉 50%+ | 卸载 80% expert → 掉 20-30% |
+
+MoE 卸载不是让 671B 模型在 8GB 显卡上跑到 60 tok/s——那不可能。它做的是让 671B 模型在 8GB 显卡上能跑到 5-12 tok/s，从"完全跑不了"变成"勉强可用"。对个人部署大模型来说，这是门槛级的突破。
+
 ## 跨阶段优化
 
 ### 连续批处理：填满 GPU 的等待间隙
@@ -167,6 +218,6 @@ llama-cli -m model.gguf -ngl 20 -t 14
 ## 本地落地方阵
 在本地单 GPU 或 PCIe 多卡环境下，优化技术按投入产出比排序：
 
-选择自带 GQA/MLA 的模型（Qwen 2.5、DeepSeek-V3）——零成本获取 KV Cache 压缩。启动服务确保 FlashAttention-2 启用（现代框架默认）。Prefill 慢（首字延迟高）→ 开启 Prefix Caching（SGLang RadixAttention，多轮对话场景收益最大）。Decode 慢（生成速度低）→ 开启投机解码（1.5-2.5x，draft model 需同系列）。长上下文场景 → KV Cache 4-bit 量化（显存节省 > 权重量化收益）。高并发 API 服务 → 连续批处理（vLLM/SGLang）。显存放不下模型 → CPU+GPU 混合推理（llama.cpp，层切分+KV Cache 量化优先）。多 GPU 场景 → 量化+DP 多实例覆盖并发，或 PP 拆分大模型（见[多卡推理](multi-gpu)）。
+选择自带 GQA/MLA 的模型（Qwen 2.5、DeepSeek-V3）——零成本获取 KV Cache 压缩。启动服务确保 FlashAttention-2 启用（现代框架默认）。Prefill 慢（首字延迟高）→ 开启 Prefix Caching（SGLang RadixAttention，多轮对话场景收益最大）。Decode 慢（生成速度低）→ 开启投机解码（1.5-2.5x，draft model 需同系列）或 MTP（模型内置时零额外成本）。长上下文场景 → KV Cache 4-bit 量化（显存节省 > 权重量化收益）。高并发 API 服务 → 连续批处理（vLLM/SGLang）。显存放不下模型 → CPU+GPU 混合推理（llama.cpp，层切分+KV Cache 量化优先）；如果是 MoE 模型 → Expert 卸载优先（Attention 留 GPU，Routed Expert 放 CPU，通过 expert 缓存+异步预取 3-12 tok/s）。多 GPU 场景 → 量化+DP 多实例覆盖并发，或 PP 拆分大模型（见[多卡推理](multi-gpu)）。
 
 关键认知：Prefill 瓶颈加算力，Decode 瓶颈减数据。选错方向比不作为更糟——给一台 3090 加第二张卡（算力翻倍）对 Decode 速度几乎无影响。混合推理的核心不是"CPU 能帮 GPU 算"，而是"尽量不让 CPU 算"——KV Cache 量化省出 1-2GB 显存多放 8-16 层到 GPU，收益远大于调 CPU 线程数。
