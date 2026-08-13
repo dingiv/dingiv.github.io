@@ -88,35 +88,48 @@ order: 2
 
   题目中关键词：`有序、查找、第 k 小的元素、最大化最小值、最小化最大值、单调`等等；
 
-  ```js
-  // 开区间二分遍历
-  let left = -1,
-    right = n;
-  while (left < right) {
-    let mid = Math.floor((left + right) / 2);
-    if (condition) {
-      // 处理边界情况
-      left = mid;
-    } else {
-      // 处理边界情况
-      right = mid;
-    }
-  }
+  **边界细节**。二分法的难点不是"折半"思想，而是边界细节：循环条件用 `<=` 还是 `<`、mid 向哪边取整、退出后答案在哪一侧。统一视角：**循环条件定义搜索区间的开闭，mid 的取整方向保证区间必然收缩**。
 
-  // 闭区间二分遍历
-  let left = 0,
-    right = n - 1;
-  while (left <= right) {
+  循环条件有三种变体。`left <= right`（闭区间）适合查找确定存在的目标值，三分支（等于即返回）：
+
+  ```js
+  let left = 0, right = n - 1;
+  while (left <= right) {                    // 闭区间 [left, right]
     let mid = Math.floor((left + right) / 2);
-    if (condition) {
-      // 处理边界情况
-      left = mid + 1;
+    if (nums[mid] === target) {
+      return mid;                            // 找到即返回
+    } else if (nums[mid] < target) {
+      left = mid + 1;                        // 跳过 mid，区间收缩
     } else {
-      // 处理边界情况
       right = mid - 1;
     }
   }
+  return -1;
   ```
+
+  `left < right`（左闭右开）适合 lower_bound——找"第一个满足条件的位置"。没有"等于即返回"，目标是把区间收敛到只剩一个元素：
+
+  ```js
+  // 找第一个 >= target 的位置
+  let left = 0, right = n;
+  while (left < right) {                     // 左闭右开 [left, right)
+    let mid = Math.floor((left + right) / 2);
+    if (nums[mid] < target) {
+      left = mid + 1;                        // mid 不满足，跳过
+    } else {
+      right = mid;                           // mid 满足，right 收缩但保留 mid
+    }
+  }
+  return left;                               // 退出时 left == right 即答案
+  ```
+
+  `right = mid` 不是魔法而是区间语义的推论：right 是开区间哨兵，满足条件的 mid 必须保留在区间内。upper_bound（第一个大于 target 的位置）只需把条件改为 `nums[mid] <= target` 走左移分支。`left + 1 < right`（两侧哨兵）适合"峰值查找"类问题——答案存在性由哨兵保证，循环只负责收敛。
+
+  **死循环的唯一根源**。死循环 = 区间不收缩 = mid 落在"不收缩的那一侧边界"上。修复规则只有一条：**转移出现 `left = mid` 时，mid 向上取整**（`Math.floor((left + right + 1) / 2)`）；转移是 `right = mid` 时，mid 向下取整。调试二分法死循环不需要逐步推演——检查两件事：是否有不收缩转移，mid 的取整方向是否与不收缩转移相反。
+
+  **三分支状态转移**。二分法的转移抽象为三分支：答案在 mid 左侧 / 答案就是 mid / 答案在 mid 右侧。"等于"分支的处理是变体的分水岭：标准查找等于即返回；lower_bound 等于并入右侧收缩（找第一个等于，还要向左找）；upper_bound 等于并入左侧收缩（找第一个大于，等于时向右找）。
+
+  **应用形态**。二分答案：答案具有单调性（"x 可行则所有更大的 x 都可行"），对答案空间二分——典型场景"最小化最大值"，骨架与 lower_bound 完全一致，变化只在 check 函数（git bisect 是二分答案最鲜活的工程实例）。旋转数组：二分法不需要全局有序——只需每次迭代能确定答案在哪一半（比较 `nums[mid]` 与 `nums[left]` 判断哪侧有序）。浮点二分：收敛到精度而非相等（`while right - left > 1e-6`），取整问题消失，边界问题被精度替代。二分法的本质是**在单调性上收敛区间**——"在有序域中定位"的一切需求都是二分法的实例。
 
 - 贪心法
   贪心法是一种遍历策略，在遍历时，有导向地选择在当前状态下最好或最优的选择进行优先遍历，忽略某些路径，跳过不必要的遍历，并且依然能够找到目标或最优结果的算法。贪心法需要我们提前知道：局部选择是否能导致全局最优。这往往要求题目具有一定的数学性质，例如最优子结构、无后效性、单调性等。
