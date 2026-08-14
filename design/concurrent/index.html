@@ -6,25 +6,26 @@
     <title>并发 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/design_concurrent_index.md.C7g7oObi.lean.js">
+    <link rel="modulepreload" href="/assets/design_concurrent_index.md.loEbOlsh.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
   </head>
   <body>
-    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _design_concurrent_" data-v-e9c23681><div><h1 id="并发编程" tabindex="-1">并发编程 <a class="header-anchor" href="#并发编程" aria-label="Permalink to “并发编程”">​</a></h1><p>1️⃣ 共享状态</p><p>多个执行单元访问同一数据。</p><p>后果：</p><p>数据竞争</p><p>不一致</p><p>Heisenbug</p><p>解决思路：</p><p>锁</p><p>原子操作</p><p>不共享（最优）</p><p>2️⃣ 顺序与可见性</p><p>不是“谁先写”，而是“谁看到什么”。</p><p>CPU、编译器、内存模型都会重排。</p><p>解决思路：</p><p>内存屏障</p><p>happens-before 关系</p><p>语言内存模型保证（Java / Rust）</p><p>3️⃣ 协调与阻塞</p><p>谁等谁？等多久？</p><p>错误设计会导致：</p><p>死锁</p><p>活锁</p><p>饥饿</p><p>解决思路：</p><p>条件变量</p><p>channel</p><p>async + await</p><p>超时 + 取消</p><p>4️⃣ 失败传播</p><p>并发中失败不是“return -1”。</p><p>一个任务失败，其他怎么办？</p><p>半完成状态如何回滚？</p><p>解决思路：</p><p>结构化并发</p><p>supervisor</p><p>失败隔离</p><h2 id="解决思路" tabindex="-1">解决思路 <a class="header-anchor" href="#解决思路" aria-label="Permalink to “解决思路”">​</a></h2><p>1️⃣ 共享内存模型（最难）</p><p>代表：</p><p>C / C++</p><p>Java 低层</p><p>pthread</p><p>特征：</p><p>锁、mutex、atomic</p><p>性能高</p><p>心智负担极重</p><p>适合：</p><p>内核</p><p>高频交易</p><p>极致性能模块</p><p>2️⃣ 消息传递模型（最稳）</p><p>代表：</p><p>Go channel</p><p>Erlang / Actor</p><p>Rust channel</p><p>特征：</p><p>不共享内存</p><p>通过消息传递状态</p><p>天然隔离</p><p>适合：</p><p>服务端</p><p>微服务</p><p>分布式系统</p><p>你之前对“跨进程响应式”的直觉，本质就在这里。</p><p>3️⃣ async / await（时间抽象）</p><p>代表：</p><p>JS</p><p>Rust async</p><p>Java CompletableFuture</p><p>特征：</p><p>协作式并发</p><p>单线程也可高并发</p><p>不等于线程安全</p><p>关键误区：</p><p>async 解决的是“等”，不是“共享”</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/design/fp/state" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>状态管理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/design/concurrent/atom" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>原子操作</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _design_concurrent_" data-v-e9c23681><div><h1 id="并发编程" tabindex="-1">并发编程 <a class="header-anchor" href="#并发编程" aria-label="Permalink to “并发编程”">​</a></h1><p>并发编程的四个核心问题是递进的：多个执行单元如何<strong>共享状态</strong>而不出错、各自看到的<strong>顺序与可见性</strong>如何保持一致、需要等待时如何<strong>协调与阻塞</strong>、任务失败时如何<strong>传播与隔离</strong>。对应的解决思路构成并发编程的知识版图：</p><table tabindex="0"><thead><tr><th>核心问题</th><th>解决思路</th><th>对应文章</th></tr></thead><tbody><tr><td>共享状态</td><td>锁、原子操作、消息传递、不共享</td><td><a href="#访问自肃">访问自肃</a>、<a href="./lock">同步原语</a>、<a href="./atom">原子操作</a></td></tr><tr><td>顺序与可见性</td><td>内存屏障、happens-before、语言内存模型</td><td><a href="./barrier">内存屏障</a>、<a href="./atom">原子操作</a></td></tr><tr><td>协调与阻塞</td><td>条件变量、channel、async/await、超时取消</td><td><a href="./thread">线程</a>、<a href="./lock">同步原语</a></td></tr><tr><td>失败传播</td><td>结构化并发、supervisor、失败隔离</td><td><a href="./lock_free">无锁并发</a></td></tr></tbody></table><h2 id="访问自肃" tabindex="-1">访问自肃 <a class="header-anchor" href="#访问自肃" aria-label="Permalink to “访问自肃”">​</a></h2><p>并发编程有一条反复被验证的思想主线：<strong>共享数据的每一次访问都必须经过一个已知的同步通道</strong>。锁、原子变量、消息传递、不可变数据——形式各异，但都在执行同一条纪律：不允许&quot;裸访问&quot;共享状态。这条纪律称为访问自肃（Access Discipline）——访问共享数据时的自我约束。</p><h3 id="并发-bug-的共同结构" tabindex="-1">并发 bug 的共同结构 <a class="header-anchor" href="#并发-bug-的共同结构" aria-label="Permalink to “并发 bug 的共同结构”">​</a></h3><p>所有数据竞争都有同一个结构：两个线程访问同一块内存，至少一个是写，且两者之间没有同步关系。关键不在于&quot;两个线程都访问了&quot;，而在于&quot;访问之间没有同步通道&quot;。</p><p>这指向一个反直觉的事实：并发 bug 从来不是&quot;访问了不该访问的数据&quot;，而是&quot;通过未登记的路径访问了数据&quot;。线程 A 持锁访问 <code>counter</code>，线程 B 不持锁直接读——A 遵守纪律而 B 没有，但后果由双方承担。锁的效力依赖&quot;所有访问者都使用同一把锁&quot;的约定——这个约定就是访问自肃。</p><p>工程推论：<strong>同步机制的价值不在于它本身，而在于访问路径的覆盖率</strong>。一把保护 95% 访问路径的锁，安全性约等于没有锁。审查并发代码的第一个问题不是&quot;有没有加锁&quot;，而是&quot;有没有未加锁的访问路径&quot;。</p><h3 id="四种形态" tabindex="-1">四种形态 <a class="header-anchor" href="#四种形态" aria-label="Permalink to “四种形态”">​</a></h3><p><strong>锁的自肃</strong>：所有访问者共享同一把锁，访问前获取、访问后释放。脆弱点在锁的粒度（锁保护数据而非代码，但思维习惯按代码块组织锁）和锁顺序（多锁交叉依赖时必须遵守的锁序约定，违反即死锁）。</p><p><strong>原子操作的自肃</strong>：被原子变量保护的数据，所有访问必须走原子 API。C/C++ 中一条普通读写路径就足以破坏整个原子方案；Rust 把这条纪律做进类型系统——原子类型没有非原子访问的语法，裸访问是编译错误。</p><p><strong>消息传递的自肃</strong>：不共享内存，通过通道转移数据所有权。Go 的&quot;通过通信共享内存&quot;是这条纪律的口号。违反方式是&quot;发了消息但保留引用&quot;——发送方继续使用已发送的数据，通道语义被破坏。Rust 的所有权系统在编译期阻止这种违反。</p><p><strong>不可变的自肃</strong>：共享数据标记为不可变——初始化后永不修改。这条纪律特殊之处在于不需要同步通道——不可变数据的读取天然线程安全。函数式语言的并发优势源于默认不可变；工程中的实用形态是&quot;配置数据启动时冻结，运行期只读&quot;。</p><h3 id="与类型系统的关系" tabindex="-1">与类型系统的关系 <a class="header-anchor" href="#与类型系统的关系" aria-label="Permalink to “与类型系统的关系”">​</a></h3><p>四种形态中，不可变和消息传递可以被类型系统强制执行，锁和原子操作依赖开发者纪律——除非语言提供更强的工具。</p><p>Rust 的 Send/Sync trait 是访问自肃的系统化表达：<code>Sync</code> 类型可安全共享引用，<code>Send</code> 类型可安全跨线程转移。编译期检查保证不满足 <code>Sync</code> 的类型（内部可变且未同步）无法被多线程共享——&quot;裸访问共享可变状态&quot;从坏习惯变为编译错误。纪律从文档约定提升为类型约束，覆盖率检查从代码审查转移到编译器。</p><p>需要明确 Rust 承诺的边界：它防止的是数据竞争（两条路径同时裸访问），而不是死锁、活锁等逻辑并发问题。访问自肃解决&quot;访问路径是否登记&quot;，不解决&quot;同步策略是否合理&quot;——锁的粒度和顺序仍然是开发者责任。</p><h3 id="工程实践" tabindex="-1">工程实践 <a class="header-anchor" href="#工程实践" aria-label="Permalink to “工程实践”">​</a></h3><p><strong>共享状态登记表</strong>。维护一份全局/共享变量清单，每项标注同步通道（锁名、原子类型、消息通道或不可变标记）。新代码访问共享状态先查表——未登记的路径就是潜在竞争。在 C/C++ 工程中这把隐式约定显式化，价值最大。</p><p><strong>审查焦点是路径而非代码</strong>。列出&quot;这块数据的所有读写点&quot;，逐一检查与同步通道的关系。一眼看上去加了锁的代码可能漏了读路径——&quot;读不加锁&quot;是&quot;读便宜&quot;心理的产物，但并发读与写竞争同样是数据竞争。</p><p><strong>不可变化是成本最低的自肃</strong>。每引入新共享数据先问&quot;必须可变吗&quot;——配置、常量表、只读索引默认不可变，变动隔离到最小范围。每减少一个可变共享状态，就消灭一类潜在竞争。</p><p>访问自肃的最终形态是一个认知转变：<strong>并发安全不是&quot;加够锁&quot;的状态，而是&quot;所有访问路径都在同步通道覆盖之下&quot;的不变量</strong>。锁、原子、消息、不可变是四种实现——选择取决于数据访问模式，但不变量的存在本身不可谈判。</p><h2 id="共享内存模型-最难" tabindex="-1">共享内存模型（最难） <a class="header-anchor" href="#共享内存模型-最难" aria-label="Permalink to “共享内存模型（最难）”">​</a></h2><p>C/C++、Java 底层、pthread 的路线：锁、mutex、atomic 直接操作共享内存。性能上限最高、心智负担最重。适合内核、高频交易等极致性能场景。这条路线的一切正确性都建立在<a href="#访问自肃">访问自肃</a>之上——所有访问路径必须登记在同步通道上，<a href="./lock">同步原语</a>提供通道本身，<a href="./atom">原子操作</a>提供无锁的基础原语，<a href="./barrier">内存屏障</a>保证跨线程的顺序关系。</p><h2 id="消息传递模型-最稳" tabindex="-1">消息传递模型（最稳） <a class="header-anchor" href="#消息传递模型-最稳" aria-label="Permalink to “消息传递模型（最稳）”">​</a></h2><p>Go channel、Erlang/Actor、Rust channel 的路线：不共享内存，通过消息传递状态，天然隔离。适合服务端、微服务、分布式系统。数据的单一所有权替代了锁的互相谦让——正确性由通道语义保证，而非开发者对每一条访问路径的审查。</p><h2 id="async-await-时间抽象" tabindex="-1">async/await（时间抽象） <a class="header-anchor" href="#async-await-时间抽象" aria-label="Permalink to “async/await（时间抽象）”">​</a></h2><p>JS、Rust async、Java CompletableFuture 的路线：协作式并发，单线程也可高并发。关键误区：async 解决的是&quot;等&quot;（IO 等待期间让出执行权），不是&quot;共享&quot;（共享状态的安全仍需上述两条路线的机制）。async 不等于线程安全。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/design/fp/state" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>状态管理</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/design/concurrent/barrier" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>内存屏障</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -84,6 +85,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -181,6 +183,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -218,11 +221,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -257,6 +260,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -387,6 +391,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -416,13 +421,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -455,6 +460,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -473,6 +479,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -522,6 +529,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -573,9 +581,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -589,6 +598,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -611,8 +621,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -621,8 +631,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -692,6 +702,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx

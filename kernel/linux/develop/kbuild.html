@@ -6,25 +6,26 @@
     <title>linux 内核构建系统 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/kernel_linux_develop_kbuild.md.Bvuv0mZp.lean.js">
+    <link rel="modulepreload" href="/assets/kernel_linux_develop_kbuild.md.CMekqQ79.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
   </head>
   <body>
-    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _kernel_linux_develop_kbuild" data-v-e9c23681><div><h1 id="linux-内核构建系统" tabindex="-1">linux 内核构建系统 <a class="header-anchor" href="#linux-内核构建系统" aria-label="Permalink to “linux 内核构建系统”">​</a></h1><p>linux 内核构建系统是基于 gcc 和 makefile，并在此基础上添加了适用于内核构建的特性</p><p>内核没有标准库</p><p>-nostdinc # 不使用系统头文件 -ffreestanding # 不假设标准库存在 -fno-builtin # 不使用编译器内置函数替换 内核自己实现了 memcpy、printf（printk）等，不依赖 glibc。</p><p>NULL 不是无效地址</p><p>-fno-delete-null-pointer-checks # 禁止编译器优化掉 NULL 检查 在用户态，NULL (0x0) 永远不可访问，编译器会优化掉对 NULL 的检查。但在内核空间，地址 0 是合法的（尤其在 x86-32 上），不能被优化掉。</p><p>禁用浮点</p><p>-mno-sse -mno-mmx -mno-sse2 -mno-avx -mno-80387 内核代码不能使用浮点运算。因为切换 FPU/SSE 上下文代价高昂，内核选择完全不使用。需要浮点时，必须手动保存/恢复 FPU 状态。</p><p>红区不可用</p><p>-mno-red-zone # 仅 x86-64 x86-64 ABI 规定函数栈帧下方有 128 字节的&quot;红区&quot;可供叶函数使用而不必调整栈指针。但内核的中断随时会打断执行，红区会被覆盖，所以必须禁用。</p><p>内核代码模型</p><p>-mcmodel=kernel # 仅 x86-64 x86-64 内核运行在高位地址（0xffffffff80000000 起），超过普通 -mcmodel=small 的 2GB 寻址范围，必须用 kernel 模型。</p><p>禁止严格别名优化</p><p>-fno-strict-aliasing 内核大量做类型转换（type-punning），比如把一块内存既当 struct boot_params 又当 char[] 来操作。严格别名优化会破坏这些代码。</p><ol start="3"><li>GCC 插件体系</li></ol><p>内核还有自己的 GCC 插件（scripts/gcc-plugins/）：</p><p>┌─────────────────────────┬────────────────────────────────┐ │ 插件 │ 作用 │ ├─────────────────────────┼────────────────────────────────┤ │ randomize_layout_plugin │ 随机化结构体字段布局，防御攻击 │ ├─────────────────────────┼────────────────────────────────┤ │ stackleak_plugin │ 系统调用返回时擦除内核栈 │ ├─────────────────────────┼────────────────────────────────┤ │ latent_entropy_plugin │ 为变量注入随机熵 │ └─────────────────────────┴────────────────────────────────┘</p><ol start="4"><li>编译器抽象层</li></ol><p>内核通过头文件抹平 GCC 和 Clang 的差异：</p><p>include/linux/compiler_types.h → 根据 <strong>clang</strong>/<strong>GNUC</strong> 分发 ├─ include/linux/compiler-gcc.h # GCC 特定定义 └─ include/linux/compiler-clang.h # Clang 特定定义 include/linux/compiler_attributes.h # 统一的 <strong>attribute</strong> 宏</p><p>常用宏映射： #define __always_inline inline <strong>attribute</strong>((always_inline)) #define __packed <strong>attribute</strong>((packed)) #define __noreturn <strong>attribute</strong>((noreturn)) #define __cold <strong>attribute</strong>((cold)) #define noinstr noinline notrace // 不能被追踪/内联</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/develop/io_uring" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>io_uring</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/develop/lock" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>同步原语</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _kernel_linux_develop_kbuild" data-v-e9c23681><div><h1 id="linux-内核构建系统" tabindex="-1">linux 内核构建系统 <a class="header-anchor" href="#linux-内核构建系统" aria-label="Permalink to “linux 内核构建系统”">​</a></h1><p>linux 内核构建系统是基于 gcc 和 makefile，并在此基础上添加了适用于内核构建的特性</p><p>内核没有标准库</p><p>-nostdinc # 不使用系统头文件 -ffreestanding # 不假设标准库存在 -fno-builtin # 不使用编译器内置函数替换 内核自己实现了 memcpy、printf（printk）等，不依赖 glibc。</p><p>NULL 不是无效地址</p><p>-fno-delete-null-pointer-checks # 禁止编译器优化掉 NULL 检查 在用户态，NULL (0x0) 永远不可访问，编译器会优化掉对 NULL 的检查。但在内核空间，地址 0 是合法的（尤其在 x86-32 上），不能被优化掉。</p><p>禁用浮点</p><p>-mno-sse -mno-mmx -mno-sse2 -mno-avx -mno-80387 内核代码不能使用浮点运算。因为切换 FPU/SSE 上下文代价高昂，内核选择完全不使用。需要浮点时，必须手动保存/恢复 FPU 状态。</p><p>红区不可用</p><p>-mno-red-zone # 仅 x86-64 x86-64 ABI 规定函数栈帧下方有 128 字节的&quot;红区&quot;可供叶函数使用而不必调整栈指针。但内核的中断随时会打断执行，红区会被覆盖，所以必须禁用。</p><p>内核代码模型</p><p>-mcmodel=kernel # 仅 x86-64 x86-64 内核运行在高位地址（0xffffffff80000000 起），超过普通 -mcmodel=small 的 2GB 寻址范围，必须用 kernel 模型。</p><p>禁止严格别名优化</p><p>-fno-strict-aliasing 内核大量做类型转换（type-punning），比如把一块内存既当 struct boot_params 又当 char[] 来操作。严格别名优化会破坏这些代码。</p><ol start="3"><li>GCC 插件体系</li></ol><p>内核还有自己的 GCC 插件（scripts/gcc-plugins/）：</p><p>┌─────────────────────────┬────────────────────────────────┐ │ 插件 │ 作用 │ ├─────────────────────────┼────────────────────────────────┤ │ randomize_layout_plugin │ 随机化结构体字段布局，防御攻击 │ ├─────────────────────────┼────────────────────────────────┤ │ stackleak_plugin │ 系统调用返回时擦除内核栈 │ ├─────────────────────────┼────────────────────────────────┤ │ latent_entropy_plugin │ 为变量注入随机熵 │ └─────────────────────────┴────────────────────────────────┘</p><ol start="4"><li>编译器抽象层</li></ol><p>内核通过头文件抹平 GCC 和 Clang 的差异：</p><p>include/linux/compiler_types.h → 根据 <strong>clang</strong>/<strong>GNUC</strong> 分发 ├─ include/linux/compiler-gcc.h # GCC 特定定义 └─ include/linux/compiler-clang.h # Clang 特定定义 include/linux/compiler_attributes.h # 统一的 <strong>attribute</strong> 宏</p><p>常用宏映射： #define __always_inline inline <strong>attribute</strong>((always_inline)) #define __packed <strong>attribute</strong>((packed)) #define __noreturn <strong>attribute</strong>((noreturn)) #define __cold <strong>attribute</strong>((cold)) #define noinstr noinline notrace // 不能被追踪/内联</p><h2 id="内核启动命令行参数" tabindex="-1">内核启动命令行参数 <a class="header-anchor" href="#内核启动命令行参数" aria-label="Permalink to “内核启动命令行参数”">​</a></h2><p>编译产出 bzImage 之后，控制内核行为的第二个入口是启动命令行（kernel cmdline）——Boot Loader 传递的 <code>console=ttyS0 root=/dev/sda1</code> 这类参数。内核启动早期解析它们并据此配置自身。调试开发场景的常用参数按功能分组：</p><p><strong>控制台与输出</strong>（调试第一需要——没有输出就没有信息）：</p><table tabindex="0"><thead><tr><th>参数</th><th>作用</th></tr></thead><tbody><tr><td><code>console=ttyS0,115200</code></td><td>串口控制台（QEMU <code>-nographic</code>、无头服务器的标配）</td></tr><tr><td><code>console=tty0 console=ttyS0</code></td><td>双控制台——VGA 和串口同时输出（最后的 console 是 stdin/stdout 主设备）</td></tr><tr><td><code>earlyprintk=serial,ttyS0,115200</code></td><td>最早的输出通道——在 printk 初始化前就可用（调试启动早期崩溃）</td></tr><tr><td><code>printk.devkmsg=on</code></td><td>允许用户态写入 /dev/kmsg（测试注入）</td></tr><tr><td><code>loglevel=8</code></td><td>提高控制台日志级别（8=debug 全开）</td></tr></tbody></table><p><strong>内存与地址布局</strong>（调试内存管理、KASLR 相关问题）：</p><table tabindex="0"><thead><tr><th>参数</th><th>作用</th></tr></thead><tbody><tr><td><code>nokaslr</code></td><td>禁用内核地址随机化——KASLR 让调试符号和断点全部失效，内核调试必加</td></tr><tr><td><code>mem=4G</code></td><td>限制内核可见内存（复现小内存场景）</td></tr><tr><td><code>memmap=4G$0x100000000</code></td><td>在指定物理地址保留内存（设备 DMA 缓冲、大页预留）</td></tr><tr><td><code>crashkernel=256M</code></td><td>为 kdump 的 crash kernel 预留内存</td></tr><tr><td><code>hugepages=1024</code></td><td>启动时预留大页</td></tr></tbody></table><p><strong>调试基础设施</strong>：</p><table tabindex="0"><thead><tr><th>参数</th><th>作用</th></tr></thead><tbody><tr><td><code>oops=panic</code></td><td>oops 升级为 panic（避免带伤继续运行）</td></tr><tr><td><code>panic=5</code></td><td>panic 后 5 秒重启（配合看门狗做自动恢复）</td></tr><tr><td><code>kgdboc=ttyS1,115200</code></td><td>KGDB over console（串口连接 GDB 调试内核）</td></tr><tr><td><code>debug</code></td><td>提升子系统 debug 日志级别</td></tr><tr><td><code>initcall_debug</code></td><td>打印每个 initcall 的执行时间（定位启动慢的驱动）</td></tr><tr><td><code>ignore_loglevel</code></td><td>输出所有日志（无视 loglevel 设置）</td></tr></tbody></table><p><strong>故障注入与测试</strong>：</p><table tabindex="0"><thead><tr><th>参数</th><th>作用</th></tr></thead><tbody><tr><td><code>failslab=</code> / <code>fail_page_alloc=</code></td><td>故障注入框架（测试错误处理路径）</td></tr><tr><td><code>fault_inject=</code></td><td>通用故障注入配置</td></tr><tr><td><code>ftrace_dump_on_oops</code></td><td>oops 时自动 dump ftrace 缓冲（事后分析现场）</td></tr><tr><td><code>trace_event=</code></td><td>启动时启用指定 tracepoint（捕获启动期事件）</td></tr></tbody></table><p><strong>根文件系统与 init</strong>（引导问题排查）：</p><table tabindex="0"><thead><tr><th>参数</th><th>作用</th></tr></thead><tbody><tr><td><code>root=/dev/sda1 rootwait</code></td><td>根设备（rootwait 等待设备就绪——USB/NVMe 枚举慢时必需）</td></tr><tr><td><code>rootflags=</code></td><td>根文件系统挂载选项</td></tr><tr><td><code>init=/bin/sh</code></td><td>跳过 init 系统（救援模式——忘记密码、init 损坏）</td></tr><tr><td><code>rdinit=</code> / <code>rd.break</code></td><td>initramfs 阶段打断（dracut 的救援入口）</td></tr><tr><td><code>systemd.unit=emergency.target</code></td><td>systemd 的紧急目标</td></tr></tbody></table><p>命令行的解析机制：早期解析（<code>setup_arch</code> 前）处理 <code>earlycon</code>/<code>earlyprintk</code> 这类&quot;越早越好&quot;的参数；主体解析由 <code>parse_args</code> 遍历——每个参数匹配注册的 <code>__setup()</code> 或 <code>early_param()</code> 宏处理函数（驱动通过模块参数机制 <code>module_param</code> 注册自己的参数）。未识别的参数传递给 init 进程（<code>/proc/cmdline</code> 可查看完整命令行）。调试场景的实用习惯：维护一份 QEMU 启动脚本固定 <code>nokaslr console=ttyS0</code> 等参数组合——避免每次调试重新摸索。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/kernel/linux/develop/io_uring" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>io_uring</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/kernel/linux/develop/lock" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>同步原语</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -84,6 +85,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -181,6 +183,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -218,11 +221,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -257,6 +260,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -387,6 +391,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -416,13 +421,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -455,6 +460,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -473,6 +479,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -522,6 +529,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -573,9 +581,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -589,6 +598,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -611,8 +621,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -621,8 +631,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -692,6 +702,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx

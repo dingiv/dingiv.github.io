@@ -6,9 +6,9 @@
     <title>DirectX | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -113,12 +113,13 @@
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    float4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> color = </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">TraceRay</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ray);</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    Output[DispatchThreadID.xy] = color;</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>网格着色器（Mesh Shader）是 DirectX 12 的另一种新特性，取代了传统的顶点/几何着色器流程。网格着色器直接生成图元（点、线、三角形），可动态改变几何拓扑，实现更灵活的几何处理。放大着色器（Amplification Shader）可启动多个网格着色器实例，用于细分和剔除。这种新的几何管线比曲面细分更高效，适合复杂几何和程序化生成。</p><h2 id="性能优化" tabindex="-1">性能优化 <a class="header-anchor" href="#性能优化" aria-label="Permalink to “性能优化”">​</a></h2><p>HLSL 的性能优化原则与 GLSL 类似，但有一些 DirectX 特定的技巧。使用 <code>flattens</code> 和 <code>branch</code> 属性控制分支编译，<code>[flatten]</code> 将 if-else 编译为条件移动（无分支开销），<code>[branch]</code> 保留分支（适合 if 的一个分支总是成立的情况）。使用 <code>groupshared</code> 内存共享线程组内数据，减少全局内存访问。使用 <code>WaveActiveMax</code> 等波前操作代替原子操作，提升性能。</p><p>早期深度测试（Early-Z）是重要的优化，在片段着色器前执行深度测试，剔除被遮挡的片段。确保着色器不修改深度（<code>earlydepthstencil</code> 属性），驱动会自动启用 Early-Z。对于 Alpha 测试，使用 <code>clip()</code> 或 <code>discard</code> 会禁用 Early-Z，可考虑用 Alpha-to-Coverage 或预乘 Alpha 替代。</p><p>性能分析工具包括 PIX（微软官方）、RenderDoc（开源）、Nsight（NVIDIA）、Radeon GPU Profiler（AMD）。这些工具可捕获帧并分析着色器执行时间、资源使用、管线状态。PIX 的调试器支持单步执行着色器、检查变量值、查看 GPU 内存。优化应基于实际测量，热点分析（profiling）比猜测更可靠。</p><h2 id="与-glsl-的差异" tabindex="-1">与 GLSL 的差异 <a class="header-anchor" href="#与-glsl-的差异" aria-label="Permalink to “与 GLSL 的差异”">​</a></h2><p>HLSL 与 GLSL 的语法类似，但有一些重要差异。HLSL 使用 <code>mul(向量, 矩阵)</code>，GLSL 使用 <code>矩阵 * 向量</code>（HLSL 是行向量，GLSL 是列向量）。HLSL 的矩阵是行主序（row-major），GLSL 是列主序（column-major），需要在应用中正确设置转置。HLSL 的 <code>Texture2D::Sample()</code> 对应 GLSL 的 <code>texture()</code>，参数顺序相同。HLSL 的 <code>SV_Position</code> 对应 GLSL 的 <code>gl_Position</code>，系统值都用 <code>SV_</code> 前缀。</p><p>SPIR-V Cross、glslang 等工具可实现 HLSL 与 GLSL 的互相转换。跨平台引擎（如 Unreal、Unity）通常用 HLSL 作为主语言，然后转换为其他平台的着色器语言。这种策略减少了维护成本，但也限制了平台特定特性的使用。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/render/api/opengl" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>OpenGL</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/render/api/webgpu" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>WebGPU</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>网格着色器（Mesh Shader）是 DirectX 12 的另一种新特性，取代了传统的顶点/几何着色器流程。网格着色器直接生成图元（点、线、三角形），可动态改变几何拓扑，实现更灵活的几何处理。放大着色器（Amplification Shader）可启动多个网格着色器实例，用于细分和剔除。这种新的几何管线比曲面细分更高效，适合复杂几何和程序化生成。</p><h2 id="性能优化" tabindex="-1">性能优化 <a class="header-anchor" href="#性能优化" aria-label="Permalink to “性能优化”">​</a></h2><p>HLSL 的性能优化原则与 GLSL 类似，但有一些 DirectX 特定的技巧。使用 <code>flattens</code> 和 <code>branch</code> 属性控制分支编译，<code>[flatten]</code> 将 if-else 编译为条件移动（无分支开销），<code>[branch]</code> 保留分支（适合 if 的一个分支总是成立的情况）。使用 <code>groupshared</code> 内存共享线程组内数据，减少全局内存访问。使用 <code>WaveActiveMax</code> 等波前操作代替原子操作，提升性能。</p><p>早期深度测试（Early-Z）是重要的优化，在片段着色器前执行深度测试，剔除被遮挡的片段。确保着色器不修改深度（<code>earlydepthstencil</code> 属性），驱动会自动启用 Early-Z。对于 Alpha 测试，使用 <code>clip()</code> 或 <code>discard</code> 会禁用 Early-Z，可考虑用 Alpha-to-Coverage 或预乘 Alpha 替代。</p><p>性能分析工具包括 PIX（微软官方）、RenderDoc（开源）、Nsight（NVIDIA）、Radeon GPU Profiler（AMD）。这些工具可捕获帧并分析着色器执行时间、资源使用、管线状态。PIX 的调试器支持单步执行着色器、检查变量值、查看 GPU 内存。优化应基于实际测量，热点分析（profiling）比猜测更可靠。</p><h2 id="与-glsl-的差异" tabindex="-1">与 GLSL 的差异 <a class="header-anchor" href="#与-glsl-的差异" aria-label="Permalink to “与 GLSL 的差异”">​</a></h2><p>HLSL 与 GLSL 的语法类似，但有一些重要差异。HLSL 使用 <code>mul(向量, 矩阵)</code>，GLSL 使用 <code>矩阵 * 向量</code>（HLSL 是行向量，GLSL 是列向量）。HLSL 的矩阵是行主序（row-major），GLSL 是列主序（column-major），需要在应用中正确设置转置。HLSL 的 <code>Texture2D::Sample()</code> 对应 GLSL 的 <code>texture()</code>，参数顺序相同。HLSL 的 <code>SV_Position</code> 对应 GLSL 的 <code>gl_Position</code>，系统值都用 <code>SV_</code> 前缀。</p><p>SPIR-V Cross、glslang 等工具可实现 HLSL 与 GLSL 的互相转换。跨平台引擎（如 Unreal、Unity）通常用 HLSL 作为主语言，然后转换为其他平台的着色器语言。这种策略减少了维护成本，但也限制了平台特定特性的使用。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/render/api/opengl" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>OpenGL</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/render/api/sdl" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>SDL</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -178,6 +179,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -275,6 +277,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -312,11 +315,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -351,6 +354,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -481,6 +485,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -510,13 +515,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -549,6 +554,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -567,6 +573,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -616,6 +623,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -667,9 +675,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -683,6 +692,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -705,8 +715,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -715,8 +725,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -786,6 +796,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx

@@ -6,15 +6,15 @@
     <title>进程管理 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
     <link rel="modulepreload" href="/assets/chunks/assets.kLay_2y6.js">
-    <link rel="modulepreload" href="/assets/kernel_linux_process_index.md.ts9GJKRj.lean.js">
+    <link rel="modulepreload" href="/assets/kernel_linux_process_index.md.D62LZi0q.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
@@ -31,7 +31,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> sched_entity se;</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> sched_rt_entity rt;</span></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    // ...</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></div><table tabindex="0"><thead><tr><th>属性</th><th>进程A（主线程）</th><th>线程B（属于A）</th></tr></thead><tbody><tr><td><code>mm</code>（内存空间）</td><td>共享</td><td>共享</td></tr><tr><td><code>files</code>（文件表）</td><td>共享</td><td>共享</td></tr><tr><td><code>fs</code>（工作目录）</td><td>共享</td><td>共享</td></tr><tr><td>栈</td><td>独立</td><td>独立</td></tr><tr><td><code>task_struct</code></td><td>独立</td><td>独立</td></tr></tbody></table><h2 id="内存模型" tabindex="-1">内存模型 <a class="header-anchor" href="#内存模型" aria-label="Permalink to “内存模型”">​</a></h2><p>进程的内存是操作系统许诺的一个虚假空间，分为两个部分，一部分是内核空间，一部分是用户空间，内核空间预先存放了操作系统为用户提供过的一些数据和信息，用户的代码和数据存放在用户空间，用户可以在自己的空间中执行程序，同时也可以通过执行特定的指令，从而触发中断让操作系统介入，进入内核空间中去让操作系统执行内核代码，以使用内核提供的 API 执行更加底层的操作，包括：IO 操作，硬件控制，系统控制等等。</p><p><img src="/assets/memo.dio.DcbH3TaV.svg" alt="内存模型"></p><ul><li>栈区，为函数调用提供局部变量空间、保存返回地址，每个线程都有自己的栈空间，内存由操作系统自动维护；</li><li>堆区，为程序提供动态分配内存（如 malloc, new），内存需要程序员手动管理；</li></ul><h2 id="进程拓扑" tabindex="-1">进程拓扑 <a class="header-anchor" href="#进程拓扑" aria-label="Permalink to “进程拓扑”">​</a></h2><p>在 linux 中，所有的进程都是通过其他进程 fork 而来的，由此形成了进程之间的父子派生关系。每个进程都必须要有父进程，即使你看到一个进程是完全 detached 的，其实它也会默认找 1 号进程作为父进程。使用 fork 调用可以创建子进程，子进程默认和父进程位于同一个进程组。</p><p>Linux 系统中的所有进程都可以看作一棵以 init（PID 1）为根的树状结构。每个进程都有一个父进程（parent），可以有多个子进程（children）。通过 <code>pstree</code> 命令可以直观地查看进程树结构。所有的进程都是通过其他进程创建而来的（除了 1 号进程），由此形成了进程之间的父子派生关系。使用 <a href="./../syscall/process">fork 系列调用</a>可以创建子进程，子进程默认和父进程位于同一个进程组。</p><p>进程组是一个或多个相关进程的集合，通常用于信号的批量管理。每个进程组有一个唯一的进程组 ID（PGID），等于该组组长进程的 PID。进程组常用于 shell 管理前台/后台任务。</p><p>会话是一个或多个进程组的集合，通常由用户登录 shell 创建。每个会话有一个会话首进程（Session Leader），会话用于终端控制和作业管理。</p><h3 id="孤儿进程与僵尸进程" tabindex="-1">孤儿进程与僵尸进程 <a class="header-anchor" href="#孤儿进程与僵尸进程" aria-label="Permalink to “孤儿进程与僵尸进程”">​</a></h3><ul><li>孤儿进程：父进程终止后，子进程未结束，此时子进程会被 init 进程（PID 1）收养。</li><li>僵尸进程：子进程已结束，但父进程尚未调用 wait/waitpid 获取其状态，子进程会以僵尸状态保留在进程表中，直到父进程处理其退出信息。</li></ul><h3 id="进程在-vfs-中的虚拟文件" tabindex="-1">进程在 VFS 中的虚拟文件 <a class="header-anchor" href="#进程在-vfs-中的虚拟文件" aria-label="Permalink to “进程在 VFS 中的虚拟文件”">​</a></h3><p>每个进程在 <code>/proc/[pid]/</code> 下有一组虚拟文件：</p><table tabindex="0"><thead><tr><th>文件名</th><th>含义</th></tr></thead><tbody><tr><td><code>/proc/[pid]/status</code></td><td>进程状态和信息</td></tr><tr><td><code>/proc/[pid]/cmdline</code></td><td>启动命令</td></tr><tr><td><code>/proc/[pid]/fd/</code></td><td>打开的文件描述符</td></tr><tr><td><code>/proc/[pid]/maps</code></td><td>内存映射信息</td></tr></tbody></table><h2 id="生命周期" tabindex="-1">生命周期 <a class="header-anchor" href="#生命周期" aria-label="Permalink to “生命周期”">​</a></h2><p>进程具有从创建到死亡的阶段，特殊地还有睡眠阶段，</p><p><img src="/assets/state.dio.CzHMST5A.svg" alt="进程的生命周期"></p><p>生命周期可以使用进程相关的系统调用来进行管理，以 C 函数的形式存在。具体参考<a href="./../syscall/">系统调用</a></p><h3 id="进程加载" tabindex="-1">进程加载 <a class="header-anchor" href="#进程加载" aria-label="Permalink to “进程加载”">​</a></h3><p>当一个程序被执行时：</p><ol><li>将程序的 ELF 文件（Executable and Linkable Format）内容加载到内存中</li><li>分配到进程的虚拟地址空间中的相应位置（位置分配由编译器决定）</li><li>操作系统为进程创建页表，维护虚拟内存到物理内存的映射逻辑</li></ol><h3 id="休眠" tabindex="-1">休眠 <a class="header-anchor" href="#休眠" aria-label="Permalink to “休眠”">​</a></h3><p>阻塞、空转、死锁</p><ul><li><strong>阻塞</strong>：进程因等待 I/O、锁、信号量等进入阻塞状态，CPU 时间片被让出。</li><li><strong>空转</strong>：进程处于无意义的循环等待，浪费 CPU 资源，常见于设计缺陷或 bug。</li></ul><p>从操作系统层面，当进程调用阻塞式系统调用时：</p><ol><li>进程进入阻塞状态</li><li>操作系统不会把 CPU 的时间片分配给这个进程</li><li>直到调用结束，进程从阻塞状态重新进入执行状态</li></ol><p>常见的阻塞式调用包括：</p><ol><li><p>进程调度和中断</p><ul><li>进程本身的调度和中断机制通过阻塞方式实现</li><li>这个过程对于进程自身来说是无感知的</li></ul></li><li><p>阻塞式 IO 调用</p><div class="language-c"><button title="Copy Code" class="copy"></button><span class="lang">c</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 阻塞式函数</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></div><table tabindex="0"><thead><tr><th>属性</th><th>进程A（主线程）</th><th>线程B（属于A）</th></tr></thead><tbody><tr><td><code>mm</code>（内存空间）</td><td>共享</td><td>共享</td></tr><tr><td><code>files</code>（文件表）</td><td>共享</td><td>共享</td></tr><tr><td><code>fs</code>（工作目录）</td><td>共享</td><td>共享</td></tr><tr><td>栈</td><td>独立</td><td>独立</td></tr><tr><td><code>task_struct</code></td><td>独立</td><td>独立</td></tr></tbody></table><h2 id="内存模型" tabindex="-1">内存模型 <a class="header-anchor" href="#内存模型" aria-label="Permalink to “内存模型”">​</a></h2><p>进程的内存是操作系统许诺的一个虚假空间，分为两个部分，一部分是内核空间，一部分是用户空间，内核空间预先存放了操作系统为用户提供过的一些数据和信息，用户的代码和数据存放在用户空间，用户可以在自己的空间中执行程序，同时也可以通过执行特定的指令，从而触发中断让操作系统介入，进入内核空间中去让操作系统执行内核代码，以使用内核提供的 API 执行更加底层的操作，包括：IO 操作，硬件控制，系统控制等等。</p><p><img src="/assets/memo.dio.DcbH3TaV.svg" alt="内存模型"></p><ul><li>栈区，为函数调用提供局部变量空间、保存返回地址，每个线程都有自己的栈空间，内存由操作系统自动维护；</li><li>堆区，为程序提供动态分配内存（如 malloc, new），内存需要程序员手动管理；</li></ul><h2 id="进程拓扑" tabindex="-1">进程拓扑 <a class="header-anchor" href="#进程拓扑" aria-label="Permalink to “进程拓扑”">​</a></h2><p>在 linux 中，所有的进程都是通过其他进程 fork 而来的，由此形成了进程之间的父子派生关系。每个进程都必须要有父进程，即使你看到一个进程是完全 detached 的，其实它也会默认找 1 号进程作为父进程。使用 fork 调用可以创建子进程，子进程默认和父进程位于同一个进程组。</p><p>Linux 系统中的所有进程都可以看作一棵以 init（PID 1）为根的树状结构。每个进程都有一个父进程（parent），可以有多个子进程（children）。通过 <code>pstree</code> 命令可以直观地查看进程树结构。所有的进程都是通过其他进程创建而来的（除了 1 号进程），由此形成了进程之间的父子派生关系。使用 <a href="./../syscall/process">fork 系列调用</a>可以创建子进程，子进程默认和父进程位于同一个进程组。</p><p>进程组是一个或多个相关进程的集合，通常用于信号的批量管理。每个进程组有一个唯一的进程组 ID（PGID），等于该组组长进程的 PID。进程组常用于 shell 管理前台/后台任务。</p><p>会话是一个或多个进程组的集合，通常由用户登录 shell 创建。每个会话有一个会话首进程（Session Leader），会话用于终端控制和作业管理。</p><h3 id="孤儿进程与僵尸进程" tabindex="-1">孤儿进程与僵尸进程 <a class="header-anchor" href="#孤儿进程与僵尸进程" aria-label="Permalink to “孤儿进程与僵尸进程”">​</a></h3><ul><li>孤儿进程：父进程终止后，子进程未结束，此时子进程会被 init 进程（PID 1）收养。</li><li>僵尸进程：子进程已结束，但父进程尚未调用 wait/waitpid 获取其状态，子进程会以僵尸状态保留在进程表中，直到父进程处理其退出信息。</li></ul><h3 id="fork-树与资源继承" tabindex="-1">fork 树与资源继承 <a class="header-anchor" href="#fork-树与资源继承" aria-label="Permalink to “fork 树与资源继承”">​</a></h3><p>进程树的本质是&quot;fork 的派生历史&quot;——每次 fork 复制的不只是代码执行的上下文，还有一族资源的引用。理解&quot;fork 继承什么&quot;等于理解 Unix 环境的传播机制：</p><table tabindex="0"><thead><tr><th>继承项</th><th>fork 行为</th><th>工程含义</th></tr></thead><tbody><tr><td>文件描述符</td><td>复制引用（共享同一 file offset）</td><td>父子写同一 fd 会互相推进偏移——重定向在 fork 前设置才对全部子进程生效</td></tr><tr><td>当前工作目录/根目录</td><td>复制引用</td><td>shell 中 cd 影响后续命令的原因</td></tr><tr><td>环境变量</td><td>复制副本</td><td>fork 后修改不影响对方</td></tr><tr><td>信号处置</td><td>复制（忽略/捕获保留，默认重置的除外）</td><td>daemon 对 SIGHUP 的忽略被 worker 继承</td></tr><tr><td>进程组/会话</td><td>继承</td><td>信号可以按组广播到整个 fork 族</td></tr><tr><td>内存地址空间</td><td>COW 复制</td><td>写时才真正复制——fork 快的本质原因</td></tr><tr><td>锁（fcntl/pthread）</td><td>复制引用但语义分裂</td><td><strong>fork 与锁的经典陷阱</strong>——见下</td></tr></tbody></table><p>fork 与多线程的锁陷阱值得单独强调：多线程程序中一个线程持锁时另一线程 fork，子进程只继承调用 fork 的那个线程——持锁的线程不存在了，但锁的状态是&quot;已持有&quot;。子进程若再获取这把锁将永久死锁。POSIX 的对策是 <code>pthread_atfork</code>（fork 前后在父/子进程执行回调处理锁状态），现代实践则是<strong>多线程程序中只允许 async-signal-safe 的操作在 fork 后、exec 前执行</strong>——fork 后立即 exec 是唯一安全的模式。</p><p>树的演化形态也是工程排查的线索：<code>pstree</code> 看到进程挂在 init 下（被收养的孤儿）、sshd 派生的 bash 再派生命令（登录会话的传播链）、容器运行时的 shim 进程树（runc → containerd-shim → 容器 init）——进程树的形态直接反映系统的服务架构。</p><h3 id="会话与终端的关联" tabindex="-1">会话与终端的关联 <a class="header-anchor" href="#会话与终端的关联" aria-label="Permalink to “会话与终端的关联”">​</a></h3><p>会话（session）的完整语义围绕控制终端（controlling terminal）：登录时 login 进程创建新会话并设置终端为控制终端，shell 成为会话首进程；shell 的每个前台作业是一个进程组，终端的输入送给前台组，终端产生的信号（Ctrl-C 的 SIGINT、Ctrl-Z 的 SIGTSTP、Ctrl-\ 的 SIGQUIT）发送给前台组全体。这个模型解释了：为什么后台进程读终端会被暂停（SIGTTIN）、为什么 nohup 通过忽略 SIGHUP 让进程脱离终端生命周期、为什么 daemon 的标准姿势是 setsid（新会话，脱离控制终端）+ 两次 fork（避免再获得终端）。</p><h3 id="进程在-vfs-中的虚拟文件" tabindex="-1">进程在 VFS 中的虚拟文件 <a class="header-anchor" href="#进程在-vfs-中的虚拟文件" aria-label="Permalink to “进程在 VFS 中的虚拟文件”">​</a></h3><p>每个进程在 <code>/proc/[pid]/</code> 下有一组虚拟文件：</p><table tabindex="0"><thead><tr><th>文件名</th><th>含义</th></tr></thead><tbody><tr><td><code>/proc/[pid]/status</code></td><td>进程状态和信息</td></tr><tr><td><code>/proc/[pid]/cmdline</code></td><td>启动命令</td></tr><tr><td><code>/proc/[pid]/fd/</code></td><td>打开的文件描述符</td></tr><tr><td><code>/proc/[pid]/maps</code></td><td>内存映射信息</td></tr></tbody></table><h2 id="生命周期" tabindex="-1">生命周期 <a class="header-anchor" href="#生命周期" aria-label="Permalink to “生命周期”">​</a></h2><p>进程具有从创建到死亡的阶段，特殊地还有睡眠阶段，</p><p><img src="/assets/state.dio.CzHMST5A.svg" alt="进程的生命周期"></p><p>生命周期可以使用进程相关的系统调用来进行管理，以 C 函数的形式存在。具体参考<a href="./../syscall/">系统调用</a></p><h3 id="进程加载" tabindex="-1">进程加载 <a class="header-anchor" href="#进程加载" aria-label="Permalink to “进程加载”">​</a></h3><p>当一个程序被执行时：</p><ol><li>将程序的 ELF 文件（Executable and Linkable Format）内容加载到内存中</li><li>分配到进程的虚拟地址空间中的相应位置（位置分配由编译器决定）</li><li>操作系统为进程创建页表，维护虚拟内存到物理内存的映射逻辑</li></ol><h3 id="休眠" tabindex="-1">休眠 <a class="header-anchor" href="#休眠" aria-label="Permalink to “休眠”">​</a></h3><p>阻塞、空转、死锁</p><ul><li><strong>阻塞</strong>：进程因等待 I/O、锁、信号量等进入阻塞状态，CPU 时间片被让出。</li><li><strong>空转</strong>：进程处于无意义的循环等待，浪费 CPU 资源，常见于设计缺陷或 bug。</li></ul><p>从操作系统层面，当进程调用阻塞式系统调用时：</p><ol><li>进程进入阻塞状态</li><li>操作系统不会把 CPU 的时间片分配给这个进程</li><li>直到调用结束，进程从阻塞状态重新进入执行状态</li></ol><p>常见的阻塞式调用包括：</p><ol><li><p>进程调度和中断</p><ul><li>进程本身的调度和中断机制通过阻塞方式实现</li><li>这个过程对于进程自身来说是无感知的</li></ul></li><li><p>阻塞式 IO 调用</p><div class="language-c"><button title="Copy Code" class="copy"></button><span class="lang">c</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 阻塞式函数</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">read</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">sleep</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">wait</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span></code></pre></div></li><li><p>锁和同步机制</p><ul><li>互斥锁（Mutex）</li><li>信号量（Semaphore）</li></ul><div class="language-c"><button title="Copy Code" class="copy"></button><span class="lang">c</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 线程互斥锁</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">pthread_mutex_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mutex;</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">pthread_cond_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cond;</span></span>
@@ -53,6 +53,7 @@
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -112,6 +113,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -209,6 +211,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -246,11 +249,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -285,6 +288,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -415,6 +419,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -444,13 +449,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -483,6 +488,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -501,6 +507,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -550,6 +557,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -601,9 +609,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -617,6 +626,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -639,8 +649,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -649,8 +659,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -720,6 +730,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx

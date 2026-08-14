@@ -6,14 +6,14 @@
     <title>会话管理 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/ai_app_overlay_session_index.md.BHpGYeGA.lean.js">
+    <link rel="modulepreload" href="/assets/ai_app_overlay_session_index.md.CJ2OXvru.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
@@ -25,12 +25,13 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    {</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;role&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;user&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;content&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;要上午的&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">response </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> llm.invoke(messages)</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">messages.append({</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;role&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;assistant&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;content&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: response.content})</span></span></code></pre></div><p>这种方式的问题是消息长度会线性增长，最终超出模型的上下文窗口，或者推理成本过高。需要一种机制来管理上下文长度，在保持对话连贯性的同时控制 token 消耗。</p><h2 id="上下文窗口" tabindex="-1">上下文窗口 <a class="header-anchor" href="#上下文窗口" aria-label="Permalink to “上下文窗口”">​</a></h2><p>上下文窗口是模型一次能处理的最大 token 数，包括输入和输出。GPT-3.5 是 4K，GPT-4 是 8K/32K，Claude 2 是 100K，开源模型如 LLaMA 2 是 4K。窗口大小直接影响能处理多长的对话、多大的文档。超长上下文是近年来的发展方向，Claude 3 支持到 200K，Gemini Pro 理论上支持到 1M，但实际使用中长上下文的效果会衰减，模型对开头和中间的内容关注度下降（Lost in the Middle 现象）。</p><p>上下文管理策略需要根据应用场景选择。客服机器人通常只需要最近几轮对话，因为用户问题的上下文是短期的。代码分析助手可能需要整个文件的上下文，因为变量定义和使用的距离可能很远。文档问答需要检索相关片段，而不是把整个文档塞进上下文。</p><p>Token 消耗直接影响成本和延迟。每轮对话都重复发送历史消息，token 量按 O(n²) 增长（n 是轮次）。10 轮对话，平均每轮 100 tokens，累积到第 10 轮时单次请求就需要 1000 tokens。优化方向包括：压缩历史、滑动窗口、语义保留。</p><h2 id="记忆机制" tabindex="-1">记忆机制 <a class="header-anchor" href="#记忆机制" aria-label="Permalink to “记忆机制”">​</a></h2><p>滑动窗口是最简单的记忆策略，只保留最近 N 轮对话。N 的选择需要权衡连贯性和成本，N=3 可能丢失关键信息，N=10 可能浪费 tokens。改进方法是指针网络，用小模型评估每条历史消息的重要性，只保留与当前问题相关的部分。这需要一个二分类模型，输入是当前问题和历史消息，输出是相关性分数。</p><p>摘要压缩用 LLM 总结旧对话，将详细内容转化为精简摘要。&quot;用户询问了北京到上海的机票，偏好上午出发，预算 1000 元以内&quot;比原始对话更节省 tokens，同时保留关键信息。摘要的时机可以是每隔固定轮次（每 5 轮总结一次），或者基于长度阈值（tokens 超过 2000 时触发）。摘要的质量取决于 LLM 的理解能力，小模型可能遗漏重要细节。</p><p>长期记忆将对话历史中的关键信息（用户偏好、任务结果、知识点）提取并存储，在后续对话中检索使用。用户的说法&quot;我每次都要靠窗座位&quot;应该被提取为偏好规则，下次订票时自动应用。长期记忆通常用向量数据库实现，将对话片段向量化，通过相似度检索相关记忆。关键在于设计什么值得记忆：实体（人名、地名、事件名）、关系（用户的社交网络）、模式（用户的习惯和偏好）。</p><p>分层记忆结合短期、中期、长期。短期记忆是最近几轮对话的完整内容，用于维持连贯性。中期记忆是对话摘要，用于回顾对话主题。长期记忆是跨会话的知识，用于个性化体验。每次请求时从三层记忆中检索相关信息，动态组装上下文。这种设计借鉴了人类的记忆机制，工作记忆、短期记忆、长期记忆各有用途。</p><h2 id="对话状态" tabindex="-1">对话状态 <a class="header-anchor" href="#对话状态" aria-label="Permalink to “对话状态”">​</a></h2><p>对话状态是对话过程中累积的结构化信息，包括用户意图、槽位填充、任务进度。订票对话的状态包括出发地、目的地、日期、时间、座位偏好等字段，每轮对话更新这些字段，当所有必填字段都有值时执行下单。状态机是常见的管理方式，定义状态转换规则，从&quot;开始&quot;到&quot;收集信息&quot;到&quot;确认&quot;到&quot;完成&quot;。</p><p>槽位填充是从对话中提取结构化信息的任务。&quot;我要明天去北京&quot;需要提取日期（明天）、目的地（北京）。LLM 可以通过提示词完成这个任务，&quot;从以下对话中提取出发地和目的地，以 JSON 格式返回&quot;。槽位验证确保提取的信息有效，日期不能是过去的时间，目的地必须是机场代码或城市名。缺失槽位需要追问，&quot;请问您从哪里出发？&quot;</p><p>多任务并行是复杂场景。用户可能在同一个会话中同时进行多个任务，&quot;帮我查一下明天的天气，顺便订个去上海的票，另外提醒我下午三点开会&quot;。每个任务有独立的状态，需要任务管理器来切换和协调。一种方法是给每个任务分配独立的 Agent，由主 Agent 负责任务分发和结果汇总。</p><h2 id="持久化与恢复" tabindex="-1">持久化与恢复 <a class="header-anchor" href="#持久化与恢复" aria-label="Permalink to “持久化与恢复”">​</a></h2><p>会话持久化将对话状态保存到存储系统，支持跨设备、跨时间的对话延续。用户在手机上开始对话，回家后在电脑上继续，需要从数据库恢复会话状态。Redis 是常见选择，它的内存数据库提供低延迟访问，适合实时会话。长期存储可以用 PostgreSQL 或 MongoDB，保存会话历史、用户偏好、任务结果。</p><p>会话过期和清理是运维问题。不是所有会话都需要永久保存，一般对话 7 天后价值降低，可以归档或删除。定期清理任务需要识别非活跃会话（最后更新时间超过阈值），将历史消息转存到冷存储，只保留摘要在热存储。隐私法规（如 GDPR）要求用户有权删除个人数据，需要设计数据清除机制。</p><p>分布式环境下的会话管理面临一致性挑战。多个服务实例处理同一用户的请求，需要共享会话状态。Redis 的分布式锁可以保证同一时间只有一个实例修改会话，避免竞争条件。更复杂的场景是会话迁移，用户从服务器 A 连接到服务器 B，需要无缝迁移会话状态，WebSocket 的断线重连机制可以处理这种场景。</p><h2 id="用户体验" tabindex="-1">用户体验 <a class="header-anchor" href="#用户体验" aria-label="Permalink to “用户体验”">​</a></h2><p>会话管理的最终目标是自然的对话体验。用户不应该感知到上下文窗口的限制，不应该重复说过的信息，不应该因为长时间没对话而丢失记忆。这需要精心设计记忆策略和状态管理，让 AI 伴侣般的感受成为可能。</p><p>主动记忆是未来的方向。用户说&quot;我儿子今年上小学&quot;，AI 应该主动记住这个信息，而不只是被动存储。后续对话中，当话题涉及教育、儿童时，AI 能自然提及&quot;您儿子上小学的情况如何&quot;。这种主动性需要 LLM 具备更强的信息提取和关联能力，也是 Agent 记忆机制的研究前沿。</p><p>跨会话的个性化是长期目标。用户在不同时间的对话应该共享偏好和知识，形成持续的人格化体验。这需要长期记忆的积累和检索，也需要隐私保护的设计。用户应该能控制哪些信息被记住、哪些被遗忘，透明的记忆管理让用户对 AI 伴侣建立信任。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/overlay/ops/monitor" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>可观测性</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/overlay/session/prompt" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>提示词</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">messages.append({</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;role&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;assistant&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;content&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: response.content})</span></span></code></pre></div><p>这种方式的问题是消息长度会线性增长，最终超出模型的上下文窗口，或者推理成本过高。需要一种机制来管理上下文长度，在保持对话连贯性的同时控制 token 消耗。</p><h2 id="上下文窗口" tabindex="-1">上下文窗口 <a class="header-anchor" href="#上下文窗口" aria-label="Permalink to “上下文窗口”">​</a></h2><p>上下文窗口是模型一次能处理的最大 token 数，包括输入和输出。GPT-3.5 是 4K，GPT-4 是 8K/32K，Claude 2 是 100K，开源模型如 LLaMA 2 是 4K。窗口大小直接影响能处理多长的对话、多大的文档。超长上下文是近年来的发展方向，Claude 3 支持到 200K，Gemini Pro 理论上支持到 1M，但实际使用中长上下文的效果会衰减，模型对开头和中间的内容关注度下降（Lost in the Middle 现象）。</p><p>上下文管理策略需要根据应用场景选择。客服机器人通常只需要最近几轮对话，因为用户问题的上下文是短期的。代码分析助手可能需要整个文件的上下文，因为变量定义和使用的距离可能很远。文档问答需要检索相关片段，而不是把整个文档塞进上下文。</p><p>Token 消耗直接影响成本和延迟。每轮对话都重复发送历史消息，token 量按 O(n²) 增长（n 是轮次）。10 轮对话，平均每轮 100 tokens，累积到第 10 轮时单次请求就需要 1000 tokens。优化方向包括：压缩历史、滑动窗口、语义保留。</p><h2 id="记忆机制" tabindex="-1">记忆机制 <a class="header-anchor" href="#记忆机制" aria-label="Permalink to “记忆机制”">​</a></h2><p>滑动窗口是最简单的记忆策略，只保留最近 N 轮对话。N 的选择需要权衡连贯性和成本，N=3 可能丢失关键信息，N=10 可能浪费 tokens。改进方法是指针网络，用小模型评估每条历史消息的重要性，只保留与当前问题相关的部分。这需要一个二分类模型，输入是当前问题和历史消息，输出是相关性分数。</p><p>摘要压缩用 LLM 总结旧对话，将详细内容转化为精简摘要。&quot;用户询问了北京到上海的机票，偏好上午出发，预算 1000 元以内&quot;比原始对话更节省 tokens，同时保留关键信息。摘要的时机可以是每隔固定轮次（每 5 轮总结一次），或者基于长度阈值（tokens 超过 2000 时触发）。摘要的质量取决于 LLM 的理解能力，小模型可能遗漏重要细节。</p><p>长期记忆将对话历史中的关键信息（用户偏好、任务结果、知识点）提取并存储，在后续对话中检索使用。用户的说法&quot;我每次都要靠窗座位&quot;应该被提取为偏好规则，下次订票时自动应用。长期记忆通常用向量数据库实现，将对话片段向量化，通过相似度检索相关记忆。关键在于设计什么值得记忆：实体（人名、地名、事件名）、关系（用户的社交网络）、模式（用户的习惯和偏好）。</p><p>分层记忆结合短期、中期、长期。短期记忆是最近几轮对话的完整内容，用于维持连贯性。中期记忆是对话摘要，用于回顾对话主题。长期记忆是跨会话的知识，用于个性化体验。每次请求时从三层记忆中检索相关信息，动态组装上下文。这种设计借鉴了人类的记忆机制，工作记忆、短期记忆、长期记忆各有用途。</p><h2 id="三层身份-user、session、task" tabindex="-1">三层身份：User、Session、Task <a class="header-anchor" href="#三层身份-user、session、task" aria-label="Permalink to “三层身份：User、Session、Task”">​</a></h2><p>会话管理系统中存在三个容易被混淆的标识：<strong>user id</strong>、<strong>session id</strong>、<strong>task id</strong>。它们分属不同的抽象层级，承担不同的生命周期和隔离职责。混淆三层身份是会话系统设计中最常见的建模错误——该按用户隔离的数据被塞进会话，该随会话销毁的状态被提升到用户级，或者该独立追踪的任务被绑死在单次会话上。</p><p><strong>User ID（用户标识）</strong>代表一个持久的行为主体。生命周期跨越一切——用户注册到销户，跨设备、跨会话存在。用户层的典型数据：账户信息、长期偏好、付费订阅状态、跨会话的记忆（个人助理场景下&quot;用户住在上海&quot;）。用户层数据的访问控制最严格——它是隐私边界的第一道线。</p><p><strong>Session ID（会话标识）</strong>代表一次连续的交互上下文。生命周期从用户开启对话到关闭（或超时）。会话是<strong>上下文管理的单位</strong>——消息历史、当前话题上下文、临时状态都属于会话层，上下文压缩、历史清理、token 预算控制都按会话执行。同一个用户可以同时有多个活跃会话（手机上一个、电脑上一个），彼此隔离。</p><p><strong>Task ID（任务标识）</strong>代表一个异步执行的工作单元。生命周期从任务提交到完成（或失败/取消）。异步任务（生成一张图、执行一次深度研究）超出单次请求-响应的时长，需要独立的轮询/推送通道和独立的失败重试语义——进度查询、取消、超时处理都按任务执行。</p><p>一个具体场景说明分界：用户让 AI 助手&quot;帮我规划一次日本旅行&quot;。User 层持有用户偏好（预算敏感、喜欢小众景点）和过往旅行的记忆；Session 层持有本次对话的上下文——讨论到东京住宿的环节、之前提到十月出行；Task 层持有用户点击&quot;生成详细行程&quot;后的异步任务——正在检索航班、已生成 3 天草案。错误建模的后果：偏好放 Session 层则换会话丢失，用户每次重说一遍；对话历史放 User 层则两个会话互相污染；行程生成绑死 Session 则用户关闭页面任务即丢失——正确做法是 Task 独立存活，Session 只是发起方。</p><p>生命周期的销毁策略各层不同：User 销毁（销户）级联清理其所有 Session 和 Task（GDPR 的被遗忘权）；Session 销毁保留其发起的 Task 结果到独立 TTL（用户可能回来取结果），但清理上下文；Task 销毁清理执行产物，结果可能被提升到 User 层记忆。存储选型跟随访问模式：User 层低频写高频读——关系型数据库；Session 层高频读写、生命周期短——Redis（TTL 天然匹配会话超时）；Task 层需要轮询和推送——Redis（进度计数器）+ 对象存储（大产物）。</p><p>请求处理中三层身份参与路由和鉴权：请求携带 session_id（定位上下文）→ 鉴权确认该 session 属于该 user（防会话劫持）→ 异步操作分配 task_id 返回客户端（轮询凭证）。task_id 的鉴权同样要校验归属关系——防止越权查询他人任务。</p><h2 id="对话状态" tabindex="-1">对话状态 <a class="header-anchor" href="#对话状态" aria-label="Permalink to “对话状态”">​</a></h2><p>对话状态是对话过程中累积的结构化信息，包括用户意图、槽位填充、任务进度。订票对话的状态包括出发地、目的地、日期、时间、座位偏好等字段，每轮对话更新这些字段，当所有必填字段都有值时执行下单。状态机是常见的管理方式，定义状态转换规则，从&quot;开始&quot;到&quot;收集信息&quot;到&quot;确认&quot;到&quot;完成&quot;。</p><p>槽位填充是从对话中提取结构化信息的任务。&quot;我要明天去北京&quot;需要提取日期（明天）、目的地（北京）。LLM 可以通过提示词完成这个任务，&quot;从以下对话中提取出发地和目的地，以 JSON 格式返回&quot;。槽位验证确保提取的信息有效，日期不能是过去的时间，目的地必须是机场代码或城市名。缺失槽位需要追问，&quot;请问您从哪里出发？&quot;</p><p>多任务并行是复杂场景。用户可能在同一个会话中同时进行多个任务，&quot;帮我查一下明天的天气，顺便订个去上海的票，另外提醒我下午三点开会&quot;。每个任务有独立的状态，需要任务管理器来切换和协调。一种方法是给每个任务分配独立的 Agent，由主 Agent 负责任务分发和结果汇总。</p><h2 id="持久化与恢复" tabindex="-1">持久化与恢复 <a class="header-anchor" href="#持久化与恢复" aria-label="Permalink to “持久化与恢复”">​</a></h2><p>会话持久化将对话状态保存到存储系统，支持跨设备、跨时间的对话延续。用户在手机上开始对话，回家后在电脑上继续，需要从数据库恢复会话状态。Redis 是常见选择，它的内存数据库提供低延迟访问，适合实时会话。长期存储可以用 PostgreSQL 或 MongoDB，保存会话历史、用户偏好、任务结果。</p><p>会话过期和清理是运维问题。不是所有会话都需要永久保存，一般对话 7 天后价值降低，可以归档或删除。定期清理任务需要识别非活跃会话（最后更新时间超过阈值），将历史消息转存到冷存储，只保留摘要在热存储。隐私法规（如 GDPR）要求用户有权删除个人数据，需要设计数据清除机制。</p><p>分布式环境下的会话管理面临一致性挑战。多个服务实例处理同一用户的请求，需要共享会话状态。Redis 的分布式锁可以保证同一时间只有一个实例修改会话，避免竞争条件。更复杂的场景是会话迁移，用户从服务器 A 连接到服务器 B，需要无缝迁移会话状态，WebSocket 的断线重连机制可以处理这种场景。</p><h2 id="用户体验" tabindex="-1">用户体验 <a class="header-anchor" href="#用户体验" aria-label="Permalink to “用户体验”">​</a></h2><p>会话管理的最终目标是自然的对话体验。用户不应该感知到上下文窗口的限制，不应该重复说过的信息，不应该因为长时间没对话而丢失记忆。这需要精心设计记忆策略和状态管理，让 AI 伴侣般的感受成为可能。</p><p>主动记忆是未来的方向。用户说&quot;我儿子今年上小学&quot;，AI 应该主动记住这个信息，而不只是被动存储。后续对话中，当话题涉及教育、儿童时，AI 能自然提及&quot;您儿子上小学的情况如何&quot;。这种主动性需要 LLM 具备更强的信息提取和关联能力，也是 Agent 记忆机制的研究前沿。</p><p>跨会话的个性化是长期目标。用户在不同时间的对话应该共享偏好和知识，形成持续的人格化体验。这需要长期记忆的积累和检索，也需要隐私保护的设计。用户应该能控制哪些信息被记住、哪些被遗忘，透明的记忆管理让用户对 AI 伴侣建立信任。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/overlay/ops/monitor" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>可观测性</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/overlay/session/prompt" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>提示词</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -90,6 +91,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -187,6 +189,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -224,11 +227,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -263,6 +266,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -393,6 +397,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -422,13 +427,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -461,6 +466,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -479,6 +485,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -528,6 +535,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -579,9 +587,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -595,6 +604,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -617,8 +627,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -627,8 +637,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -698,6 +708,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx

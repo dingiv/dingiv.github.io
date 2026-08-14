@@ -6,9 +6,9 @@
     <title>原子操作 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -55,12 +55,13 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><table tabindex="0"><thead><tr><th>类别</th><th>接口/类型名称</th><th>说明</th></tr></thead><tbody><tr><td>原子类型</td><td><code>_Atomic</code> 限定符，如 <code>_Atomic int</code></td><td>用于声明原子类型变量</td></tr><tr><td></td><td><code>atomic_bool</code></td><td></td></tr><tr><td></td><td><code>atomic_char</code></td><td></td></tr><tr><td></td><td><code>atomic_int</code></td><td></td></tr><tr><td></td><td><code>atomic_long</code></td><td></td></tr><tr><td></td><td><code>atomic_pointer</code></td><td></td></tr><tr><td>原子操作</td><td><code>atomic_store(&amp;obj, val)</code></td><td>存储，将 <code>val</code> 写入 <code>obj</code></td></tr><tr><td></td><td><code>atomic_load(&amp;obj)</code></td><td>读取，从 <code>obj</code> 读取值</td></tr><tr><td></td><td><code>atomic_exchange(&amp;obj, val)</code></td><td>替换，将 <code>obj</code> 设为 <code>val</code>，返回旧值</td></tr><tr><td></td><td><code>atomic_fetch_add(&amp;obj, opnd)</code></td><td>加上 <code>opnd</code>，返回操作前的值</td></tr><tr><td></td><td><code>atomic_fetch_sub(&amp;obj, opnd)</code></td><td>减去 <code>opnd</code>，返回操作前的值</td></tr><tr><td></td><td><code>atomic_fetch_and(&amp;obj, opnd)</code></td><td>按位与（AND），返回操作前的值</td></tr><tr><td></td><td><code>atomic_fetch_or(&amp;obj, opnd)</code></td><td>按位或（OR），返回操作前的值</td></tr><tr><td></td><td><code>atomic_fetch_xor(&amp;obj, opnd)</code></td><td>按位异或（XOR），返回操作前的值</td></tr><tr><td></td><td><code>atomic_compare_exchange_strong(&amp;obj, &amp;exp, des)</code></td><td>若 <code>obj</code> 等于 <code>exp</code>，则设为 <code>des</code>，否则更新 <code>exp</code> 为当前值</td></tr><tr><td></td><td><code>atomic_compare_exchange_weak(&amp;obj, &amp;exp, des)</code></td><td>类似 strong，可能会伪失败</td></tr><tr><td>内存序控制参数</td><td><code>memory_order_relaxed</code></td><td>无序保证，执行速度最快，但允许操作重排</td></tr><tr><td></td><td><code>memory_order_acquire</code></td><td>读取操作，保证之后的操作不会被重排到该读取之前</td></tr><tr><td></td><td><code>memory_order_release</code></td><td>写入操作，保证之前的操作不会被重排到该写入之后</td></tr><tr><td></td><td><code>memory_order_acq_rel</code></td><td>用于读改写操作（如 fetch_add），同时具备 acquire 与 release 语义</td></tr><tr><td></td><td><code>memory_order_seq_cst</code></td><td>最严格，也是默认选项，所有线程间保证全序一致性</td></tr><tr><td>辅助操作</td><td><code>atomic_init(&amp;obj, val)</code></td><td>初始化原子类型变量</td></tr><tr><td></td><td><code>atomic_is_lock_free(&amp;obj)</code></td><td>检查该对象的操作是否为无锁实现</td></tr></tbody></table><div class="language-c"><button title="Copy Code" class="copy"></button><span class="lang">c</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &lt;stdatomic.h&gt;</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">atomic_int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> counter </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">atomic_fetch_add</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">counter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"> // Increments counter atomically</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> value </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> atomic_load</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">counter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"> // Reads counter atomically</span></span></code></pre></div><h2 id="内存屏障" tabindex="-1">内存屏障 <a class="header-anchor" href="#内存屏障" aria-label="Permalink to “内存屏障”">​</a></h2><p>现代的编译器会在编译时做很多工作，其中有的工作是指令重排，也就是代码执行的实际顺序不一定按照我们编写的代码顺序来执行。在单线程情况下，这通常不会有问题，但是一旦到了多线程的环境下，指令重排就可能导致数据竞争和不可预期的结果。更糟糕的是，现代的 CPU 往往可以使用一些硬件加速手段，例如：分支预测和流水线并发，这些硬件级别的行为也会导致指令顺序发生重排。</p><p>为了解决这种问题，引入了内存屏障（memory barrier，或 memory fence）的机制。内存屏障是一种特殊的指令，用于限制编译器和 CPU 的指令重排，保证内存操作的可见性和有序性。常见的内存屏障分为以下几类：</p><ul><li>全屏障（Full Barrier, 通常为 mfence）：确保其前后的所有读写操作都完成，常用于关键的同步点。</li><li>读屏障（Load Barrier, lfence）：保证屏障前的读操作全部完成，才会进行屏障后的读操作。</li><li>写屏障（Store Barrier, sfence）：保证屏障前的写操作全部完成，之后的写操作才会开始。</li></ul><p>内存屏障主要用途包括：</p><ul><li>防止乱序执行：确保关键顺序不可颠倒，避免多线程访问共享变量时出现“看见过时值”或“操作丢失”问题。</li><li>实现同步原语：如锁（mutex）、自旋锁（spinlock）、信号量（semaphore）等都依赖内存屏障保障可见性和顺序性。</li><li>确保写入对其他CPU可见：跨核心通信时，强制将数据从 CPU 缓存刷回主内存，确保其他处理器能够及时看到变更。</li></ul><h2 id="总结" tabindex="-1">总结 <a class="header-anchor" href="#总结" aria-label="Permalink to “总结”">​</a></h2><ul><li>原子操作适合简单数据类型（如整型），复杂结构体仍需加锁保护。</li><li>无锁并发虽然高效，但实现复杂，需谨慎设计，避免ABA问题等陷阱。</li><li>在 SMP（多核）系统下，原子操作通常伴随内存屏障（memory barrier）以保证可见性和有序性。</li></ul></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/design/concurrent/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>并发</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/design/concurrent/lock" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>同步原语</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> value </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> atomic_load</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">counter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"> // Reads counter atomically</span></span></code></pre></div><h2 id="内存屏障" tabindex="-1">内存屏障 <a class="header-anchor" href="#内存屏障" aria-label="Permalink to “内存屏障”">​</a></h2><p>现代的编译器会在编译时做很多工作，其中有的工作是指令重排，也就是代码执行的实际顺序不一定按照我们编写的代码顺序来执行。在单线程情况下，这通常不会有问题，但是一旦到了多线程的环境下，指令重排就可能导致数据竞争和不可预期的结果。更糟糕的是，现代的 CPU 往往可以使用一些硬件加速手段，例如：分支预测和流水线并发，这些硬件级别的行为也会导致指令顺序发生重排。</p><p>为了解决这种问题，引入了内存屏障（memory barrier，或 memory fence）的机制。内存屏障是一种特殊的指令，用于限制编译器和 CPU 的指令重排，保证内存操作的可见性和有序性。常见的内存屏障分为以下几类：</p><ul><li>全屏障（Full Barrier, 通常为 mfence）：确保其前后的所有读写操作都完成，常用于关键的同步点。</li><li>读屏障（Load Barrier, lfence）：保证屏障前的读操作全部完成，才会进行屏障后的读操作。</li><li>写屏障（Store Barrier, sfence）：保证屏障前的写操作全部完成，之后的写操作才会开始。</li></ul><p>内存屏障主要用途包括：</p><ul><li>防止乱序执行：确保关键顺序不可颠倒，避免多线程访问共享变量时出现“看见过时值”或“操作丢失”问题。</li><li>实现同步原语：如锁（mutex）、自旋锁（spinlock）、信号量（semaphore）等都依赖内存屏障保障可见性和顺序性。</li><li>确保写入对其他CPU可见：跨核心通信时，强制将数据从 CPU 缓存刷回主内存，确保其他处理器能够及时看到变更。</li></ul><h2 id="总结" tabindex="-1">总结 <a class="header-anchor" href="#总结" aria-label="Permalink to “总结”">​</a></h2><ul><li>原子操作适合简单数据类型（如整型），复杂结构体仍需加锁保护。</li><li>无锁并发虽然高效，但实现复杂，需谨慎设计，避免ABA问题等陷阱。</li><li>在 SMP（多核）系统下，原子操作通常伴随内存屏障（memory barrier）以保证可见性和有序性。</li></ul></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/design/concurrent/barrier" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>内存屏障</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/design/concurrent/lock" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>同步原语</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -120,6 +121,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -217,6 +219,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -254,11 +257,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -293,6 +296,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -423,6 +427,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -452,13 +457,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -491,6 +496,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -509,6 +515,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -558,6 +565,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -609,9 +617,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -625,6 +634,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -647,8 +657,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -657,8 +667,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -728,6 +738,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx

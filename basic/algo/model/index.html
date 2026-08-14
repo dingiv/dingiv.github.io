@@ -6,14 +6,14 @@
     <title>算法模型 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/basic_algo_model_index.md.BPDgY9y8.lean.js">
+    <link rel="modulepreload" href="/assets/basic_algo_model_index.md.Cuap_miT.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
@@ -62,33 +62,28 @@
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> m; left</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, right</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">  // 处理双序列</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div></li><li><p>二分法 二分法是一种<strong>在有序集合中查找目标值</strong>的方法，其时间复杂度为 O(logn)。二分法的基本思想是将集合分成两部分，然后根据目标值的大小，选择其中一部分继续查找，直到找到目标值或者查找范围为空。二分法可以用于实现快速查找，例如查找有序数组中的目标值、查找有序数组中的第 k 小的元素等等。二分法优化的前提思路是，你可以先基于线性遍历暴力查找，然后得知这个线性序列其实是有序的，那么在移动指针的时候便可以考虑使用二分法的移动逻辑，快速跳过不必要的验证项，而不是傻傻地一个个去排除。</p><p>题目中关键词：<code>有序、查找、第 k 小的元素、最大化最小值、最小化最大值、单调</code>等等；</p><div class="language-js"><button title="Copy Code" class="copy"></button><span class="lang">js</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 开区间二分遍历</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n;</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div></li><li><p>二分法 二分法是一种<strong>在有序集合中查找目标值</strong>的方法，其时间复杂度为 O(logn)。二分法的基本思想是将集合分成两部分，然后根据目标值的大小，选择其中一部分继续查找，直到找到目标值或者查找范围为空。二分法可以用于实现快速查找，例如查找有序数组中的目标值、查找有序数组中的第 k 小的元素等等。二分法优化的前提思路是，你可以先基于线性遍历暴力查找，然后得知这个线性序列其实是有序的，那么在移动指针的时候便可以考虑使用二分法的移动逻辑，快速跳过不必要的验证项，而不是傻傻地一个个去排除。</p><p>题目中关键词：<code>有序、查找、第 k 小的元素、最大化最小值、最小化最大值、单调</code>等等；</p><p><strong>边界细节</strong>。二分法的难点不是&quot;折半&quot;思想，而是边界细节：循环条件用 <code>&lt;=</code> 还是 <code>&lt;</code>、mid 向哪边取整、退出后答案在哪一侧。统一视角：<strong>循环条件定义搜索区间的开闭，mid 的取整方向保证区间必然收缩</strong>。</p><p>循环条件有三种变体。<code>left &lt;= right</code>（闭区间）适合查找确定存在的目标值，三分支（等于即返回）：</p><div class="language-js"><button title="Copy Code" class="copy"></button><span class="lang">js</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right) {                    </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 闭区间 [left, right]</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Math.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">floor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">((left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right) </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (condition) {</span></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    // 处理边界情况</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (nums[mid] </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">===</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> target) {</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid;                            </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 找到即返回</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  } </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (nums[mid] </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> target) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;                        </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 跳过 mid，区间收缩</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  } </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    // 处理边界情况</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid;</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  }</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 闭区间二分遍历</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right) {</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Math.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">floor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">((left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right) </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
-<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (condition) {</span></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    // 处理边界情况</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  } </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
-<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    // 处理边界情况</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  }</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div></li><li><p>贪心法 贪心法是一种遍历策略，在遍历时，有导向地选择在当前状态下最好或最优的选择进行优先遍历，忽略某些路径，跳过不必要的遍历，并且依然能够找到目标或最优结果的算法。贪心法需要我们提前知道：局部选择是否能导致全局最优。这往往要求题目具有一定的数学性质，例如最优子结构、无后效性、单调性等。</p><p>题目中关键词：<code>最优、单调性</code>等等；</p><div class="language-js"><button title="Copy Code" class="copy"></button><span class="lang">js</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; i </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n; i</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">return</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></div><p><code>left &lt; right</code>（左闭右开）适合 lower_bound——找&quot;第一个满足条件的位置&quot;。没有&quot;等于即返回&quot;，目标是把区间收敛到只剩一个元素：</p><div class="language-js"><button title="Copy Code" class="copy"></button><span class="lang">js</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 找第一个 &gt;= target 的位置</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n;</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right) {                     </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 左闭右开 [left, right)</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Math.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">floor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">((left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> right) </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (nums[mid] </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> target) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    left </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;                        </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// mid 不满足，跳过</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  } </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    right </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mid;                           </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// mid 满足，right 收缩但保留 mid</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> left;                               </span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">// 退出时 left == right 即答案</span></span></code></pre></div><p><code>right = mid</code> 不是魔法而是区间语义的推论：right 是开区间哨兵，满足条件的 mid 必须保留在区间内。upper_bound（第一个大于 target 的位置）只需把条件改为 <code>nums[mid] &lt;= target</code> 走左移分支。<code>left + 1 &lt; right</code>（两侧哨兵）适合&quot;峰值查找&quot;类问题——答案存在性由哨兵保证，循环只负责收敛。</p><p><strong>死循环的唯一根源</strong>。死循环 = 区间不收缩 = mid 落在&quot;不收缩的那一侧边界&quot;上。修复规则只有一条：<strong>转移出现 <code>left = mid</code> 时，mid 向上取整</strong>（<code>Math.floor((left + right + 1) / 2)</code>）；转移是 <code>right = mid</code> 时，mid 向下取整。调试二分法死循环不需要逐步推演——检查两件事：是否有不收缩转移，mid 的取整方向是否与不收缩转移相反。</p><p><strong>三分支状态转移</strong>。二分法的转移抽象为三分支：答案在 mid 左侧 / 答案就是 mid / 答案在 mid 右侧。&quot;等于&quot;分支的处理是变体的分水岭：标准查找等于即返回；lower_bound 等于并入右侧收缩（找第一个等于，还要向左找）；upper_bound 等于并入左侧收缩（找第一个大于，等于时向右找）。</p><p><strong>应用形态</strong>。二分答案：答案具有单调性（&quot;x 可行则所有更大的 x 都可行&quot;），对答案空间二分——典型场景&quot;最小化最大值&quot;，骨架与 lower_bound 完全一致，变化只在 check 函数（git bisect 是二分答案最鲜活的工程实例）。旋转数组：二分法不需要全局有序——只需每次迭代能确定答案在哪一半（比较 <code>nums[mid]</code> 与 <code>nums[left]</code> 判断哪侧有序）。浮点二分：收敛到精度而非相等（<code>while right - left &gt; 1e-6</code>），取整问题消失，边界问题被精度替代。二分法的本质是<strong>在单调性上收敛区间</strong>——&quot;在有序域中定位&quot;的一切需求都是二分法的实例。</p></li><li><p>贪心法 贪心法是一种遍历策略，在遍历时，有导向地选择在当前状态下最好或最优的选择进行优先遍历，忽略某些路径，跳过不必要的遍历，并且依然能够找到目标或最优结果的算法。贪心法需要我们提前知道：局部选择是否能导致全局最优。这往往要求题目具有一定的数学性质，例如最优子结构、无后效性、单调性等。</p><p>题目中关键词：<code>最优、单调性</code>等等；</p><div class="language-js"><button title="Copy Code" class="copy"></button><span class="lang">js</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; i </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n; i</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (condition) {</span></span>
 <span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">    // 跳过特殊情况</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">    continue</span></span>
@@ -132,12 +127,13 @@
 <span class="line"><span></span></span>
 <span class="line"><span>对 [a, b] 区间内的数值进行加减操作，只需要对差分数组进行修改：</span></span>
 <span class="line"><span>d[a] += val</span></span>
-<span class="line"><span>d[b+1] -= val</span></span></code></pre></div><h3 id="dp-动态规划" tabindex="-1">dp 动态规划 <a class="header-anchor" href="#dp-动态规划" aria-label="Permalink to “dp 动态规划”">​</a></h3><p>动态规划是一种通过将问题分解为子问题，并将子问题的解存储起来，从而避免重复计算的方法，是典型<strong>空间换时间</strong>的思想，同时，动态规划刻意地在构造一个数列问题，将题目转化为寻找数列的递推公式的问题，或者说是寻找状态转移方程的问题。动态规划通常用于解决一些具有重叠子问题和最优子结构的问题，例如背包问题、最长公共子序列问题、最长递增子序列问题等等。</p><p>关键词：最优等；（含有重叠子问题），具体内容参看 <a href="./dp">动态规划</a>。</p><h3 id="位运算" tabindex="-1">位运算 <a class="header-anchor" href="#位运算" aria-label="Permalink to “位运算”">​</a></h3><p>使用位运算可以模拟集合操作，例如集合的并集、交集、差集等等。位运算的时间复杂度为 O(1)，可以用于解决一些需要频繁进行集合操作的问题，例如集合的并集、交集、差集等等，同时降低算法的空间复杂度。但是，位运算需要我们提前知道集合中的元素，并且元素的范围不能太大，否则会超出计算机的表示范围。具体参考<a href="./bit">位运算</a></p><h3 id="数学公式" tabindex="-1">数学公式 <a class="header-anchor" href="#数学公式" aria-label="Permalink to “数学公式”">​</a></h3><p>使用数学公式可以简化算法，一些问题具有鲜明的数学性质，通过归纳数学公式来直接计算答案。数学公式的时间复杂度为 O(1)，可以用于解决一些需要频繁进行计算的问题，例如阶乘、斐波那契数列等等，同时降低算法的空间复杂度。一旦一个问题可以通过推导数学公式来解决，那么该问题的难点就变成了数学推导，而对算法实现的难度大大降低。</p><h2 id="排序" tabindex="-1">排序 <a class="header-anchor" href="#排序" aria-label="Permalink to “排序”">​</a></h2><p>排序算法是计算机科学中最基础且重要的算法之一。根据不同的应用场景和需求，我们可以选择不同的<a href="./../sort/index">排序算法</a>。</p><h3 id="排序算法的选择" tabindex="-1">排序算法的选择 <a class="header-anchor" href="#排序算法的选择" aria-label="Permalink to “排序算法的选择”">​</a></h3><p>选择排序算法时，需要考虑以下因素：</p><ol><li>数据规模：小规模数据可以使用简单排序，大规模数据需要使用高效排序</li><li>数据分布：如果数据分布有特点，可以使用特定排序算法</li><li>稳定性：如果需要保持相等元素的相对顺序，选择稳定排序</li><li>空间限制：如果空间有限，选择原地排序</li><li>数据特点：如果数据基本有序，插入排序可能更高效</li></ol><h3 id="排序算法的应用" tabindex="-1">排序算法的应用 <a class="header-anchor" href="#排序算法的应用" aria-label="Permalink to “排序算法的应用”">​</a></h3><ol><li>数据预处理：排序是许多算法的基础步骤</li><li>查找优化：排序后的数据可以使用二分查找</li><li>去重：排序后可以方便地去除重复元素</li><li>统计：排序后可以方便地进行各种统计</li><li>数据展示：排序后的数据更易于展示和理解</li></ol><h2 id="字符串" tabindex="-1">字符串 <a class="header-anchor" href="#字符串" aria-label="Permalink to “字符串”">​</a></h2><p>字符串算法是计算机科学中最常见和实用的算法之一，涉及对文本数据的处理和分析。字符串处理在日常开发中有着广泛的应用，从简单的文本搜索到复杂的自然语言处理。</p><h3 id="字符串算法的主要类别" tabindex="-1">字符串算法的主要类别 <a class="header-anchor" href="#字符串算法的主要类别" aria-label="Permalink to “字符串算法的主要类别”">​</a></h3><ol><li><strong>搜索与匹配</strong>：在文本中查找模式串 <ul><li>暴力匹配（Brute Force）</li><li>KMP算法（Knuth-Morris-Pratt）</li><li>Boyer-Moore算法</li><li>Rabin-Karp算法</li><li>后缀树/后缀数组</li></ul></li><li><strong>编辑与比较</strong>：计算字符串间的相似度或距离 <ul><li>最长公共子序列（LCS）</li><li>最长公共子串</li><li>编辑距离（Levenshtein距离）</li><li>字符串对齐</li></ul></li><li><strong>压缩与编码</strong>：减少字符串存储空间 <ul><li>Huffman编码</li><li>游程编码（Run-length encoding）</li><li>LZ77/LZ78压缩</li></ul></li><li><strong>文本分析</strong>：从文本中提取信息 <ul><li>正则表达式</li><li>词频统计</li><li>文本分类</li></ul></li></ol><h3 id="常见的字符串数据结构" tabindex="-1">常见的字符串数据结构 <a class="header-anchor" href="#常见的字符串数据结构" aria-label="Permalink to “常见的字符串数据结构”">​</a></h3><ul><li><strong>Trie树（前缀树）</strong>：用于高效存储和查找字符串集合</li><li><strong>后缀树/后缀数组</strong>：用于复杂的字符串匹配问题</li><li><strong>Bloom过滤器</strong>：用于快速判断一个元素是否在集合中</li></ul><p>字符串算法的详细实现和应用可以参考<a href="./../string/index">字符串算法专题</a>。</p><h2 id="加密与解密" tabindex="-1">加密与解密 <a class="header-anchor" href="#加密与解密" aria-label="Permalink to “加密与解密”">​</a></h2><p>加密和解密是信息安全领域的基础技术，用于保护数据的机密性、完整性和可用性。根据加密方式的不同，可以分为以下几类：</p><ol><li><strong>朴素加密</strong>：基于简单的替换或移位操作 <ul><li>凯撒密码：字母表移位</li><li>Base64：二进制数据编码</li><li>其他古典密码</li></ul></li><li><strong>对称加密</strong>：使用相同的密钥进行加密和解密 <ul><li>AES（高级加密标准）：最常用的对称加密算法</li><li>DES（数据加密标准）：较老的对称加密算法</li><li>3DES：DES的三重加密版本</li></ul></li><li><strong>非对称加密</strong>：使用不同的密钥进行加密和解密 <ul><li>RSA：最广泛使用的非对称加密算法</li><li>ECC（椭圆曲线加密）：更高效的现代非对称加密</li><li>DSA（数字签名算法）：主要用于数字签名</li></ul></li><li><strong>哈希加密</strong>：单向加密，不可逆 <ul><li>MD5：较老的哈希算法，已不推荐用于安全场景</li><li>SHA系列：包括SHA-1、SHA-256、SHA-512等</li><li>HMAC：基于哈希的消息认证码</li></ul></li></ol><p>加密算法的选择需要考虑以下因素：</p><ol><li>安全性：算法的抗攻击能力</li><li>性能：加密/解密的速度和资源消耗</li><li>密钥管理：密钥的生成、存储和分发</li><li>应用场景：不同的场景需要不同的加密方案</li></ol><p>详细内容请参考<a href="./../crypto/index">加密与解密专题</a>。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/basic/algo/struct/graph" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>图</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/basic/algo/model/recrusion" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>递归</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span>d[b+1] -= val</span></span></code></pre></div><h3 id="dp-动态规划" tabindex="-1">dp 动态规划 <a class="header-anchor" href="#dp-动态规划" aria-label="Permalink to “dp 动态规划”">​</a></h3><p>动态规划是一种通过将问题分解为子问题，并将子问题的解存储起来，从而避免重复计算的方法，是典型<strong>空间换时间</strong>的思想，同时，动态规划刻意地在构造一个数列问题，将题目转化为寻找数列的递推公式的问题，或者说是寻找状态转移方程的问题。动态规划通常用于解决一些具有重叠子问题和最优子结构的问题，例如背包问题、最长公共子序列问题、最长递增子序列问题等等。</p><p>关键词：最优等；（含有重叠子问题），具体内容参看 <a href="./dp">动态规划</a>。</p><h3 id="位运算" tabindex="-1">位运算 <a class="header-anchor" href="#位运算" aria-label="Permalink to “位运算”">​</a></h3><p>使用位运算可以模拟集合操作，例如集合的并集、交集、差集等等。位运算的时间复杂度为 O(1)，可以用于解决一些需要频繁进行集合操作的问题，例如集合的并集、交集、差集等等，同时降低算法的空间复杂度。但是，位运算需要我们提前知道集合中的元素，并且元素的范围不能太大，否则会超出计算机的表示范围。具体参考<a href="./bit">位运算</a></p><h3 id="数学公式" tabindex="-1">数学公式 <a class="header-anchor" href="#数学公式" aria-label="Permalink to “数学公式”">​</a></h3><p>使用数学公式可以简化算法，一些问题具有鲜明的数学性质，通过归纳数学公式来直接计算答案。数学公式的时间复杂度为 O(1)，可以用于解决一些需要频繁进行计算的问题，例如阶乘、斐波那契数列等等，同时降低算法的空间复杂度。一旦一个问题可以通过推导数学公式来解决，那么该问题的难点就变成了数学推导，而对算法实现的难度大大降低。</p><h2 id="排序" tabindex="-1">排序 <a class="header-anchor" href="#排序" aria-label="Permalink to “排序”">​</a></h2><p>排序算法是计算机科学中最基础且重要的算法之一。根据不同的应用场景和需求，我们可以选择不同的<a href="./../sort/index">排序算法</a>。</p><h3 id="排序算法的选择" tabindex="-1">排序算法的选择 <a class="header-anchor" href="#排序算法的选择" aria-label="Permalink to “排序算法的选择”">​</a></h3><p>选择排序算法时，需要考虑以下因素：</p><ol><li>数据规模：小规模数据可以使用简单排序，大规模数据需要使用高效排序</li><li>数据分布：如果数据分布有特点，可以使用特定排序算法</li><li>稳定性：如果需要保持相等元素的相对顺序，选择稳定排序</li><li>空间限制：如果空间有限，选择原地排序</li><li>数据特点：如果数据基本有序，插入排序可能更高效</li></ol><h3 id="排序算法的应用" tabindex="-1">排序算法的应用 <a class="header-anchor" href="#排序算法的应用" aria-label="Permalink to “排序算法的应用”">​</a></h3><ol><li>数据预处理：排序是许多算法的基础步骤</li><li>查找优化：排序后的数据可以使用二分查找</li><li>去重：排序后可以方便地去除重复元素</li><li>统计：排序后可以方便地进行各种统计</li><li>数据展示：排序后的数据更易于展示和理解</li></ol><h2 id="字符串" tabindex="-1">字符串 <a class="header-anchor" href="#字符串" aria-label="Permalink to “字符串”">​</a></h2><p>字符串算法是计算机科学中最常见和实用的算法之一，涉及对文本数据的处理和分析。字符串处理在日常开发中有着广泛的应用，从简单的文本搜索到复杂的自然语言处理。</p><h3 id="字符串算法的主要类别" tabindex="-1">字符串算法的主要类别 <a class="header-anchor" href="#字符串算法的主要类别" aria-label="Permalink to “字符串算法的主要类别”">​</a></h3><ol><li><strong>搜索与匹配</strong>：在文本中查找模式串 <ul><li>暴力匹配（Brute Force）</li><li>KMP算法（Knuth-Morris-Pratt）</li><li>Boyer-Moore算法</li><li>Rabin-Karp算法</li><li>后缀树/后缀数组</li></ul></li><li><strong>编辑与比较</strong>：计算字符串间的相似度或距离 <ul><li>最长公共子序列（LCS）</li><li>最长公共子串</li><li>编辑距离（Levenshtein距离）</li><li>字符串对齐</li></ul></li><li><strong>压缩与编码</strong>：减少字符串存储空间 <ul><li>Huffman编码</li><li>游程编码（Run-length encoding）</li><li>LZ77/LZ78压缩</li></ul></li><li><strong>文本分析</strong>：从文本中提取信息 <ul><li>正则表达式</li><li>词频统计</li><li>文本分类</li></ul></li></ol><h3 id="常见的字符串数据结构" tabindex="-1">常见的字符串数据结构 <a class="header-anchor" href="#常见的字符串数据结构" aria-label="Permalink to “常见的字符串数据结构”">​</a></h3><ul><li><strong>Trie树（前缀树）</strong>：用于高效存储和查找字符串集合</li><li><strong>后缀树/后缀数组</strong>：用于复杂的字符串匹配问题</li><li><strong>Bloom过滤器</strong>：用于快速判断一个元素是否在集合中</li></ul><p>字符串算法的详细实现和应用可以参考<a href="./../string/index">字符串算法专题</a>。</p><h2 id="加密与解密" tabindex="-1">加密与解密 <a class="header-anchor" href="#加密与解密" aria-label="Permalink to “加密与解密”">​</a></h2><p>加密和解密是信息安全领域的基础技术，用于保护数据的机密性、完整性和可用性。根据加密方式的不同，可以分为以下几类：</p><ol><li><strong>朴素加密</strong>：基于简单的替换或移位操作 <ul><li>凯撒密码：字母表移位</li><li>Base64：二进制数据编码</li><li>其他古典密码</li></ul></li><li><strong>对称加密</strong>：使用相同的密钥进行加密和解密 <ul><li>AES（高级加密标准）：最常用的对称加密算法</li><li>DES（数据加密标准）：较老的对称加密算法</li><li>3DES：DES的三重加密版本</li></ul></li><li><strong>非对称加密</strong>：使用不同的密钥进行加密和解密 <ul><li>RSA：最广泛使用的非对称加密算法</li><li>ECC（椭圆曲线加密）：更高效的现代非对称加密</li><li>DSA（数字签名算法）：主要用于数字签名</li></ul></li><li><strong>哈希加密</strong>：单向加密，不可逆 <ul><li>MD5：较老的哈希算法，已不推荐用于安全场景</li><li>SHA系列：包括SHA-1、SHA-256、SHA-512等</li><li>HMAC：基于哈希的消息认证码</li></ul></li></ol><p>加密算法的选择需要考虑以下因素：</p><ol><li>安全性：算法的抗攻击能力</li><li>性能：加密/解密的速度和资源消耗</li><li>密钥管理：密钥的生成、存储和分发</li><li>应用场景：不同的场景需要不同的加密方案</li></ol><p>详细内容请参考<a href="./../crypto/index">加密与解密专题</a>。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/basic/algo/struct/traversal" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>图遍历</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/basic/algo/model/recrusion" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>递归</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -197,6 +193,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -294,6 +291,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -331,11 +329,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -370,6 +368,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -500,6 +499,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -529,13 +529,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -568,6 +568,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -586,6 +587,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -635,6 +637,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -686,9 +689,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -702,6 +706,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -724,8 +729,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -734,8 +739,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -805,6 +810,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx

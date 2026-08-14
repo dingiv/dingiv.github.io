@@ -3,28 +3,31 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>ELK | Spark Notes</title>
+    <title>可观测性 | Spark Notes</title>
     <meta name="description" content="我的计科学习随笔">
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
-    <link rel="preload stylesheet" href="/assets/style.ChAJyitO.css" as="style">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.dd646087.js"></script>
+    <script src="/assets/site-data.cce20d3a.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/sde_sre_elk.md.O-kxv-bJ.lean.js">
+    <link rel="modulepreload" href="/assets/sde_sre_elk.md.Bn3E62Jj.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
   </head>
   <body>
-    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _sde_sre_elk" data-v-e9c23681><div><h1 id="elk" tabindex="-1">ELK <a class="header-anchor" href="#elk" aria-label="Permalink to “ELK”">​</a></h1><h1 id="plg" tabindex="-1">PLG <a class="header-anchor" href="#plg" aria-label="Permalink to “PLG”">​</a></h1><p>prometheus loki grafana</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/sde/sre/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>运维</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/sde/sre/jenkins" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Jenkins</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _sde_sre_elk" data-v-e9c23681><div><h1 id="可观测性-监控、日志与链路追踪" tabindex="-1">可观测性：监控、日志与链路追踪 <a class="header-anchor" href="#可观测性-监控、日志与链路追踪" aria-label="Permalink to “可观测性：监控、日志与链路追踪”">​</a></h1><p>可观测性（Observability）回答的问题是：<strong>通过系统的外部输出，能多大程度推断系统内部的状态</strong>。传统的监控（Monitoring）回答&quot;系统是否正常&quot;——预定义的指标和阈值告诉你红灯还是绿灯。可观测性回答&quot;系统为什么不正常&quot;——在没有预想到的故障发生时，能否通过既有数据定位根因。</p><p>三根支柱构成可观测性的数据模型：<strong>指标</strong>（Metrics，随时间变化的数值）、<strong>日志</strong>（Logs，离散事件的文本记录）、<strong>链路追踪</strong>（Traces，请求穿越多个服务的时间线）。三者各有不可替代的视角，也有明确的关联机制。</p><h2 id="指标-低成本的全局视野" tabindex="-1">指标：低成本的全局视野 <a class="header-anchor" href="#指标-低成本的全局视野" aria-label="Permalink to “指标：低成本的全局视野”">​</a></h2><p>指标是聚合的数值——QPS、P99 延迟、错误率、内存使用量。它的优势是<strong>存储成本低</strong>（一个时间序列每分钟一个数据点，一年不过 50 万个点）和<strong>查询速度快</strong>（聚合查询在预计算的序列上执行）。这使指标适合回答&quot;系统的整体健康状态&quot;和&quot;趋势变化&quot;。</p><p>指标的设计核心是<strong>维度（labels）</strong>。Prometheus 的数据模型是多维时间序列——<code>http_requests_total{method=&quot;GET&quot;, path=&quot;/api/users&quot;, status=&quot;500&quot;}</code> 的每个 label 组合是一条独立序列。维度设计的好坏直接决定排查能力：有 status 维度能立刻看到错误率飙升，有 path 维度能定位到具体接口，缺失维度则只能知道&quot;出了问题&quot;但不知道哪里出的问题。工程实践中的准则：高基数维度（user_id、request_id）<strong>不要</strong>放进指标 label——每个唯一值产生一条序列，基数爆炸会拖垮存储；这类信息属于日志和追踪的领域。</p><p><strong>Prometheus</strong> 是指标领域的事实标准。Pull 模型（Prometheus 主动抓取 exporter 暴露的 <code>/metrics</code> 端点）、PromQL 查询语言、告警规则（Alertmanager）构成完整的指标闭环。长期存储（Prometheus 本地存储有限）通过 Thanos 或 VictoriaMetrics 扩展。</p><div class="language-promql"><button title="Copy Code" class="copy"></button><span class="lang">promql</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span># 过去 5 分钟的错误率，按 path 分组</span></span>
+<span class="line"><span>sum(rate(http_requests_total{status=~&quot;5..&quot;}[5m])) by (path)</span></span>
+<span class="line"><span>  / sum(rate(http_requests_total[5m])) by (path)</span></span></code></pre></div><h2 id="日志-事件的全量记录" tabindex="-1">日志：事件的全量记录 <a class="header-anchor" href="#日志-事件的全量记录" aria-label="Permalink to “日志：事件的全量记录”">​</a></h2><p>日志记录离散事件——一个请求的完整上下文、一个错误的堆栈、一次状态变更。与指标相反，日志的<strong>存储成本高</strong>（一条结构化日志几百字节到几 KB）但<strong>信息量大</strong>（可以包含任意上下文字段）。</p><p>结构化日志是现代实践的分水线。传统的非结构化日志（<code>Connection failed for user 123 at 2026-08-14 10:23:45</code>）对机器解析不友好——grep 能用但聚合分析困难。结构化日志（<code>{&quot;event&quot;: &quot;connection_failed&quot;, &quot;user_id&quot;: 123, &quot;error&quot;: &quot;timeout&quot;}</code>）支持字段级查询和聚合。日志框架的结构化输出（JSON formatter）+ 采集端的字段解析 + 存储端的全文索引构成结构化日志管线。</p><p><strong>ELK/EFK 栈</strong>（Elasticsearch + Logstash/Filebeat + Kibana）是日志领域的传统方案：Filebeat 采集 → Logstash 解析富化 → Elasticsearch 索引 → Kibana 查询可视化。<strong>Loki</strong>（Grafana 生态）是轻量替代——只索引 label 不索引全文，存储成本降一个数量级，代价是全文搜索能力弱（依赖 LogQL 的标签过滤 + 受限的行过滤）。选型分界：需要复杂全文搜索和长期留存选 ELK，只需要按服务/级别/trace_id 过滤查看选 Loki。</p><h2 id="链路追踪-请求的时空之旅" tabindex="-1">链路追踪：请求的时空之旅 <a class="header-anchor" href="#链路追踪-请求的时空之旅" aria-label="Permalink to “链路追踪：请求的时空之旅”">​</a></h2><p>分布式系统中一个请求穿越多个服务——网关 → 用户服务 → 订单服务 → 数据库。每个服务各自记录日志，但&quot;这些日志属于同一个请求&quot;的关联信息缺失。链路追踪补上这块：每个请求携带全局唯一的 <strong>trace_id</strong>，每经过一个服务产生一个 <strong>span</strong>（有开始/结束时间和操作名），所有 span 通过 trace_id 关联成一棵调用树。</p><p>追踪的核心价值是<strong>延迟归因</strong>。用户报&quot;下单慢&quot;，从 trace 树上立刻看到：网关 5ms → 用户服务 10ms → 订单服务 800ms → 其中数据库查询 750ms。瓶颈定位从&quot;逐个服务查日志&quot;变成&quot;看一棵树&quot;。这在调用链超过 3 层的系统中几乎是唯一高效的排障手段。</p><p><strong>OpenTelemetry</strong>（OTel）是三支柱的统一采集标准——SDK（各语言的应用内埋点）、Collector（接收/处理/导出的中间层）、OTLP 协议（SDK 到 Collector 的传输）。OTel 的意义是解耦：应用只对接 OTel SDK，后端（Jaeger、Zipkin、Prometheus、Loki、商业 APM）可以随时替换——避免了被单一可观测厂商锁定。</p><p>追踪的采样策略是成本与覆盖的权衡。全量追踪（每个请求都记录）在小流量系统可行，高流量系统通常采样（1%-10%）——但纯随机采样会错过低频但关键的错误请求。自适应采样（错误请求必采、慢请求高概率采、正常请求低概率采）是现代后端的标准能力。</p><h2 id="三支柱的关联" tabindex="-1">三支柱的关联 <a class="header-anchor" href="#三支柱的关联" aria-label="Permalink to “三支柱的关联”">​</a></h2><p>三支柱不是孤立的——关联机制决定它们的组合价值：</p><p><strong>Exemplars</strong>（样本关联）：指标的数据点附带一个 exemplar——指向该数据点来源的具体 trace。P99 延迟图上的异常点，点击 exemplar 直接跳转到对应的慢请求 trace——从&quot;指标发现异常&quot;到&quot;追踪定位原因&quot;的桥。</p><p><strong>trace_id in logs</strong>：日志中注入 trace_id 字段——从 trace 树发现订单服务的数据库查询慢，用 trace_id 查日志看到该请求的完整参数和 SQL。指标 → 追踪 → 日志的排障链路就此贯通。</p><p><strong>统一元数据</strong>：服务名、环境（prod/staging）、版本号在三支柱中保持一致的 label/tag/字段——这是跨支柱查询（&quot;过滤出 v2.3.1 版本的所有数据&quot;）的前提。</p><p>OpenTelemetry 的 Collector 通常承担关联的实现——接收三支柱数据后统一注入服务元数据，再分发到各自的后端。</p><h2 id="实践路径" tabindex="-1">实践路径 <a class="header-anchor" href="#实践路径" aria-label="Permalink to “实践路径”">​</a></h2><p>可观测性建设的一个务实顺序：先有<strong>指标</strong>（Prometheus + Grafana，覆盖 RED 方法——Rate/Error/Duration——每个服务的三个基础指标），这是发现问题的眼睛。再有<strong>结构化日志</strong>（集中收集 + trace_id 注入），这是定位问题的第一层。最后是<strong>追踪</strong>（OTel SDK 埋点 + Jaeger/Tempo 后端），这是复杂调用链的终极武器。三者的投入比大约是 3:4:3——指标和追踪的基础设施成本高（存储和查询），日志的采集成本高（量大）。</p><p>告警是可观测性的出口。好的告警实践：基于症状而非原因告警（用户可感知的错误率/延迟，而非 CPU 使用率——原因类指标波动频繁且用户无感）；分级（page 立即处理 vs ticket 工作时间处理）；每个告警有 runbook（接警后的处理步骤文档）——没有 runbook 的告警只是噪音的另一种形态。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/sde/sre/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>运维</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/sde/sre/tuning" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Linux 性能调优</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
 /ai - 人工智能
 /ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
 /ai/app/arch - 应用架构
 /ai/app/arch/api - API 设计
 /ai/app/arch/caching - Prompt Caching
@@ -84,6 +87,7 @@
 /ai/app/overlay/rag/vector/db
 /ai/app/overlay/rag/vector_db - 向量数据库
 /ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
 /ai/app/overlay/session/context - Context Engineering
 /ai/app/overlay/session/prompt - 提示词
 /ai/app/overlay/ui - AI UI
@@ -181,6 +185,7 @@
 /basic/algo/string - 字符串算法
 /basic/algo/struct - 数据结构
 /basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
 /basic/algo/struct/tree - 树
 /basic/compile - 编译原理
 /basic/compile/advance - 高级语言
@@ -218,11 +223,11 @@
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程
-/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程</pre>
+<pre>/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
-/client/csharp/msbuild - MSBuild</pre>
-<pre>/client/csharp/nuget - NuGet
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
 /client/csharp/unity - Unity
 /client/game - 游戏引擎
 /client/game/cocos - Cocos
@@ -257,6 +262,7 @@
 /client/render/api - 标准接口
 /client/render/api/directx - DirectX
 /client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
 /client/render/api/vulkan - Vulkan
 /client/render/api/vulkan/icd - ICD
 /client/render/api/vulkan/spirv - SPIR-V
@@ -387,6 +393,7 @@
 /design/async/schedule - 用户态调度
 /design/concurrent - 并发
 /design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
 /design/concurrent/lock - 同步原语
 /design/concurrent/lock/free
 /design/concurrent/lock_free - 无锁并发
@@ -416,13 +423,13 @@
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域
-/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域</pre>
+<pre>/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
-/design/typical - 经典范式</pre>
-<pre>/design/typical/ability - 质量属性
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
 /design/typical/ddd - DDD
 /design/typical/duty - 职责分配
 /design/typical/macro - 宏观指导
@@ -455,6 +462,7 @@
 /kernel/embed/device/comm - 数据面
 /kernel/embed/device/platform - 平台设备
 /kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
 /kernel/embed/elel - 硬件基础
 /kernel/embed/elel/design - 打板
 /kernel/embed/elel/fpga - FPGA
@@ -473,6 +481,7 @@
 /kernel/equip/laptop_brand - 笔记本
 /kernel/equip/lte - LTE
 /kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
@@ -522,6 +531,7 @@
 /kernel/linux/irq/clock - 时钟中断
 /kernel/linux/irq/controller - 中断控制器
 /kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
 /kernel/linux/mm - 内存管理
 /kernel/linux/mm/mmap - 虚拟内存映射
 /kernel/linux/mm/pmm - 物理内存管理
@@ -573,9 +583,10 @@
 /sde/shell/basic - 语言基础
 /sde/shell/cli - 常见命令行
 /sde/sre - 运维
-/sde/sre/elk - ELK
+/sde/sre/elk - 可观测性
 /sde/sre/jenkins - Jenkins
 /sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
 /sde/test - 测试
 /sde/test/basic - 测试原理
 /sde/test/framework - 测试工具与框架
@@ -589,6 +600,7 @@
 /sde/workflow/version - 版本管理
 /server - 服务端
 /server/db - 数据库
+/server/db/architecture - 数据库架构分层
 /server/db/distributed - 集群
 /server/db/distributed/comparison - 数据库对比与选型
 /server/db/distributed/newsql - NewSQL 数据库
@@ -611,8 +623,8 @@
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划
-/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划</pre>
+<pre>/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
@@ -621,8 +633,8 @@
 /server/db/sql/basic/design - 数据库设计
 /server/db/sql/basic/integrity - 数据完整性
 /server/db/sql/basic/transaction - 事务与并发控制
-/server/db/sql/mysql - MySQL</pre>
-<pre>/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
 /server/db/sql/mysql/id - 索引
 /server/db/sql/mysql/impl - 存储引擎
 /server/db/sql/mysql/optimize - 查询优化
@@ -692,6 +704,7 @@
 /server/middleware/mq/rocketmq - RocketMQ
 /server/middleware/mycat - MyCat
 /server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
 /server/middleware/proxy/haproxy - haproxy
 /server/middleware/proxy/lvs - LVS
 /server/middleware/proxy/nginx - Nginx
