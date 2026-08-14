@@ -43,6 +43,21 @@ BIOS 通常提供基于终端的配置界面，允许用户自定义引导过程
 
 > 一些硬件层面的功能（如网卡的 SR-IOV 功能）不一定会被启用。如需启用，需要重启机器并提前修改 BIOS 配置。
 
+### UEFI 是一个微型操作系统
+理解 UEFI 的关键转变：UEFI 不是 BIOS 的升级版，而是一个**微型操作系统**。BIOS 只是"一段初始化硬件后跳转的固件"，UEFI 则有完整的系统抽象——自己的进程模型（EFI Application/Driver，PE 格式可执行文件）、内存管理（`AllocatePool`/`AllocatePages`）、文件系统（FAT32 的 Simple File System Protocol，能直接读 ESP 分区的文件）、图形输出（GOP——图形协议，启动画面就靠它）、网络栈（PXE、部分实现有 TCP/IP）。
+
+这个"微型操作系统"的定位解释了 UEFI 时代的诸多现象：
+
+**启动项是文件而非扇区**。BIOS 从磁盘固定位置（MBR 第一扇区）读代码；UEFI 按 NVRAM 中记录的路径（如 `\EFI\ubuntu\shimx64.efi`）从 ESP 分区加载 PE 格式的可执行文件。启动项损坏 = NVRAM 条目指向的文件丢失——修复方式是 `efibootmgr` 重建条目而非 `dd` 写 MBR。
+
+**UEFI Shell 和 UEFI 应用存在**。因为 UEFI 有完整的运行时（进程+文件系统+图形），所以能直接在固件环境跑应用——UEFI Shell（命令行环境）、内存测试工具、甚至游戏（Tetris 的 EFI 移植版）。主板厂商的"图形化 BIOS 界面"本质是一个 EFI 应用。
+
+**Secure Boot 是固件层的代码签名**。UEFI 在加载每个 EFI 可执行文件前验证签名（db 白名单/dbx 黑名单），shim→GRUB→内核的链条靠签名传递信任。关闭 Secure Boot 才能加载未签名内核（部分发行版的定制内核、某些驱动）的原因在此。
+
+**漏洞面截然不同**。BIOS 时代的漏洞是"覆盖启动扇区"；UEFI 时代的漏洞是微型操作系统的漏洞——BootHole（GRUB 签名验证绕过）、UEFI 变量权限问题、甚至 UEFI 层的 rootkit（LoJax）。固件攻击的隐蔽性极高——重装操作系统不会清除固件层的植入。
+
+**操作系统接管时的交接协议**。UEFI 提供 ExitBootServices——内核初始化完成后调用它，UEFI 交出全部内存控制权。但在交接之前，内核可以通过 EFI 的运行时服务（Runtime Services——时间、变量存储 NVRAM）继续交互——这就是 Linux 的 efivarfs（`/sys/firmware/efi/efivars`）和 `efibootmgr` 操作启动项的原理。BIOS 没有任何运行时服务——操作系统启动后 BIOS 彻底消失。
+
 ## Boot Loader 加载操作系统
 Boot Loader 是存放在操作系统镜像盘中约定区域的一段程序。它被 BIOS 程序加载并执行，负责：
 

@@ -44,17 +44,17 @@
 ## 图形
 - SDL2 图形库
 
-## Linux 内核
-- proc 文件系统：proc_fs、proc_create、proc 目录常见条目
-- /sys 目录与 kset/kobject 模块
-- 内核编译参数与内核启动命令行
-- 常用内核命令行参数（调试开发场景）
-- 内核并发机制：原子变量、RCU、per-CPU 变量、seqlock、单写者模型、中断与抢占禁用
-- Linux 进程树与继承性：fork 树拓扑结构
-- EFI 是一个微型操作系统
-- Linux 性能调优：服务器莫名卡顿排查
-- 内存管理：e820 表、e820 与 memblock 的关系、x86 物理内存映射兼容性设计
-- 手写操作系统章节（新增 blog 章节）
+## Linux 内核（已完成）
+- proc 文件系统：proc_fs、proc_create、proc 目录常见条目 → 已扩充 `file/pfs.md`
+- /sys 目录与 kset/kobject 模块 → 已扩充 `file/pfs.md`
+- 内核编译参数与内核启动命令行 → 已扩充 `develop/kbuild.md`（命令行参数五类分组表）
+- 常用内核命令行参数（调试开发场景）→ 同上
+- 内核并发机制：原子变量、RCU、per-CPU 变量、seqlock、单写者模型、中断与抢占禁用 → 新建 `irq/sync.md`
+- Linux 进程树与继承性：fork 树拓扑结构 → 已扩充 `process/index.md`（fork 继承表 + 锁陷阱 + 会话）
+- EFI 是一个微型操作系统 → 已扩充 `power/boot.md`（UEFI 微系统视角）
+- Linux 性能调优：服务器莫名卡顿排查 → 新建 `sde/sre/tuning.md`
+- 内存管理：e820 表、e820 与 memblock 的关系、x86 物理内存映射兼容性设计 → 已有覆盖（`mm/pmm.md` + `power/boot.md` 早期内存管理节）
+- 手写操作系统章节（新增 blog 章节）→ 待规划（章节级）
 
 ## 数据库
 - 数据库分层：访问层、执行层、存储层

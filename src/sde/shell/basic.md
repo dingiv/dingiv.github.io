@@ -233,3 +233,54 @@ function error_handler() {
 
 trap 'error_handler $LINENO; exit 1' ERR
 ```
+
+### local 与 $() 的错误吞噬
+
+最隐蔽的陷阱：**`local` 声明与赋值合写时，赋值部分的退出码会被 `local` 命令自己的成功码覆盖**——命令替换 `$(...)` 的失败被静默吞掉。
+
+```sh
+get_version() {
+    local version=$(cat VERSION.txt)    # ← 陷阱
+    echo "$version"
+}
+
+version=$(get_version) || echo "获取版本失败"   # ← 永远不会走到"失败"分支
+```
+
+当 `VERSION.txt` 不存在时，`cat` 失败（退出码 1）——但 `local` 这个内建命令本身成功了（成功地声明了变量并赋了空值），它的退出码 0 覆盖了命令替换的非零退出码。函数返回 0，`set -e` 不触发、`||` 分支不执行，错误被完全吞掉。
+
+修复方式是**声明与赋值分离**——赋值行的退出码就属于命令替换本身：
+
+```sh
+get_version() {
+    local version              # ① 只声明
+    version=$(cat VERSION.txt) # ② 赋值——失败码正确传播
+    echo "$version"
+}
+```
+
+这个模式应该成为肌肉记忆：**`local x; x=$(cmd)`，永远不写 `local x=$(cmd)`**。适用于 `local`、`declare`、`export`、`readonly` 所有的变量声明内建——它们都有同样的退出码覆盖行为。
+
+### 同族陷阱清单
+
+Shell 的错误处理陷阱成群出现：
+
+**set -e 在条件上下文中失效**。`cmd || true`、`if cmd; then`、`while cmd` 这些条件位置中，`cmd` 的失败不会触发 `set -e`（这是设计——条件判断本来就是"测试失败"）。坑点在于**函数在条件中被调用时，函数内部的所有命令都不受 `set -e` 约束**——函数内一个该失败的命令失败了，函数继续执行到下一个 return 0，错误升级为"函数返回错误值"而非"脚本退出"。
+
+**管道只看最后一个命令**。`cmd1 | cmd2` 的退出码是 `cmd2` 的——`cmd1` 崩溃不影响整体。`set -o pipefail` 修复（任一命令失败则整体失败）。陷阱残留：pipefail 开启后，`grep` 在"没匹配到"时返回 1——`cat log | grep ERROR` 在没有错误日志时会触发退出，这是 grep 的语义而非 bug，但经常被当成 bug 排查半天。
+
+**算术的返回值语义**。`((count++))` 在 count 为 0 时返回 1（0 是假值）——set -e 下这会让脚本意外退出。修复用 `((++count))` 或 `count=$((count+1))`（赋值永远返回 0）。
+
+**命令替换不继承 errexit**。`result=$(failing_func)` 中，只要函数整体返回 0（比如最后一行是 echo），赋值就成功——命令替换是"错误被吞"的重灾区。
+
+### 防御性模板
+
+把这些陷阱的防御固化为脚本开头：
+
+```sh
+#!/bin/bash
+set -euo pipefail          # 严格模式三件套
+IFS=$'\n\t'                # 防止未引用变量的分词意外
+```
+
+更可靠的防御是 ShellCheck——静态分析器能直接指出"SC2155: local 声明与赋值合写会掩盖命令替换的退出码"这类问题，把它加入 CI 比人肉记忆可靠。
