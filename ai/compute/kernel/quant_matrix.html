@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>量化选型 | Spark Notes</title>
+    <meta name="description" content="我的计科学习随笔">
+    <meta name="generator" content="VitePress v2.0.0-alpha.18">
+    <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    <script src="/assets/site-data.15a9f116.js"></script>
+    <script type="module" src="/assets/app.CzQd7weX.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
+    <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
+    <link rel="modulepreload" href="/assets/ai_compute_kernel_quant_matrix.md.DNYxTfte.lean.js">
+    <link rel="icon" href="/favicon.svg">
+    <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="spark-theme" data-v-7a12f61a><div class="particle" data-v-7a12f61a data-v-dc122416><canvas class="particle-canvas deep-layer" data-v-dc122416></canvas><canvas class="particle-canvas mid-layer" data-v-dc122416></canvas><canvas class="particle-canvas near-layer" data-v-dc122416></canvas><!--[--><!--]--></div><div class="Layout" data-v-7a12f61a><!--[--><!--]--><!--[--><span tabindex="-1" data-v-3a24536c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-3a24536c>Skip to content</a><!--]--><!----><header class="VPNav" data-v-7a12f61a data-v-61838ac2><div class="VPNavBar has-sidebar top" data-v-61838ac2 data-v-a7b9378c><div class="wrapper" data-v-a7b9378c><div class="container" data-v-a7b9378c><div class="title" data-v-a7b9378c><div class="VPNavBarTitle has-sidebar" data-v-a7b9378c data-v-5f213ba3><a class="title" href="/" data-v-5f213ba3><!--[--><!--]--><!----><span data-v-5f213ba3>Spark Notes</span><!--[--><!--]--></a></div></div><div class="content" data-v-a7b9378c><div class="content-body" data-v-a7b9378c><!--[--><!--]--><div class="VPNavBarSearch search" data-v-a7b9378c data-v-00326b02><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-a7b9378c data-v-90c7ab83><span id="main-nav-aria-label" class="visually-hidden" data-v-90c7ab83> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-90c7ab83 data-v-d410ec49><!--[--><span data-v-d410ec49>首页</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-a7b9378c data-v-46d51ec5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-46d51ec5 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-a7b9378c data-v-d97ce479 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-a7b9378c data-v-c25236e4 data-v-9fd08302><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-9fd08302><span class="vpi-more-horizontal icon" data-v-9fd08302></span></button><div class="menu" data-v-9fd08302><div class="VPMenu" data-v-9fd08302 data-v-b5562c30><!----><!--[--><!--[--><!----><div class="group" data-v-c25236e4><div class="item appearance" data-v-c25236e4><p class="label" data-v-c25236e4>Appearance</p><div class="appearance-action" data-v-c25236e4><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-c25236e4 data-v-86dbb786 data-v-68ba1c94><span class="check" data-v-68ba1c94><span class="icon" data-v-68ba1c94><!--[--><span class="vpi-sun sun" data-v-86dbb786></span><span class="vpi-moon moon" data-v-86dbb786></span><!--]--></span></span></button></div></div></div><div class="group" data-v-c25236e4><div class="item social-links" data-v-c25236e4><div class="VPSocialLinks social-links-list" data-v-c25236e4 data-v-eaf927fa><!--[--><a class="VPSocialLink no-icon" href="https://github.com/dingiv/dingiv.github.io" aria-label="github" target="_blank" rel="me noopener" data-v-eaf927fa data-v-6451ba65><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-a7b9378c data-v-f5603a07><span class="container" data-v-f5603a07><span class="top" data-v-f5603a07></span><span class="middle" data-v-f5603a07></span><span class="bottom" data-v-f5603a07></span></span></button></div></div></div></div><div class="divider" data-v-a7b9378c><div class="divider-line" data-v-a7b9378c></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-7a12f61a data-v-68b6e41a><div class="container" data-v-68b6e41a><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-68b6e41a><span class="vpi-align-left menu-icon" data-v-68b6e41a></span><span class="menu-text" data-v-68b6e41a>Menu</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-allow-mismatch="style" data-v-68b6e41a data-v-01915fbe><button data-v-01915fbe>Return to top</button><!----></div></div></div><aside class="VPSidebar sidebar-skeleton" data-v-7a12f61a></aside><div class="VPContent has-sidebar" id="VPContent" data-v-7a12f61a data-v-455de19b><div class="VPDoc has-sidebar has-aside" data-v-455de19b data-v-e9c23681><!--[--><!--]--><div class="container" data-v-e9c23681><div class="aside" data-v-e9c23681><div class="aside-curtain" data-v-e9c23681></div><div class="aside-container" data-v-e9c23681><div class="aside-content" data-v-e9c23681><div class="VPDocAside" data-v-e9c23681 data-v-469668af><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-469668af data-v-7b2f0394><div class="content" data-v-7b2f0394><div class="outline-marker" data-v-7b2f0394></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-7b2f0394>本页导航</div><ul class="VPDocOutlineItem root" data-v-7b2f0394 data-v-e9fb397b><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-469668af></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-e9c23681><div class="content-container" data-v-e9c23681><!--[--><!--]--><main class="main" data-v-e9c23681><div style="position:relative;" class="vp-doc _ai_compute_kernel_quant_matrix" data-v-e9c23681><div><h1 id="量化方案选型矩阵" tabindex="-1">量化方案选型矩阵 <a class="header-anchor" href="#量化方案选型矩阵" aria-label="Permalink to “量化方案选型矩阵”">​</a></h1><p>选一张 4-bit 量化模型跑推理时，最常被问的问题是&quot;我这块卡到底该用哪个内核&quot;。答案不是看 GPU 显存够不够，而是看 GPU 架构代际——Ampere 起才开始有原生的 INT4 Tensor Core，Ada 起才有原生 FP8 Tensor Core，Blackwell 起才有原生 FP4。每张卡的最优内核完全不同。</p><p>本文以&quot;GPU 架构 × 量化方案&quot;的二维矩阵为主线，给出生产环境落地的选型决策树。</p><h2 id="位宽命名法" tabindex="-1">位宽命名法 <a class="header-anchor" href="#位宽命名法" aria-label="Permalink to “位宽命名法”">​</a></h2><p>在进入选型之前，必须先澄清一套贯穿整个行业的命名规则：W、A、FP 三种前缀分别代表什么。</p><p>W 和 A 后跟数字描述位宽。W 是 Weight（权重）的首字母，A 是 Activation（激活值）的首字母。例如 W4A16 表示权重 4-bit、激活 16-bit；W8A8 表示权重 8-bit、激活 8-bit。这是&quot;weight-only 量化&quot;（只压缩权重、激活保持高精度）和&quot;对等量化&quot;（权重和激活同等压缩）的核心区分。</p><p>FP 后跟数字表示浮点格式。例如 FP8 是 8-bit 浮点数（常见 E4M3 / E5M2 两种变体），FP16 / BF16 是 16-bit 浮点。FP8 不指定位宽，只指定数字格式——它既可以用于权重（写成 W8A8-FP8，权重和激活都用 FP8），也可以独立存在。</p><p>两者可以组合。W4A8-FP8 表示权重 4-bit 整数、激活 8-bit 浮点；NVFP4 是 NVIDIA 专为 Blackwell 设计的 4-bit 浮点格式（用微块缩放 + E4M3 scale）。理解了这套命名规则，所有量化方案的&quot;是什么&quot;问题就回答了一半。</p><table tabindex="0"><thead><tr><th>名称</th><th>类型</th><th>含义</th><th>典型硬件</th></tr></thead><tbody><tr><td>W4A16</td><td>量化方案</td><td>权重 INT4 + 激活 FP16/BF16</td><td>Ampere+</td></tr><tr><td>W8A8-FP8</td><td>量化方案</td><td>权重 FP8 + 激活 FP8</td><td>Ada/Hopper/Blackwell 原生</td></tr><tr><td>W4A8-FP8</td><td>量化方案</td><td>权重 INT4 + 激活 FP8</td><td>Hopper（CUTLASS）</td></tr><tr><td>NVFP4</td><td>量化格式</td><td>4-bit 浮点 + 微块缩放</td><td>Blackwell 原生</td></tr></tbody></table><h2 id="选型决策矩阵" tabindex="-1">选型决策矩阵 <a class="header-anchor" href="#选型决策矩阵" aria-label="Permalink to “选型决策矩阵”">​</a></h2><p>把 GPU 架构代际和量化方案画成一张二维表，就是这张矩阵的全部内容。每一格代表&quot;在该架构上跑该量化方案时，使用什么后端、性能如何、推荐度怎样&quot;。</p><table tabindex="0"><thead><tr><th>GPU 架构</th><th>计算能力</th><th>最优内核</th><th>备选内核</th><th>不推荐内核</th><th>推荐格式</th></tr></thead><tbody><tr><td>Ampere（RTX 3090 / A100）</td><td>sm_80 / sm_86</td><td>Marlin</td><td>W8A8 INT8</td><td>FP8（无硬件支持，会回退）</td><td>AWQ / GPTQ (W4A16)</td></tr><tr><td>Ada Lovelace（RTX 4090 / L40S）</td><td>sm_89</td><td>FP8 原生</td><td>Marlin</td><td>CUTLASS W4A8（为 Hopper 设计）</td><td>FP8 优先，AWQ/GPTQ 备选</td></tr><tr><td>Hopper（H100 / H200）</td><td>sm_90</td><td>FP8 原生</td><td>Machete / CUTLASS W4A8</td><td>Marlin（已被 Machete 替代）</td><td>FP8 优先，W4A8 备选</td></tr><tr><td>Blackwell（B200 / RTX 5090）</td><td>sm_100+</td><td>CUTLASS NVFP4 / DeepGEMM</td><td>FP8</td><td>Marlin（性能次优）</td><td>NVFP4 优先</td></tr></tbody></table><p>每一行的推荐内核都依赖该架构的某项硬件能力，盲目套用别的架构的最优解会得到非常差的结果。</p><h3 id="ampere-marlin-是绝对主力" tabindex="-1">Ampere：Marlin 是绝对主力 <a class="header-anchor" href="#ampere-marlin-是绝对主力" aria-label="Permalink to “Ampere：Marlin 是绝对主力”">​</a></h3><p>Ampere 没有原生 FP8 Tensor Core——任何 FP8 模型在 Ampere 上都会回退到 W8A16 模式（FP8 权重用 Marlin FP8 内核反量化），损失原 FP8 的吞吐优势。Ampere 上 INT4 推理的最优内核只有 Marlin，其他备选（W8A8 INT8、ExLlamaV2）在中等 batch 的服务场景下吞吐显著低于 Marlin。</p><p>启动配置：vLLM 中 AWQ/GPTQ 模型默认走 Marlin 后端。</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">awq-mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">l</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --quantization</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> awq_marlin</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">gptq-mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">l</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --quantization</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> gptq_marlin</span></span></code></pre></div><p>ExLlamaV2 在 batch=1 的单用户极致延迟场景下可能反超 Marlin，但一旦进入多用户合并 batch 就被 Marlin 拉开差距。Marlin 的关键技术细节（异步内存拷贝、Tensor Core 融合反量化）见 <a href="./marlin">Marlin</a>。</p><h3 id="ada-lovelace-fp8-原生优先-marlin-备选" tabindex="-1">Ada Lovelace：FP8 原生优先，Marlin 备选 <a class="header-anchor" href="#ada-lovelace-fp8-原生优先-marlin-备选" aria-label="Permalink to “Ada Lovelace：FP8 原生优先，Marlin 备选”">​</a></h3><p>Ada 是首个消费级原生支持 FP8 Tensor Core 的架构（第四代）。FP8（W8A8）在精度几乎无损的前提下，吞吐和显存效率都比 Marlin 加速的 W4A16 更好——前提是显存够用。显存紧张时（4090 24G 跑 13B+ 模型）退回 Marlin + AWQ/GPTQ。</p><p>启动配置：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># FP8 优先</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">l</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --quantization</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fp8</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --kv-cache-dtype</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fp8</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># 显存不够时退回 Marlin</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">awq-mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">l</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --quantization</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> awq_marlin</span></span></code></pre></div><p>Ada 上 FP8 的优化成熟度仍略逊于 Hopper，但已经可用且效果不错。Ada 没有原生 FP4，强行使用 NVFP4 只会模拟、没有硬件加速收益。</p><h3 id="hopper-fp8-最成熟-machete-替代-marlin" tabindex="-1">Hopper：FP8 最成熟，Machete 替代 Marlin <a class="header-anchor" href="#hopper-fp8-最成熟-machete-替代-marlin" aria-label="Permalink to “Hopper：FP8 最成熟，Machete 替代 Marlin”">​</a></h3><p>Hopper 的 FP8 支持是当前数据中心部署的事实标准。第四代 Tensor Core + Transformer Engine + FA3 让 FP8 推理的性能和精度都达到生产级。如果坚持使用 W4A16，应该选 Machete（Marlin 在 Hopper 上的继任者，针对 wgmma + TMA 优化），而不是继续用 Marlin——Marlin 没有针对 Hopper 的新指令集做优化，在 H100 上性能远不如 Machete。</p><p>启动配置：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># FP8</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">l</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --quantization</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fp8</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --kv-cache-dtype</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fp8</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#62687b;--shiki-dark:#818e99;"># W4A16 走 Machete 而非 Marlin</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">awq-mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">l</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --quantization</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> awq_marlin</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">  # vLLM 会自动选 Machete</span></span></code></pre></div><p>Hopper 还支持 CUTLASS W4A8（INT4 权重 + FP8 激活），用于同时追求低显存和高计算吞吐。<code>CutlassW4A8LinearKernel</code> 要求 compute capability ≥ 90 且不支持 zero-point 和 act-order。</p><h3 id="blackwell-nvfp4-多源分化" tabindex="-1">Blackwell：NVFP4 多源分化 <a class="header-anchor" href="#blackwell-nvfp4-多源分化" aria-label="Permalink to “Blackwell：NVFP4 多源分化”">​</a></h3><p>Blackwell 第五代 Tensor Core 原生支持 FP4，NVFP4 是 NVIDIA 专为它设计的 4-bit 浮点格式——用微块缩放 + E4M3 scale，精度接近 FP8 但显存和速度比 INT4 还激进。这是当前生产部署的最前沿，B200 和 RTX 5090 都应该优先考虑 NVFP4。</p><p>启动配置：</p><div class="language-bash"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vllm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> serve</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">l</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --quantization</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> nvfp4</span></span></code></pre></div><p>与 W4A16 有 Marlin 这个社区主导的&quot;杀手级内核&quot;不同，NVFP4 目前由多个源头的算子拼接而成，还没有一个一统天下的名字。</p><p><strong>数据中心 B200 / SM100</strong> 走 <code>tcgen05.mma</code> block-scaled 指令。CUTLASS 提供 <code>72_blackwell_narrow_precision_gemm/72b_blackwell_nvfp4_nvfp4_gemm.cu</code> 参考实现，使用 Tensor Memory (TMEM) 存累加器、TMA 搬数据，输出可以是 FP32、BF16 或 FP8。DeepSeek-AI 出的 <strong>DeepGEMM</strong> 库走相同的 SM100 路径，专为 MoE/grouped-GEMM 场景优化，是当前 FP4 推理吞吐最高的选择之一（截至 2026 初仍 SM100-only，SM120 移植进行中）。</p><p><strong>消费级 RTX 5090 / SM120</strong> 走 <code>mma.sync.aligned.block_scale</code> 指令，没有数据中心卡的 TMEM 和大规模 TMA 路径。CUTLASS 提供 <code>79_blackwell_geforce_gemm/79a_blackwell_geforce_nvfp4_bf16_gemm.cu</code> 参考实现，并配套 grouped-GEMM 变体（<code>79d</code>）给 MoE 用。TensorRT-Edge-LLM 仓库里有 CuTe DSL 写的 <code>blockscaled_contiguous_grouped_gemm_finalize_fusion.py</code>，是 SM120 上 MoE FP4 推理的高性能实现。</p><p>反量化在所有 Blackwell NVFP4 路径上都<strong>发生在 Tensor Core 内部</strong>，没有独立的&quot;dequant kernel&quot;——这与 Marlin 的设计一致（避免写回全局内存），但实现机制不同：Marlin 在寄存器里反量化，Blackwell 的 NVFP4 直接在 Tensor Core 的微块缩放电路里完成。吞吐量参考上，CUTLASS SM120 example 头部声明 NVFP4 比 MXFP8 MMA 快约 2 倍、比 Ada Tensor Core 快约 4 倍，但这个数字仅来自单一实现，尚未独立验证。</p><p>Marlin 在 Blackwell 上不是不能跑，但性能远不如 NVFP4——Blackwell 的 wgmma + TMA + FP4 Tensor Core 路径没有被 Marlin 利用起来。如果在 Blackwell 上继续用 Marlin + W4A16，相当于在 5nm 工艺的卡上跑 8nm 时代的优化思路，硬件潜力只发挥了一小部分。</p><h2 id="为什么不能跨架构套用" tabindex="-1">为什么不能跨架构套用 <a class="header-anchor" href="#为什么不能跨架构套用" aria-label="Permalink to “为什么不能跨架构套用”">​</a></h2><p>很多用户在选型时会犯&quot;看别人跑得好就直接抄&quot;的错误。常见的反面教材：</p><p><strong>用 FP8 权重跑在 Ampere 上</strong>——Ampere 没有原生 FP8 Tensor Core，FP8 权重会被自动反量化到 FP16 再做矩阵乘法，吞吐甚至不如直接用 FP16 + Marlin 的 W4A16 路径。FP8 模型在 Ampere 上不是&quot;快&quot;，而是&quot;绕了一圈变慢&quot;。</p><p><strong>用 Marlin 跑在 Hopper 上</strong>——Marlin 是为 Ampere 的 cp.async 设计的，没有用到 Hopper 的 wgmma + TMA 新指令。同一个 W4A16 模型在 H100 上用 Marlin 跑，比用 Machete 跑慢 30%-50%。</p><p><strong>用 NVFP4 跑在 Ada 上</strong>——Ada 没有原生 FP4 Tensor Core，NVFP4 会被软件模拟。损失精度的同时，吞吐也不如直接用原生 FP8。NVFP4 必须配 Blackwell。</p><p>每个量化方案的&quot;原生硬件&quot;是它在设计阶段就锚定的，跨架构使用就失去了硬件加速的根基。选型的第一步永远是先看 GPU 架构代际，第二步才是看模型有什么量化版本。</p><h2 id="决策树简化" tabindex="-1">决策树简化 <a class="header-anchor" href="#决策树简化" aria-label="Permalink to “决策树简化”">​</a></h2><p>如果上面的矩阵看着累，可以按以下三步快速决策。</p><p><strong>第一步：确认 GPU 架构</strong>。<code>nvidia-smi</code> 查看 GPU 型号，对照 NVIDIA 官方架构图确认是 Ampere / Ada / Hopper / Blackwell 中哪一个。如果是 Volta 或 Turing（A100 之前、RTX 20 系及更早），直接放弃跑现代大模型——BF16 和 FlashAttention-2 都缺失，强行跑只会得到 NaN 输出和长文本卡顿。</p><p><strong>第二步：在该架构的最优内核列里选</strong>。Ampere → Marlin + W4A16；Ada → FP8（W8A8）优先；Hopper → FP8 或 Machete；Blackwell → NVFP4。如果该架构上没有原生的最优格式，退回到 Marlin 通用方案。</p><p><strong>第三步：根据显存调整</strong>。如果最优格式的模型权重加上 KV Cache 超过显存，降到次优格式（通常是 W4A16 系）。如果是 batch=1 的单用户极致延迟场景，可以试试 ExLlamaV2 系（EXL2/EXL3 格式），它在 Ampere/Ada 上有小 M 场景的速度优势。</p><h2 id="与其他量化内核的关系" tabindex="-1">与其他量化内核的关系 <a class="header-anchor" href="#与其他量化内核的关系" aria-label="Permalink to “与其他量化内核的关系”">​</a></h2><p>这张矩阵之外，还有两个常被提及的内核值得单独说明。</p><p>EXL2（ExLlamaV2 专用）是 2~8 bit 混合比特的私有格式，权重存储和 Marlin 期望的 GPTQ/AWQ 布局完全不同——EXL2 模型不能直接用 Marlin 跑，反之亦然。EXL2 在 batch=1 的单用户场景下 decode 速度往往领先 Marlin，但在多用户合并 batch 的服务场景下退路较少。如果你的工作负载是个人本地推理，EXL2 + ExLlamaV2 是优秀选择；如果是多用户服务，AWQ/GPTQ + Marlin 更稳妥。</p><p>GGUF（llama.cpp 原生格式）是 CPU+GPU 混合推理的瑞士军刀——<code>ngl</code> 参数控制多少层放 GPU、多少层走 CPU 内存。GGUF 不属于本文讨论的 GPU 内核选型范畴，但在显存放不下完整模型、系统内存足够时是决定性能力。GGUF 与 Marlin/FP8 是正交关系——前者是部署架构选择，后者是 GPU 内核选择。</p><h2 id="工程实践要点" tabindex="-1">工程实践要点 <a class="header-anchor" href="#工程实践要点" aria-label="Permalink to “工程实践要点”">​</a></h2><p><strong>vLLM 默认会自动选最优后端</strong>。AWQ/GPTQ 模型在 Ampere 上默认走 Marlin，在 Hopper 上默认走 Machete，在 Blackwell 上会优先 NVFP4。手动指定 <code>--quantization awq_marlin</code> 是为了显式锁定，避免框架版本升级时默认行为变化。</p><p><strong>Group size 选 128</strong>。Marlin 的反量化流水线和 group-wise scale 都围绕 128 这个粒度优化。64 / 256 等其他值虽然能跑，但性能通常略低。</p><p><strong>KV Cache 量化是独立维度</strong>。本文讨论的是权重量化，KV Cache 量化（FP8 KV Cache、TurboQuant 等）是独立的优化维度，与权重方案可以叠加使用——例如 FP8 权重 + FP8 KV Cache 是 Ada/Hopper 的常见生产配置。</p><p><strong>精度与吞吐的权衡</strong>。W4A16 的精度损失通常在 1-3%（大模型更小），W8A8-FP8 精度几乎无损。如果业务对精度极其敏感（如金融、医疗），优先 FP8 而不是 W4A16；如果只是聊天/写作/代码辅助，W4A16 已经足够。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/kernel/marlin" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>Marlin</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/kernel/fusion" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>算子融合</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+    
+<nav id="sitemap" aria-hidden="true">
+<pre>/abstract - 目录
+/ai - 人工智能
+/ai/app - 大模型应用
+/ai/app/api/openai-rpc - OpenAI_API
+/ai/app/arch - 应用架构
+/ai/app/arch/api - API 设计
+/ai/app/arch/caching - Prompt Caching
+/ai/app/arch/gateway - 网关与缓存
+/ai/app/arch/routing - 模型路由
+/ai/app/auto - 自动化
+/ai/app/auto/impl - 实现原理
+/ai/app/auto/traditional - 传统自动化
+/ai/app/engine - 推理引擎
+/ai/app/engine/llama/cpp
+/ai/app/engine/llama_cpp - llama.cpp
+/ai/app/engine/mistral/rs
+/ai/app/engine/mistral_rs - mistral.rs
+/ai/app/engine/rust/infer
+/ai/app/engine/rust_infer - Rust 推理引擎
+/ai/app/engine/vllm - vLLM
+/ai/app/finetune - 微调
+/ai/app/lib - 框架库
+/ai/app/lib/langchain - LangChain
+/ai/app/lib/langchain/langgraph - LangGraph
+/ai/app/lib/langchain/runnable - LCEL 与 Runnable
+/ai/app/lib/packages - 常用包
+/ai/app/multimodal - 多模态
+/ai/app/multimodal/audio - 语音交互
+/ai/app/multimodal/generation - 媒体生成
+/ai/app/multimodal/vision - 视觉理解
+/ai/app/overlay - Overlay
+/ai/app/overlay/agent - 智能体
+/ai/app/overlay/agent/a2a - A2A 协议
+/ai/app/overlay/agent/case - 应用实战
+/ai/app/overlay/agent/case/claude/code
+/ai/app/overlay/agent/case/claude_code - Claude Code
+/ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/cua - Computer Use Agent
+/ai/app/overlay/agent/deep/agent
+/ai/app/overlay/agent/deep_agent - Deep Agent
+/ai/app/overlay/agent/loop - Agent 循环
+/ai/app/overlay/agent/mcp - MCP Server
+/ai/app/overlay/agent/safety - 安全防护
+/ai/app/overlay/agent/safety/content - 内容安全
+/ai/app/overlay/agent/safety/guardrails - Guardrails
+/ai/app/overlay/agent/safety/injection - Prompt 注入
+/ai/app/overlay/agent/skills - Skills
+/ai/app/overlay/agent/tools - 工具调用
+/ai/app/overlay/ops - LLMOps
+/ai/app/overlay/ops/eval - 评估框架
+/ai/app/overlay/ops/monitor - 可观测性
+/ai/app/overlay/ops/test - 测试策略
+/ai/app/overlay/rag - RAG
+/ai/app/overlay/rag/agentic/rag
+/ai/app/overlay/rag/agentic_rag - Agentic RAG
+/ai/app/overlay/rag/data - 数据工程
+/ai/app/overlay/rag/data/parsing - 文档解析
+/ai/app/overlay/rag/data/processing - 数据处理
+/ai/app/overlay/rag/embedding - Embedding
+/ai/app/overlay/rag/graphrag - GraphRAG
+/ai/app/overlay/rag/retrieval - 检索质量
+/ai/app/overlay/rag/vector/db
+/ai/app/overlay/rag/vector_db - 向量数据库
+/ai/app/overlay/session - 会话管理
+/ai/app/overlay/session/compression - 上下文压缩
+/ai/app/overlay/session/context - Context Engineering
+/ai/app/overlay/session/prompt - 提示词
+/ai/app/overlay/ui - AI UI
+/ai/compute - AI 引擎
+/ai/compute/api - 标准接口
+/ai/compute/api/cpu - SIMD
+/ai/compute/api/cuda - CUDA
+/ai/compute/api/opencl - OpenCL
+/ai/compute/api/simt - SIMT
+/ai/compute/api/triton - Triton
+/ai/compute/deploy - 部署
+/ai/compute/deploy/eco - 部署工具
+/ai/compute/deploy/hardware - 硬件
+/ai/compute/deploy/llmops - LLMOps
+/ai/compute/deploy/multi-gpu - 多卡推理
+/ai/compute/deploy/onnx-deploy - ONNX 部署
+/ai/compute/deploy/optimization - 推理优化
+/ai/compute/deploy/quantization - 模型量化
+/ai/compute/deploy/serving - 服务部署
+/ai/compute/distributed - 集群
+/ai/compute/distributed/comm - 集合通信
+/ai/compute/distributed/parallel - 模型拆分
+/ai/compute/engine - 主流引擎
+/ai/compute/engine/deepspeed - DeepSpeed
+/ai/compute/engine/other - 其他
+/ai/compute/engine/pytorch - PyTorch
+/ai/compute/engine/vllm - vLLM
+/ai/compute/impl - 设计实现
+/ai/compute/impl/kvcache - KV Cache
+/ai/compute/impl/moe - 混合专家
+/ai/compute/impl/speculative - 投机解码
+/ai/compute/kernel - 算子
+/ai/compute/kernel/concepts - 概念索引
+/ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/format - 模型格式
+/ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/gguf - GGUF
+/ai/compute/kernel/marlin - Marlin
+/ai/compute/kernel/onnx - ONNX
+/ai/compute/kernel/optimization - 算子优化
+/ai/compute/kernel/quant/matrix
+/ai/compute/kernel/quant_matrix - 量化选型
+/ai/compute/kernel/quantization - 量化算法
+/ai/compute/stack - 计算栈
+/ai/cpp - C++
+/ai/neural - 神经网络
+/ai/neural/dl - 深度学习
+/ai/neural/dl/audio - 听觉
+/ai/neural/dl/backforward - 反向传播
+/ai/neural/dl/cnn - CNN
+/ai/neural/dl/diffusion - Diffusion
+/ai/neural/dl/multimodal - 多模态
+/ai/neural/dl/nlp - NLP
+/ai/neural/dl/recommend - 推荐
+/ai/neural/dl/rnn - RNN
+/ai/neural/dl/transformer - Transformer
+/ai/neural/dl/vision - 视觉
+/ai/neural/dl/vit - ViT
+/ai/neural/llm - LLM
+/ai/neural/llm/arch - 架构
+/ai/neural/llm/finetune - 微调
+/ai/neural/llm/memo - 记忆
+/ai/neural/llm/pretraind - 基座模型
+/ai/neural/math - 数学基础
+/ai/neural/ml - 机器学习
+/ai/neural/ml/bf - 梯度下降法
+/ai/neural/ml/loss - 损失函数
+/ai/neural/ml/reinforce - 强化学习
+/ai/neural/ml/supervised - 监督学习
+/ai/neural/ml/unsupervised - 无监督学习
+/ai/neural/numpy - Numpy
+/ai/neural/pytorch - PyTorch
+/ai/neural/sklearn - sklearn
+/ai/python - Python
+/ai/python/basic - 语言基础
+/ai/python/basic/module - 模块系统
+/ai/python/fastapi - FastAPI
+/ai/python/jupyter - jupyter
+/ai/python/uv - uv
+/ai/symbol - 符号逻辑
+/ai/symbol/expert-system - 专家系统
+/ai/symbol/logic - 数理逻辑基础
+/ai/symbol/neuralify - 神经符号融合
+/ai/symbol/outline - 学习路线
+/ai/symbol/prolog - Prolog
+/ai/symbol/reasoning - 推理引擎与搜索
+/ai/symbol/representation - 知识表示
+/basic - 理论基础
+/basic/algo - 算法
+/basic/algo/compress - 压缩
+/basic/algo/crypto - 加密和解密
+/basic/algo/model - 算法模型
+/basic/algo/model/bit - 位运算
+/basic/algo/model/dp - 动态规划
+/basic/algo/model/leetcode - leetcode 题型
+/basic/algo/model/recrusion - 递归
+/basic/algo/model/struct - 数据结构辅助
+/basic/algo/sort - 排序算法
+/basic/algo/string - 字符串算法
+/basic/algo/struct - 数据结构
+/basic/algo/struct/graph - 图
+/basic/algo/struct/traversal - 图遍历
+/basic/algo/struct/tree - 树
+/basic/compile - 编译原理
+/basic/compile/advance - 高级语言
+/basic/compile/dsl - DSL
+/basic/compile/dsl/glob - glob
+/basic/compile/dsl/regex - 正则表达式
+/basic/compile/lang - 编程语言概览
+/basic/db - 数据库
+/basic/db/cmp - SQL
+/basic/db/nf - 范式
+/basic/graphic - 图形学
+/basic/graphic/2d - 2D 图形
+/basic/graphic/3d - 3D 场景渲染
+/basic/hardware - 硬件组成
+/basic/hardware/coding - 编码
+/basic/hardware/cpu - CPU
+/basic/hardware/gpu - GPU
+/basic/hardware/interrupt - 中断
+/basic/hardware/motherboard - 主板
+/basic/hardware/storage - 存储
+/basic/hardware/topo - CPU 拓扑
+/basic/network - 网络协议
+/basic/network/ether - 以太网
+/basic/network/http - HTTP
+/basic/network/ip - IP
+/basic/network/protocol - 网络协议
+/basic/network/tcp - TCP
+/basic/network/udp - UDP
+/basic/os - 操作系统
+/basic/os/mm - 内存管理
+/basic/os/schd - 调度
+/client - 客户端
+/client/art - 美术设计</pre>
+<pre>/client/art/mime - 媒体文件
+/client/art/render - 渲染
+/client/art/toolchain - 工具链
+/client/csharp - C#
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
+/client/csharp/dotnet - .NET
+/client/csharp/msbuild - MSBuild
+/client/csharp/nuget - NuGet
+/client/csharp/unity - Unity
+/client/game - 游戏引擎
+/client/game/cocos - Cocos
+/client/game/godot - Godot
+/client/game/unity - Unity
+/client/game/unreal - Unreal
+/client/gui - 图形应用
+/client/gui/arch - 架构
+/client/gui/arch/observe - 可观测性
+/client/gui/ergonomic - 人机关系
+/client/gui/ergonomic/interact - 人机交互
+/client/gui/ergonomic/screen - 屏幕
+/client/gui/framework - UI 框架
+/client/gui/framework/cross - 跨平台
+/client/gui/framework/electron - Electron
+/client/gui/framework/flutter - Flutter
+/client/gui/framework/flutter/dart - Dart
+/client/gui/framework/reactnative - ReactNative
+/client/gui/platform - UI 平台
+/client/gui/platform/android - Android
+/client/gui/platform/gnome - Gnome
+/client/gui/platform/ios - Apple
+/client/gui/platform/web-env - Web 宿主
+/client/gui/platform/windows - Windows
+/client/gui/security - 安全
+/client/gui/security/access - 应用权限
+/client/gui/security/antiattack - 网络攻击
+/client/gui/security/auth - 登录鉴权
+/client/gui/security/privacy - 隐私保护
+/client/gui/security/sandbox - 沙箱
+/client/render - 渲染引擎
+/client/render/api - 标准接口
+/client/render/api/directx - DirectX
+/client/render/api/opengl - OpenGL
+/client/render/api/sdl - SDL
+/client/render/api/vulkan - Vulkan
+/client/render/api/vulkan/icd - ICD
+/client/render/api/vulkan/spirv - SPIR-V
+/client/render/api/webgl
+/client/render/api/webgpu - WebGPU
+/client/render/basic - 渲染基础
+/client/render/basic/mapping - 贴图
+/client/render/basic/scene - 3D 场景
+/client/render/engine - 主流引擎
+/client/render/engine/cycles - Cycles
+/client/render/engine/godot - Godot
+/client/render/engine/skia - Skia
+/client/render/raster - 光栅化管线
+/client/render/raster/ae - 后处理
+/client/render/raster/illumination - 光照模型
+/client/render/raster/rast - 光栅化算法
+/client/render/raytrace - 光线追踪管线
+/client/render/raytrace/bvh - 加速算法
+/client/render/raytrace/denoise - 降噪
+/client/render/raytrace/integrate - 混合渲染管线
+/client/render/shader - 着色器
+/client/render/shader/optimization - 着色器优化
+/client/render/shader/patterns - 常见模式
+/client/render/stack - 计算栈
+/client/render/vec/compose
+/client/render/vec_compose - 矢量合成管线
+/client/rust - Rust
+/client/rust/basic - 语言基础
+/client/rust/basic/assets - 静态资源管理
+/client/rust/basic/closure - 闭包
+/client/rust/basic/ld - 链接库
+/client/rust/basic/macro - 宏
+/client/rust/basic/mod - 模块系统
+/client/rust/basic/ref - 智能指针
+/client/rust/basic/trait - 特性
+/client/rust/cargo - Cargo
+/client/rust/cli - CLi
+/client/rust/framework - UI 框架
+/client/rust/framework/iced - iced
+/client/rust/framework/slint - Slint
+/client/rust/framework/tauri - Tauri
+/client/rust/wasm - WASM
+/client/web - Web
+/client/web/api - Web API
+/client/web/api/wasm - WASM
+/client/web/browser - 浏览器
+/client/web/browser/arch - 架构
+/client/web/browser/devtools - DevTools 性能分析
+/client/web/browser/eventloop - 事件循环
+/client/web/browser/http - HTTP 协议
+/client/web/browser/memleak - 内存泄漏
+/client/web/browser/optimize - 性能优化
+/client/web/browser/render - 渲染周期
+/client/web/browser/render copy - 渲染周期
+/client/web/browser/security - 浏览器安全
+/client/web/browser/security copy - 安全
+/client/web/browser/storage - 存储
+/client/web/browser/v8 - V8
+/client/web/css - CSS
+/client/web/css/basic - 语言基础
+/client/web/css/sass - Sass
+/client/web/css/tailwind - Tailwindcss
+/client/web/css/trick - CSS trick
+/client/web/css/trick/animation - CSS 动画
+/client/web/css/trick/bfc - 块级格式上下文
+/client/web/css/trick/layout - 布局
+/client/web/css/trick/layout/box-sizing - CSS盒模型
+/client/web/css/trick/layout/containing-block - 包含块
+/client/web/css/trick/layout/grid - grid布局
+/client/web/css/trick/relative - 主题定制
+/client/web/css/trick/sort - css 属性的分类
+/client/web/css/trick/z-index - 层叠上下文与 z-index
+/client/web/eng - 工程化
+/client/web/eng/bootstrap - 项目搭建
+/client/web/eng/build - 构建优化
+/client/web/eng/engineering - 工程化搭建
+/client/web/eng/migration - 迁移
+/client/web/eng/svg - svg
+/client/web/eng/vite - Vite
+/client/web/eng/vite-plugin - Vite 插件
+/client/web/eng/webpack - Webpack
+/client/web/html - HTML
+/client/web/html/basic - 语言基础
+/client/web/html/mathml - MathML
+/client/web/html/md - Markdown
+/client/web/html/seo - SEO
+/client/web/html/svg - SVG
+/client/web/html/trick - HTML trick
+/client/web/html/trick/drag - HTML 拖放 API
+/client/web/html/trick/event - 事件与尺寸获取
+/client/web/html/trick/wc - Web Component
+/client/web/js - JavaScript
+/client/web/js/basic - 语言基础
+/client/web/js/basic/async - 异步编程
+/client/web/js/basic/class - 面向对象
+/client/web/js/basic/iterable - 迭代器
+/client/web/js/basic/obj-base-ops - js 对象基本操作
+/client/web/js/basic/own-property - 属性的可枚举性和所有者
+/client/web/js/basic/proto - 原型链
+/client/web/js/basic/stream - Stream API
+/client/web/js/basic/type-transform - 隐式类型转换
+/client/web/js/npm - npm
+/client/web/js/typescript - TypeScript
+/client/web/js/typescript/basic - 语法基础
+/client/web/nodejs - Nodejs
+/client/web/nodejs/express - Express.js
+/client/web/nodejs/nestjs - Nestjs
+/client/web/nodejs/performance - Node.js 性能调优
+/client/web/react - React
+/client/web/react/fiber - Fiber 与调和
+/client/web/react/rsc - 服务端组件
+/client/web/solid - Solid
+/client/web/ssr - SSR
+/client/web/ssr/nextjs - Nextjs
+/client/web/ssr/nuxtjs - Nuxtjs
+/client/web/ssr/seo - SEO
+/client/web/ssr/ssg - SSG
+/client/web/ssr/vike - Vike
+/client/web/typical - 典型业务
+/client/web/vue - Vue
+/client/web/vue/cpc - 组件通信
+/client/web/vue/nuxt-server - 服务端组件
+/client/web/vue/vdom - 虚拟 DOM 与 Diff 算法
+/design - 软件设计
+/design/async - 异步
+/design/async/async-await - await
+/design/async/reactive - 响应式
+/design/async/schedule - 用户态调度
+/design/concurrent - 并发
+/design/concurrent/atom - 原子操作
+/design/concurrent/barrier - 内存屏障
+/design/concurrent/lock - 同步原语
+/design/concurrent/lock/free
+/design/concurrent/lock_free - 无锁并发
+/design/concurrent/thread - 多线程
+/design/fp - 函数式
+/design/fp/composition - 组合
+/design/fp/functor - 函子
+/design/fp/hint - hint
+/design/fp/immutable - 不可变
+/design/fp/io - IO
+/design/fp/state - 状态管理
+/design/oop - 面向对象
+/design/oop/aop - AOP
+/design/oop/interface - 接口与抽象
+/design/oop/ioc - IOC
+/design/oop/lifetime - 对象生命周期
+/design/oop/om - 对象模型
+/design/oop/pattern - 设计模式
+/design/oop/relationship - 类间关系
+/design/oop/solid - SOLID
+/design/spacetime - 面向时空
+/design/spacetime/domain - 主机域
+/design/spacetime/general - 通用域
+/design/spacetime/general/architecture - 架构演进
+/design/spacetime/general/container - 容器</pre>
+<pre>/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/dependency - 依赖管理
+/design/spacetime/general/tradeoff - 权衡
+/design/spacetime/network - 网络域
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process/scope - 作用域
+/design/spacetime/process/single - 单进程
+/design/spacetime/space - 体系建构
+/design/typical - 经典范式
+/design/typical/ability - 质量属性
+/design/typical/ddd - DDD
+/design/typical/duty - 职责分配
+/design/typical/macro - 宏观指导
+/design/typical/maintainability - 可读性与可维护性
+/design/typical/refactor - 重构
+/design/typical/reliability - 可靠性与可用性
+/design/typical/requirements - 需求分析
+/design/typical/simplify - 简化原则
+/design/typical/swift - 敏捷开发
+/examples - 随便看看
+/index
+/kernel - 系统层
+/kernel/asm - 汇编
+/kernel/asm/arm - ARM 指令集
+/kernel/c - C
+/kernel/c/basic - 语言基础
+/kernel/c/basic/io - io 操作
+/kernel/c/basic/string - 字符串操作
+/kernel/c/build - 构建系统
+/kernel/c/concurrent - 并发编程
+/kernel/c/debug - 调试
+/kernel/c/lib - 库函数
+/kernel/embed - 嵌入式
+/kernel/embed/bios - BIOS
+/kernel/embed/device - 外设
+/kernel/embed/device/bus - 总线设备
+/kernel/embed/device/bus/i2c - I2C
+/kernel/embed/device/bus/pci - PCI
+/kernel/embed/device/bus/usb - USB
+/kernel/embed/device/comm - 数据面
+/kernel/embed/device/platform - 平台设备
+/kernel/embed/device/sub - 集成子设备
+/kernel/embed/device/wwan - 蜂窝模块
+/kernel/embed/elel - 硬件基础
+/kernel/embed/elel/design - 打板
+/kernel/embed/elel/fpga - FPGA
+/kernel/embed/elel/pcb - PCB
+/kernel/embed/elel/soc - SoC
+/kernel/embed/freertos - FreeRTOS
+/kernel/embed/iot - 物联网
+/kernel/embed/sbc - 开发板
+/kernel/embed/sbc/raspberry - 树莓派
+/kernel/embed/sbc/stm32 - STM32
+/kernel/embed/uboot - U-Boot
+/kernel/equip - 装机
+/kernel/equip/bmc - BMC
+/kernel/equip/gpu - GPU
+/kernel/equip/laptop/brand
+/kernel/equip/laptop_brand - 笔记本
+/kernel/equip/lte - LTE
+/kernel/equip/motherboard - 主板
+/kernel/equip/motherboard/bmc - BMC 详解
+/kernel/equip/motherboard/consumer - 消费级
+/kernel/equip/motherboard/epyc - EPYC 装机
+/kernel/equip/motherboard/ram - 内存适配
+/kernel/equip/motherboard/server - 服务器
+/kernel/equip/motherboard/threadripper - Threadripper 装机
+/kernel/equip/motherboard/workstation - 工作站
+/kernel/equip/motherboard/xeon - Xeon 装机
+/kernel/equip/ram - 内存
+/kernel/equip/sbc - SBC
+/kernel/equip/screen - 屏幕
+/kernel/equip/server/room
+/kernel/equip/server_room - 机房
+/kernel/equip/slot - 接口
+/kernel/equip/support - 支撑设备
+/kernel/linux - Linux
+/kernel/linux/develop - 系统开发
+/kernel/linux/develop/ctx - 内核上下文
+/kernel/linux/develop/io/uring
+/kernel/linux/develop/io_uring - io_uring
+/kernel/linux/develop/ip/cli
+/kernel/linux/develop/ip_cli - ip 命令
+/kernel/linux/develop/kbuild - linux 内核构建系统
+/kernel/linux/develop/lock - 同步原语
+/kernel/linux/develop/service - 系统服务
+/kernel/linux/develop/socket - 套接字
+/kernel/linux/develop/stream-block - 流式与块式存取
+/kernel/linux/develop/struct - 数据结构
+/kernel/linux/develop/struct/iov - 聚簇读写
+/kernel/linux/develop/struct/linked - 链表
+/kernel/linux/develop/systemd - systemd
+/kernel/linux/develop/zero-copy - sendfile 零拷贝
+/kernel/linux/device - 设备管理
+/kernel/linux/device/dma - DMA
+/kernel/linux/device/driver - 驱动接口
+/kernel/linux/device/driver/can - CAN
+/kernel/linux/device/driver/pci - PCIe 驱动
+/kernel/linux/device/driver/usb - USB 驱动
+/kernel/linux/device/driver/virtio
+/kernel/linux/device/iommu - IOMMU
+/kernel/linux/device/lifecycle - 生命周期
+/kernel/linux/device/udev - udev
+/kernel/linux/file - 文件管理
+/kernel/linux/file/block - 块设备子系统
+/kernel/linux/file/pfs - 伪文件系统
+/kernel/linux/file/vfs - 虚拟文件系统
+/kernel/linux/irq - 中断管理
+/kernel/linux/irq/clock - 时钟中断
+/kernel/linux/irq/controller - 中断控制器
+/kernel/linux/irq/handler - 中断处理
+/kernel/linux/irq/sync - 内核并发机制
+/kernel/linux/mm - 内存管理
+/kernel/linux/mm/mmap - 虚拟内存映射
+/kernel/linux/mm/pmm - 物理内存管理
+/kernel/linux/mm/reclaim - 内存回收
+/kernel/linux/mm/swap - 内存交换
+/kernel/linux/net - 网络实现
+/kernel/linux/net/stack - 协议栈
+/kernel/linux/power - 电源管理
+/kernel/linux/power/boot - 开机上电
+/kernel/linux/power/tpm - 安全启动
+/kernel/linux/process - 进程管理
+/kernel/linux/process/cgroup - Cgroup
+/kernel/linux/process/ipc - IPC
+/kernel/linux/process/namespace - 命名空间
+/kernel/linux/process/schd - 调度
+/kernel/linux/process/security - 权限管理
+/kernel/linux/syscall - 系统调用
+/kernel/linux/syscall/file - 文件管理
+/kernel/linux/syscall/mm - 内存管理
+/kernel/linux/syscall/process - 进程管理
+/kernel/linux/video - 视图系统
+/kernel/linux/video/terminal - 终端系统
+/kernel/netlink - 通信
+/kernel/netlink/hardware - 硬件通信
+/kernel/netlink/protocol - 协议分层
+/kernel/vm - 虚拟化
+/kernel/vm/basic - 基本原理
+/kernel/vm/basic/bios - BIOS
+/kernel/vm/basic/cpu - CPU
+/kernel/vm/basic/device - 设备
+/kernel/vm/basic/memory - 内存
+/kernel/vm/debug - 虚拟机调试增强
+/kernel/vm/qemu - QEMU 内核调试
+/kernel/vm/spdk-dpdk - SPDK 与 DPDK
+/kernel/vm/vfio - VFIO
+/kernel/vm/virtio - VirtIO
+/sde - 工程化
+/sde/container - 容器
+/sde/container/docker - Docker
+/sde/container/principle - 实现原理
+/sde/git - Git
+/sde/git/advanced - Git 高阶用法
+/sde/git/github - Github
+/sde/git/gitlab - Gitlab
+/sde/k8s - K8s
+/sde/k8s/k3s - k3s
+/sde/k8s/network - 网络模型
+/sde/shell - Shell
+/sde/shell/basic - 语言基础
+/sde/shell/cli - 常见命令行
+/sde/sre - 运维
+/sde/sre/elk - 可观测性
+/sde/sre/jenkins - Jenkins
+/sde/sre/openstack - OpenStack
+/sde/sre/tuning - Linux 性能调优
+/sde/test - 测试
+/sde/test/basic - 测试原理
+/sde/test/framework - 测试工具与框架
+/sde/test/tdd - 测试驱动开发
+/sde/workflow - 工作流
+/sde/workflow/devops - DevOps
+/sde/workflow/devops/cicd - CI/CD
+/sde/workflow/quality - 质量控制
+/sde/workflow/quality/docs - 文档工程
+/sde/workflow/quality/review - Code Review
+/sde/workflow/version - 版本管理
+/server - 服务端
+/server/db - 数据库
+/server/db/architecture - 数据库架构分层
+/server/db/distributed - 集群
+/server/db/distributed/comparison - 数据库对比与选型
+/server/db/distributed/newsql - NewSQL 数据库
+/server/db/distributed/sharding - 分库分表
+/server/db/distributed/transaction - 分布式事务
+/server/db/engine - 存储引擎
+/server/db/engine/fulltext - 全文检索
+/server/db/engine/graph - 图
+/server/db/engine/innodb - innodb
+/server/db/engine/vector - 向量
+/server/db/nosql - NoSQL
+/server/db/nosql/es - ElasticSearch
+/server/db/nosql/milvus - Milvus
+/server/db/nosql/milvus/idx - 向量索引
+/server/db/nosql/milvus/storage - 分布式能力
+/server/db/nosql/milvus/usage - 使用实践
+/server/db/nosql/minio - MinIO
+/server/db/nosql/mongo - MongoDB</pre>
+<pre>/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/redis - Redis
+/server/db/practice - 工程实践
+/server/db/practice/backup - 备份与恢复
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
+/server/db/practice/monitoring - 监控与运维
+/server/db/practice/standards - 数据库规范
+/server/db/practice/tuning - 性能调优实践
+/server/db/sql - SQL
+/server/db/sql/basic - sql 基础
+/server/db/sql/basic/design - 数据库设计
+/server/db/sql/basic/integrity - 数据完整性
+/server/db/sql/basic/transaction - 事务与并发控制
+/server/db/sql/mysql - MySQL
+/server/db/sql/mysql/acid - ACID
+/server/db/sql/mysql/id - 索引
+/server/db/sql/mysql/impl - 存储引擎
+/server/db/sql/mysql/optimize - 查询优化
+/server/db/sql/pg - PostgreSQL
+/server/db/sql/sqlite - SQLite
+/server/distribute - 分布式
+/server/distribute/arch - 集群架构
+/server/distribute/basic - 分布式基础
+/server/distribute/basic/cap - CAP
+/server/distribute/basic/concurrency - 并发模型
+/server/distribute/basic/concurrency/coroutine - 协程原理
+/server/distribute/basic/concurrency/event-loop - 事件驱动架构
+/server/distribute/basic/consensus - 共识算法
+/server/distribute/basic/consensus/paxos - Paxos 算法
+/server/distribute/basic/consensus/raft - Raft 算法
+/server/distribute/basic/consensus/zab - ZAB 协议
+/server/distribute/basic/id - 分布式 ID
+/server/distribute/basic/lock - 分布式锁
+/server/distribute/basic/transaction - 分布式事务
+/server/distribute/cloud - 云原生
+/server/distribute/cloud/arch - 架构
+/server/distribute/cloud/cicd - CI/CD
+/server/distribute/cloud/container - 容器技术
+/server/distribute/cloud/mesh - Service Mesh
+/server/distribute/cloud/orchestration - Kubernetes
+/server/distribute/cloud/pkg - 包管理与镜像
+/server/distribute/micro - 微服务
+/server/distribute/micro/cache - 缓存
+/server/distribute/micro/cache/consistency - 缓存一致性
+/server/distribute/micro/config - 配置中心
+/server/distribute/micro/discovery - 服务发现
+/server/distribute/micro/gateway - API 网关
+/server/distribute/micro/lb - 负载均衡
+/server/distribute/micro/observability - 可观测性
+/server/distribute/micro/observability/monitoring - 监控告警
+/server/distribute/micro/observability/tracing - 链路追踪
+/server/distribute/micro/qos - QoS
+/server/distribute/micro/qos/chaos - 混沌工程
+/server/distribute/micro/qos/fuse - 熔断限流
+/server/distribute/micro/qos/ha - 高可用与容错
+/server/distribute/micro/qos/ha/load-balance - 负载均衡
+/server/distribute/micro/qos/highes - 三高
+/server/distribute/micro/qos/monitor - 监控
+/server/distribute/micro/qos/observability - 可观测性
+/server/distribute/micro/qos/observability/monitoring - 监控指标设计
+/server/distribute/micro/qos/performance - 性能优化
+/server/distribute/micro/qos/performance/profiling - 性能分析工具
+/server/distribute/micro/qos/reliability/disaster-recovery - 容灾
+/server/distribute/micro/qos/reliability/failover - 故障转移
+/server/distribute/micro/qos/slashing - 限流降级
+/server/distribute/micro/reliability - 健壮性
+/server/distribute/micro/reliability/fusing - 熔断降级
+/server/distribute/micro/reliability/ratelimit - 限流
+/server/go - Go
+/server/go/gmp - GMP 调度器
+/server/java - Java
+/server/java/basic - 语言基础
+/server/java/jvm - JVM 内存与 GC
+/server/java/mod - 模块系统
+/server/java/mod/gradle - gradle
+/server/java/mod/maven - Maven
+/server/java/spring - Spring
+/server/middleware - 中间件
+/server/middleware/mq - 消息队列
+/server/middleware/mq/kafka - Kafka
+/server/middleware/mq/rabbitmq - RabbitMQ
+/server/middleware/mq/rocketmq - RocketMQ
+/server/middleware/mycat - MyCat
+/server/middleware/proxy - 代理
+/server/middleware/proxy/gateway - API 网关
+/server/middleware/proxy/haproxy - haproxy
+/server/middleware/proxy/lvs - LVS
+/server/middleware/proxy/nginx - Nginx
+/server/middleware/srs - SRS
+/server/network - 网络编程
+/server/network/io-model - I/O 模型
+/server/network/proto - 网络协议
+/server/network/proto/http - HTTP
+/server/network/proto/quic - QUIC
+/server/network/proto/rpc - RPC 框架
+/server/network/proto/tcp - TCP
+/server/network/proto/udp - UDP
+/server/network/proto/websocket - WebSocket
+/server/network/security - 网络安全
+/server/network/tcp-tuning - TCP 调优
+/server/network/zero-copy - 零拷贝
+/server/typical - 典型业务
+/server/typical/auth - 登录鉴权
+/server/typical/flash/sale
+/server/typical/flash_sale - 秒杀活动
+/server/typical/image - 图片上传
+/server/typical/order - 订单管理
+/server/typical/search - 内容搜索
+/server/typical/setup - 快速建站
+/web3 - 去中心化
+/web3/blockchain - 区块链
+/web3/blockchain/consensus - 共识机制
+/web3/blockchain/crypto - 密码学支持
+/web3/blockchain/ethereum - 以太坊
+/web3/blockchain/zk-proof - 零知识证明
+/web3/dapp - DApp
+/web3/dapp/defi - DeFi
+/web3/dapp/tokens - 代币标准
+/web3/dapp/wallets - 账户与钱包
+/web3/solidity - Solidity
+/web3/solidity/smart-contracts - 智能合约</pre>
+</nav><style>#sitemap{display:none}</style>
+    
+    
+  </body>
+</html>

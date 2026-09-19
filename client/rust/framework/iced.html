@@ -8,7 +8,7 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.cce20d3a.js"></script>
+    <script src="/assets/site-data.15a9f116.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -173,7 +173,7 @@
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">        Page</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Settings</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> =&gt;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> settings</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">view</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">self</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">settings)</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">map</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Message</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Settings</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">        Page</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">About</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> =&gt;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> about_view</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>页面切换是一个 Message 变体：<code>Message::NavigateTo(Page::Settings)</code>。<code>update()</code> 中 <code>self.current_page = Page::Settings</code>，view 自动切换到对应页面。没有路由库、没有 <code>react-router</code>——就是 enum + match。</p><p>iced 通过 wgpu 实现跨平台 GPU 渲染——wgpu 是 WebGPU 标准的 Rust 实现，在 Windows 上映射到 DX12/Vulkan、macOS 上映射到 Metal、Linux 上映射到 Vulkan。也支持 OpenGL 作为 fallback（通过 glow crate）。GPU 直接绘制意味着不需要内嵌浏览器引擎——一个完整桌面应用编译后约 3-8 MB。</p><p>内置组件覆盖标准桌面 UI 需求：button、text、text_input、slider、checkbox、radio、pick_list、scrollable、container、column、row、grid、toggler、tooltip、progress_bar。自定义绘制通过 <code>Canvas</code> 组件实现，提供类似 HTML5 Canvas 的程序化绘图 API（路径、形状、文字渲染）。</p><h2 id="平台与生态" tabindex="-1">平台与生态 <a class="header-anchor" href="#平台与生态" aria-label="Permalink to “平台与生态”">​</a></h2><p>桌面平台（Windows/Mac/Linux）是一等公民。Web 通过 WASM + WebGL 编译到浏览器运行。移动端（iOS/Android）有实验性支持。iced 的组件库相对精简——没有表格、树形视图、富文本编辑器等复杂组件，这些需要基于 <code>Canvas</code> 自己实现。自定义 UI 和复杂交互的样板代码量高于 React/Vue 等声明式 Web 框架。</p><p><strong>适合</strong>：工具软件、系统面板、不需要表格/树/富文本的桌面应用。<strong>不适合</strong>：需要大量复杂交互组件的企业应用、设计驱动的像素级定制产品、内嵌地图/视频/动画的多媒体应用。在这些场景下，Tauri 的 Web 生态复用是更好的选择。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/rust/framework/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>Rust UI 框架</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/rust/framework/slint" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Slint</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>页面切换是一个 Message 变体：<code>Message::NavigateTo(Page::Settings)</code>。<code>update()</code> 中 <code>self.current_page = Page::Settings</code>，view 自动切换到对应页面。没有路由库、没有 <code>react-router</code>——就是 enum + match。</p><p>iced 通过 wgpu 实现跨平台 GPU 渲染——wgpu 是 WebGPU 标准的 Rust 实现，在 Windows 上映射到 DX12/Vulkan、macOS 上映射到 Metal、Linux 上映射到 Vulkan。也支持 OpenGL 作为 fallback（通过 glow crate）。GPU 直接绘制意味着不需要内嵌浏览器引擎——一个完整桌面应用编译后约 3-8 MB。</p><p>内置组件覆盖标准桌面 UI 需求：button、text、text_input、slider、checkbox、radio、pick_list、scrollable、container、column、row、grid、toggler、tooltip、progress_bar。自定义绘制通过 <code>Canvas</code> 组件实现，提供类似 HTML5 Canvas 的程序化绘图 API（路径、形状、文字渲染）。</p><h2 id="平台与生态" tabindex="-1">平台与生态 <a class="header-anchor" href="#平台与生态" aria-label="Permalink to “平台与生态”">​</a></h2><p>桌面平台（Windows/Mac/Linux）是一等公民。Web 通过 WASM + WebGL 编译到浏览器运行。移动端（iOS/Android）有实验性支持。iced 的组件库相对精简——没有表格、树形视图、富文本编辑器等复杂组件，这些需要基于 <code>Canvas</code> 自己实现。自定义 UI 和复杂交互的样板代码量高于 React/Vue 等声明式 Web 框架。</p><p><strong>适合</strong>：工具软件、系统面板、不需要表格/树/富文本的桌面应用。<strong>不适合</strong>：需要大量复杂交互组件的企业应用、设计驱动的像素级定制产品、内嵌地图/视频/动画的多媒体应用。在这些场景下，Tauri 的 Web 生态复用是更好的选择。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/client/rust/framework/" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>UI 框架</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/client/rust/framework/slint" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Slint</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -213,6 +213,7 @@
 /ai/app/overlay/agent/case/claude/code
 /ai/app/overlay/agent/case/claude_code - Claude Code
 /ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/cua - Computer Use Agent
 /ai/app/overlay/agent/deep/agent
 /ai/app/overlay/agent/deep_agent - Deep Agent
 /ai/app/overlay/agent/loop - Agent 循环
@@ -267,18 +268,22 @@
 /ai/compute/engine/other - 其他
 /ai/compute/engine/pytorch - PyTorch
 /ai/compute/engine/vllm - vLLM
-/ai/compute/format - 模型格式
-/ai/compute/format/hf - HF 风格
-/ai/compute/format/onnx - ONNX
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
 /ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
+/ai/compute/kernel/concepts - 概念索引
 /ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/format - 模型格式
 /ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/gguf - GGUF
+/ai/compute/kernel/marlin - Marlin
+/ai/compute/kernel/onnx - ONNX
 /ai/compute/kernel/optimization - 算子优化
-/ai/compute/kernel/quantization - 量化
+/ai/compute/kernel/quant/matrix
+/ai/compute/kernel/quant_matrix - 量化选型
+/ai/compute/kernel/quantization - 量化算法
 /ai/compute/stack - 计算栈
 /ai/cpp - C++
 /ai/neural - 神经网络
@@ -370,13 +375,13 @@
 /basic/os/mm - 内存管理
 /basic/os/schd - 调度
 /client - 客户端
-/client/art - 美术设计
-/client/art/mime - 媒体文件
+/client/art - 美术设计</pre>
+<pre>/client/art/mime - 媒体文件
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程</pre>
-<pre>/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
 /client/csharp/msbuild - MSBuild
 /client/csharp/nuget - NuGet
@@ -452,7 +457,7 @@
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/framework - Rust UI 框架
+/client/rust/framework - UI 框架
 /client/rust/framework/iced - iced
 /client/rust/framework/slint - Slint
 /client/rust/framework/tauri - Tauri
@@ -570,13 +575,13 @@
 /design/spacetime/domain - 主机域
 /design/spacetime/general - 通用域
 /design/spacetime/general/architecture - 架构演进
-/design/spacetime/general/container - 容器
-/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/container - 容器</pre>
+<pre>/design/spacetime/general/corruption - 腐化
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域</pre>
-<pre>/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
@@ -770,13 +775,13 @@
 /server/db/nosql/milvus/storage - 分布式能力
 /server/db/nosql/milvus/usage - 使用实践
 /server/db/nosql/minio - MinIO
-/server/db/nosql/mongo - MongoDB
-/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/mongo - MongoDB</pre>
+<pre>/server/db/nosql/neo4j - Neo4j
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划</pre>
-<pre>/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践

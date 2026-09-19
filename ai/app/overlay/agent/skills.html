@@ -8,7 +8,7 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.cce20d3a.js"></script>
+    <script src="/assets/site-data.15a9f116.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
@@ -91,7 +91,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">- </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">成功返回 2xx，附上资源表示</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">- </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">参数校验失败返回 400，附上具体字段错误</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">- </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">资源不存在返回 404</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">- </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">统一使用 JSON 格式，字段名 snake_case</span></span></code></pre></div><p>和 Claude Code 的关键区别在于优先级：Cline 中全局 skill 优先于项目级同名 skill，设计意图是个人通用 skill 不应被项目特定 skill 覆盖。而 Claude Code 中两者可以同名共存。</p><h2 id="mcp-暴露的-slash-commands" tabindex="-1">MCP 暴露的 Slash Commands <a class="header-anchor" href="#mcp-暴露的-slash-commands" aria-label="Permalink to “MCP 暴露的 Slash Commands”">​</a></h2><p>MCP Server 除了暴露 Tools，还可以暴露 Prompts（预定义的提示模板）。Claude Code 会将这些 Prompts 自动注册为 Slash Commands，命名格式为 <code>/mcp__&lt;server-name&gt;__&lt;prompt-name&gt;</code>。这意味着 MCP Server 可以同时提供工具能力和指令模板，用户通过 <code>/mcp__xxx</code> 调用 prompt，Claude 通过 <code>tools/call</code> 调用工具。Cline 对 MCP Prompts 的支持类似，同样会将其注册为可用的 workflow 或命令。</p><p>这种机制把 Skill 和 MCP 联系起来：如果某个提示模板需要依赖外部数据（比如代码库的最新变更、部署环境的配置），MCP Prompt 可以在注册时动态生成上下文，比静态 markdown 文件更灵活。</p><h2 id="实践建议" tabindex="-1">实践建议 <a class="header-anchor" href="#实践建议" aria-label="Permalink to “实践建议”">​</a></h2><p>Skill 的核心价值在于沉淀团队的领域知识。Code Review 标准、部署检查清单、API 设计规范——这些隐性知识通常只存在于资深成员的脑中，通过 Skill 显式化后，所有使用 AI 工具的团队成员都能自动获得这些指导。项目级的 Skill 应该纳入代码审查，和代码本身一起迭代。</p><p>Slash Command 适合高频、确定性的操作流程。如果团队每次发布都遵循相同步骤，写成 workflow 可以消除人为遗漏。<code>allowed-tools</code> 字段在实践中很有用：review 类命令限制为只读工具，deploy 类命令限制为特定的部署脚本，从工具层面防止误操作。</p><p>Agent Skill 的 <code>description</code> 字段决定了触发准确率。太宽泛的描述（如&quot;帮助写代码&quot;）会导致频繁误触发，太窄的描述（如&quot;审查 user service 的 authentication middleware&quot;）又会让 skill 几乎永远不会被激活。好的描述应该覆盖功能关键词和使用场景，让模型在相关请求出现时有足够的匹配信号。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/overlay/agent/mcp" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>MCP Server</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/overlay/agent/a2a" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>A2A 协议</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">- </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">统一使用 JSON 格式，字段名 snake_case</span></span></code></pre></div><p>和 Claude Code 的关键区别在于优先级：Cline 中全局 skill 优先于项目级同名 skill，设计意图是个人通用 skill 不应被项目特定 skill 覆盖。而 Claude Code 中两者可以同名共存。</p><h2 id="mcp-暴露的-slash-commands" tabindex="-1">MCP 暴露的 Slash Commands <a class="header-anchor" href="#mcp-暴露的-slash-commands" aria-label="Permalink to “MCP 暴露的 Slash Commands”">​</a></h2><p>MCP Server 除了暴露 Tools，还可以暴露 Prompts（预定义的提示模板）。Claude Code 会将这些 Prompts 自动注册为 Slash Commands，命名格式为 <code>/mcp__&lt;server-name&gt;__&lt;prompt-name&gt;</code>。这意味着 MCP Server 可以同时提供工具能力和指令模板，用户通过 <code>/mcp__xxx</code> 调用 prompt，Claude 通过 <code>tools/call</code> 调用工具。Cline 对 MCP Prompts 的支持类似，同样会将其注册为可用的 workflow 或命令。</p><p>这种机制把 Skill 和 MCP 联系起来：如果某个提示模板需要依赖外部数据（比如代码库的最新变更、部署环境的配置），MCP Prompt 可以在注册时动态生成上下文，比静态 markdown 文件更灵活。</p><h2 id="实践建议" tabindex="-1">实践建议 <a class="header-anchor" href="#实践建议" aria-label="Permalink to “实践建议”">​</a></h2><p>Skill 的核心价值在于沉淀团队的领域知识。Code Review 标准、部署检查清单、API 设计规范——这些隐性知识通常只存在于资深成员的脑中，通过 Skill 显式化后，所有使用 AI 工具的团队成员都能自动获得这些指导。项目级的 Skill 应该纳入代码审查，和代码本身一起迭代。</p><p>Slash Command 适合高频、确定性的操作流程。如果团队每次发布都遵循相同步骤，写成 workflow 可以消除人为遗漏。<code>allowed-tools</code> 字段在实践中很有用：review 类命令限制为只读工具，deploy 类命令限制为特定的部署脚本，从工具层面防止误操作。</p><p>Agent Skill 的 <code>description</code> 字段决定了触发准确率。太宽泛的描述（如&quot;帮助写代码&quot;）会导致频繁误触发，太窄的描述（如&quot;审查 user service 的 authentication middleware&quot;）又会让 skill 几乎永远不会被激活。好的描述应该覆盖功能关键词和使用场景，让模型在相关请求出现时有足够的匹配信号。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/app/overlay/agent/mcp" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>MCP Server</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/app/overlay/agent/cua" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>Computer Use Agent</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -131,6 +131,7 @@
 /ai/app/overlay/agent/case/claude/code
 /ai/app/overlay/agent/case/claude_code - Claude Code
 /ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/cua - Computer Use Agent
 /ai/app/overlay/agent/deep/agent
 /ai/app/overlay/agent/deep_agent - Deep Agent
 /ai/app/overlay/agent/loop - Agent 循环
@@ -185,18 +186,22 @@
 /ai/compute/engine/other - 其他
 /ai/compute/engine/pytorch - PyTorch
 /ai/compute/engine/vllm - vLLM
-/ai/compute/format - 模型格式
-/ai/compute/format/hf - HF 风格
-/ai/compute/format/onnx - ONNX
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
 /ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
+/ai/compute/kernel/concepts - 概念索引
 /ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/format - 模型格式
 /ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/gguf - GGUF
+/ai/compute/kernel/marlin - Marlin
+/ai/compute/kernel/onnx - ONNX
 /ai/compute/kernel/optimization - 算子优化
-/ai/compute/kernel/quantization - 量化
+/ai/compute/kernel/quant/matrix
+/ai/compute/kernel/quant_matrix - 量化选型
+/ai/compute/kernel/quantization - 量化算法
 /ai/compute/stack - 计算栈
 /ai/cpp - C++
 /ai/neural - 神经网络
@@ -288,13 +293,13 @@
 /basic/os/mm - 内存管理
 /basic/os/schd - 调度
 /client - 客户端
-/client/art - 美术设计
-/client/art/mime - 媒体文件
+/client/art - 美术设计</pre>
+<pre>/client/art/mime - 媒体文件
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程</pre>
-<pre>/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
 /client/csharp/msbuild - MSBuild
 /client/csharp/nuget - NuGet
@@ -370,7 +375,7 @@
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/framework - Rust UI 框架
+/client/rust/framework - UI 框架
 /client/rust/framework/iced - iced
 /client/rust/framework/slint - Slint
 /client/rust/framework/tauri - Tauri
@@ -488,13 +493,13 @@
 /design/spacetime/domain - 主机域
 /design/spacetime/general - 通用域
 /design/spacetime/general/architecture - 架构演进
-/design/spacetime/general/container - 容器
-/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/container - 容器</pre>
+<pre>/design/spacetime/general/corruption - 腐化
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域</pre>
-<pre>/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
@@ -688,13 +693,13 @@
 /server/db/nosql/milvus/storage - 分布式能力
 /server/db/nosql/milvus/usage - 使用实践
 /server/db/nosql/minio - MinIO
-/server/db/nosql/mongo - MongoDB
-/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/mongo - MongoDB</pre>
+<pre>/server/db/nosql/neo4j - Neo4j
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划</pre>
-<pre>/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践

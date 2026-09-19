@@ -8,12 +8,12 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.cce20d3a.js"></script>
+    <script src="/assets/site-data.15a9f116.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/ai_compute_kernel_flashattention.md.BRZYMqig.lean.js">
+    <link rel="modulepreload" href="/assets/ai_compute_kernel_flashattention.md.Dc91mw2g.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
@@ -44,7 +44,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">q, k, v </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> ...</span><span style="--shiki-light:#62687b;--shiki-dark:#818e99;">  # [batch, heads, seq_len, head_dim]</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">output </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> scaled_dot_product_attention(q, k, v, </span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">is_causal</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">True</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><p>对于旧版 PyTorch，可通过 pip 安装 <code>flash-attn</code> 包：</p><div class="language-python"><button title="Copy Code" class="copy"></button><span class="lang">python</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">from</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flash_attn </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flash_attn_func</span></span>
 <span class="line"></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">output </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flash_attn_func(q, k, v, </span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">causal</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">True</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><p>FlashAttention 对序列长度和 head dim 有要求：序列长度需是 128 的倍数（最优 256），head dim 需是 64/128/256 之一。不符合时性能会下降，但仍比标准 Attention 快。</p><h2 id="性能对比" tabindex="-1">性能对比 <a class="header-anchor" href="#性能对比" aria-label="Permalink to “性能对比”">​</a></h2><p>FlashAttention 官方 benchmark 显示，相比标准 Attention，FlashAttention-2 在 A100 上将前向传播加速 2-4 倍，反向传播加速 1.5-2 倍。显存占用方面，序列长度 2K 时标准 Attention 需要 16GB，FlashAttention 仅需 2GB。这使得长序列训练（如 32K 上下文的 GPT-3）成为可能。</p><p>推理场景下，FlashAttention 的优势更为明显，因为推理的 batch size 通常较小，GPU 的并行度更受限。FlashAttention-2 的高并行度设计使得小 batch 场景下仍能充分利用 GPU，将首 token 延迟降低 30-50%。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/kernel/optimization" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>算子优化</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/kernel/fusion" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>算子融合</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">output </span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flash_attn_func(q, k, v, </span><span style="--shiki-light:#c13617;--shiki-dark:#FFAB70;">causal</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">True</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><p>FlashAttention 对序列长度和 head dim 有要求：序列长度需是 128 的倍数（最优 256），head dim 需是 64/128/256 之一。不符合时性能会下降，但仍比标准 Attention 快。</p><h2 id="性能对比" tabindex="-1">性能对比 <a class="header-anchor" href="#性能对比" aria-label="Permalink to “性能对比”">​</a></h2><p>FlashAttention 官方 benchmark 显示，相比标准 Attention，FlashAttention-2 在 A100 上将前向传播加速 2-4 倍，反向传播加速 1.5-2 倍。显存占用方面，序列长度 2K 时标准 Attention 需要 16GB，FlashAttention 仅需 2GB。这使得长序列训练（如 32K 上下文的 GPT-3）成为可能。</p><p>推理场景下，FlashAttention 的优势更为明显，因为推理的 batch size 通常较小，GPU 的并行度更受限。FlashAttention-2 的高并行度设计使得小 batch 场景下仍能充分利用 GPU，将首 token 延迟降低 30-50%。</p><h2 id="硬件依赖与版本演进" tabindex="-1">硬件依赖与版本演进 <a class="header-anchor" href="#硬件依赖与版本演进" aria-label="Permalink to “硬件依赖与版本演进”">​</a></h2><p>FlashAttention 不是一个“万能加速”，它的有效性与 GPU 架构代际紧密绑定。三代实现的硬件门槛如下。</p><table tabindex="0"><thead><tr><th>版本</th><th>最低架构</th><th>compute capability</th><th>关键依赖</th><th>代表卡</th></tr></thead><tbody><tr><td>FA1</td><td>Ampere</td><td>sm_80+</td><td>标准 <code>mma.sync</code> 指令</td><td>RTX 30 系、A100</td></tr><tr><td>FA2</td><td>Ampere</td><td>sm_80+</td><td>同 FA1，针对计算并行重排</td><td>3090、4090、A100、H100</td></tr><tr><td>FA3</td><td>Hopper</td><td>sm_90+</td><td><code>wgmma</code> + <code>TMA</code></td><td>H100、H200</td></tr><tr><td>FA4</td><td>Blackwell</td><td>sm_100+</td><td><code>tcgen05.mma</code> + <code>TMEM</code></td><td>B100/B200、RTX 50 系</td></tr></tbody></table><p><strong>FA2 是当代推理部署的事实标准</strong>。它需要 sm_80 起跑，这意味着 RTX 20 系（sm_75）和 V100（sm_70）无法运行 FA2，只能跑 FA1 或回退到标准 Attention。RTX 30 系及以上才能完整享受 FA2 的加速。这是为什么本地 LLM 部署的架构底线被定在 Ampere——不是 BF16（虽然也是原因之一），而是 FA2。</p><p><strong>FA3 在 Hopper 上是质的飞跃</strong>，不是 FA2 的小改进。Hopper 引入的 <code>wgmma</code> 指令让一个 warp group（4 个 warp）共同完成一次矩阵乘，而不是传统 <code>mma.sync</code> 的单个 warp——单条 MMA 指令覆盖的矩阵面积翻 4 倍。配合 <code>TMA</code> 异步加载 K/V 块到 SMEM，FA3 在 H100 上把训练 step time 又压到 FA2 的 1/2-1/3。但 FA3 的 <code>wgmma</code> 路径在 Ampere 上不能跑——Hopper 专属指令集。</p><p><strong>FA4 是 Blackwell 的专属</strong>，利用了第五代 Tensor Core 的 <code>tcgen05.mma</code> 和新的 TMEM（Tensor Memory）存储累加器。它进一步将 SMEM 占用和寄存器压力大幅降低。在 B200 上 FA4 的吞吐量是 FA3 的约 2 倍。</p><h2 id="在推理中的位置" tabindex="-1">在推理中的位置 <a class="header-anchor" href="#在推理中的位置" aria-label="Permalink to “在推理中的位置”">​</a></h2><p>FlashAttention 在推理栈里的角色不同于在训练中。</p><p><strong>Prefill 阶段</strong>：与训练前向几乎一样，需要算整个 prompt 的注意力矩阵。FA2 在这里节省显存 + 提升吞吐。如果 prompt 长度 8K+，FA2 通常吃掉 Prefill 总时间的 30-40%，不启用 FA2 几乎跑不动现代模型。</p><p><strong>Decode 阶段</strong>：attention 计算本身规模很小（每个新 token 只与历史 KV Cache 算一次 QK^T），FA2 的分块优势在这里不明显。但 <strong>FA2 与 PagedAttention 的交互</strong> 仍重要——vLLM 的 PagedAttention 把 KV Cache 分页存储，FA2 能感知到这种非连续布局，避免重复加载整块 KV。推理框架（vLLM、TGI、SGLang）默认启用 FA2，用户不需要额外配置。</p><p><strong>训练阶段</strong>：反向传播需要保存中间结果，标准 Attention 会保存完整的 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:-0.05ex;" xmlns="http://www.w3.org/2000/svg" width="1.459ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 645 727" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D446" d="M308 24Q367 24 416 76T466 197Q466 260 414 284Q308 311 278 321T236 341Q176 383 176 462Q176 523 208 573T273 648Q302 673 343 688T407 704H418H425Q521 704 564 640Q565 640 577 653T603 682T623 704Q624 704 627 704T632 705Q645 705 645 698T617 577T585 459T569 456Q549 456 549 465Q549 471 550 475Q550 478 551 494T553 520Q553 554 544 579T526 616T501 641Q465 662 419 662Q362 662 313 616T263 510Q263 480 278 458T319 427Q323 425 389 408T456 390Q490 379 522 342T554 242Q554 216 546 186Q541 164 528 137T492 78T426 18T332 -20Q320 -22 298 -22Q199 -22 144 33L134 44L106 13Q83 -14 78 -18T65 -22Q52 -22 52 -14Q52 -11 110 221Q112 227 130 227H143Q149 221 149 216Q149 214 148 207T144 186T142 153Q144 114 160 87T203 47T255 29T308 24Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math></mjx-assistive-mml></mjx-container> 和 <mjx-container class="MathJax" jax="SVG" style="direction:ltr;position:relative;"><svg style="overflow:visible;min-height:1px;min-width:1px;vertical-align:0;" xmlns="http://www.w3.org/2000/svg" width="1.699ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 751 683" aria-hidden="true"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z" style="stroke-width:3;"></path></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline" style="top:0px;left:0px;clip:rect(1px, 1px, 1px, 1px);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:absolute;padding:1px 0px 0px 0px;border:0px;display:block;width:auto;overflow:hidden;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math></mjx-assistive-mml></mjx-container> 矩阵，显存爆炸；FA2 通过重计算（recomputation）避免保存中间值，反向时重算一遍——显存降 5-10 倍。这与推理场景的需求点不同。</p><p><strong>与 KV Cache 量化的交互</strong>：当 KV Cache 启用 FP8 量化（如 <code>--kv-cache-dtype fp8</code>），FA2 内核需要支持 FP8 输入的版本。vLLM 默认会根据硬件和量化配置选择对应内核（FA2 FP8 路径需要 Hopper+，Ada 上的 FP8 KV Cache 可能回退到标准 Attention）。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/ai/compute/kernel/concepts" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>概念索引</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/ai/compute/kernel/quantization" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>量化算法</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -84,6 +84,7 @@
 /ai/app/overlay/agent/case/claude/code
 /ai/app/overlay/agent/case/claude_code - Claude Code
 /ai/app/overlay/agent/case/cline - Cline
+/ai/app/overlay/agent/cua - Computer Use Agent
 /ai/app/overlay/agent/deep/agent
 /ai/app/overlay/agent/deep_agent - Deep Agent
 /ai/app/overlay/agent/loop - Agent 循环
@@ -138,18 +139,22 @@
 /ai/compute/engine/other - 其他
 /ai/compute/engine/pytorch - PyTorch
 /ai/compute/engine/vllm - vLLM
-/ai/compute/format - 模型格式
-/ai/compute/format/hf - HF 风格
-/ai/compute/format/onnx - ONNX
 /ai/compute/impl - 设计实现
 /ai/compute/impl/kvcache - KV Cache
 /ai/compute/impl/moe - 混合专家
 /ai/compute/impl/speculative - 投机解码
 /ai/compute/kernel - 算子
+/ai/compute/kernel/concepts - 概念索引
 /ai/compute/kernel/flashattention - FlashAttention
+/ai/compute/kernel/format - 模型格式
 /ai/compute/kernel/fusion - 算子融合
+/ai/compute/kernel/gguf - GGUF
+/ai/compute/kernel/marlin - Marlin
+/ai/compute/kernel/onnx - ONNX
 /ai/compute/kernel/optimization - 算子优化
-/ai/compute/kernel/quantization - 量化
+/ai/compute/kernel/quant/matrix
+/ai/compute/kernel/quant_matrix - 量化选型
+/ai/compute/kernel/quantization - 量化算法
 /ai/compute/stack - 计算栈
 /ai/cpp - C++
 /ai/neural - 神经网络
@@ -241,13 +246,13 @@
 /basic/os/mm - 内存管理
 /basic/os/schd - 调度
 /client - 客户端
-/client/art - 美术设计
-/client/art/mime - 媒体文件
+/client/art - 美术设计</pre>
+<pre>/client/art/mime - 媒体文件
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
-/client/csharp/async - 异步编程</pre>
-<pre>/client/csharp/basic - 语言基础
+/client/csharp/async - 异步编程
+/client/csharp/basic - 语言基础
 /client/csharp/dotnet - .NET
 /client/csharp/msbuild - MSBuild
 /client/csharp/nuget - NuGet
@@ -323,7 +328,7 @@
 /client/rust/basic/trait - 特性
 /client/rust/cargo - Cargo
 /client/rust/cli - CLi
-/client/rust/framework - Rust UI 框架
+/client/rust/framework - UI 框架
 /client/rust/framework/iced - iced
 /client/rust/framework/slint - Slint
 /client/rust/framework/tauri - Tauri
@@ -441,13 +446,13 @@
 /design/spacetime/domain - 主机域
 /design/spacetime/general - 通用域
 /design/spacetime/general/architecture - 架构演进
-/design/spacetime/general/container - 容器
-/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/container - 容器</pre>
+<pre>/design/spacetime/general/corruption - 腐化
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
-/design/spacetime/process - 进程域</pre>
-<pre>/design/spacetime/process/coupling - 组件耦合
+/design/spacetime/process - 进程域
+/design/spacetime/process/coupling - 组件耦合
 /design/spacetime/process/scope - 作用域
 /design/spacetime/process/single - 单进程
 /design/spacetime/space - 体系建构
@@ -641,13 +646,13 @@
 /server/db/nosql/milvus/storage - 分布式能力
 /server/db/nosql/milvus/usage - 使用实践
 /server/db/nosql/minio - MinIO
-/server/db/nosql/mongo - MongoDB
-/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/mongo - MongoDB</pre>
+<pre>/server/db/nosql/neo4j - Neo4j
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
-/server/db/practice/capacity - 容量规划</pre>
-<pre>/server/db/practice/cloud - 云数据库服务
+/server/db/practice/capacity - 容量规划
+/server/db/practice/cloud - 云数据库服务
 /server/db/practice/monitoring - 监控与运维
 /server/db/practice/standards - 数据库规范
 /server/db/practice/tuning - 性能调优实践
