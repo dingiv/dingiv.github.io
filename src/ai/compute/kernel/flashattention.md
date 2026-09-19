@@ -1,5 +1,6 @@
 ---
 title: FlashAttention
+order: 10
 ---
 
 # Flash Attention
@@ -72,3 +73,30 @@ FlashAttention 对序列长度和 head dim 有要求：序列长度需是 128 �
 FlashAttention 官方 benchmark 显示，相比标准 Attention，FlashAttention-2 在 A100 上将前向传播加速 2-4 倍，反向传播加速 1.5-2 倍。显存占用方面，序列长度 2K 时标准 Attention 需要 16GB，FlashAttention 仅需 2GB。这使得长序列训练（如 32K 上下文的 GPT-3）成为可能。
 
 推理场景下，FlashAttention 的优势更为明显，因为推理的 batch size 通常较小，GPU 的并行度更受限。FlashAttention-2 的高并行度设计使得小 batch 场景下仍能充分利用 GPU，将首 token 延迟降低 30-50%。
+
+## 硬件依赖与版本演进
+FlashAttention 不是一个“万能加速”，它的有效性与 GPU 架构代际紧密绑定。三代实现的硬件门槛如下。
+
+| 版本 | 最低架构 | compute capability | 关键依赖 | 代表卡 |
+| ---- | -------- | ------------------ | -------- | ------ |
+| FA1 | Ampere | sm_80+ | 标准 `mma.sync` 指令 | RTX 30 系、A100 |
+| FA2 | Ampere | sm_80+ | 同 FA1，针对计算并行重排 | 3090、4090、A100、H100 |
+| FA3 | Hopper | sm_90+ | `wgmma` + `TMA` | H100、H200 |
+| FA4 | Blackwell | sm_100+ | `tcgen05.mma` + `TMEM` | B100/B200、RTX 50 系 |
+
+**FA2 是当代推理部署的事实标准**。它需要 sm_80 起跑，这意味着 RTX 20 系（sm_75）和 V100（sm_70）无法运行 FA2，只能跑 FA1 或回退到标准 Attention。RTX 30 系及以上才能完整享受 FA2 的加速。这是为什么本地 LLM 部署的架构底线被定在 Ampere——不是 BF16（虽然也是原因之一），而是 FA2。
+
+**FA3 在 Hopper 上是质的飞跃**，不是 FA2 的小改进。Hopper 引入的 `wgmma` 指令让一个 warp group（4 个 warp）共同完成一次矩阵乘，而不是传统 `mma.sync` 的单个 warp——单条 MMA 指令覆盖的矩阵面积翻 4 倍。配合 `TMA` 异步加载 K/V 块到 SMEM，FA3 在 H100 上把训练 step time 又压到 FA2 的 1/2-1/3。但 FA3 的 `wgmma` 路径在 Ampere 上不能跑——Hopper 专属指令集。
+
+**FA4 是 Blackwell 的专属**，利用了第五代 Tensor Core 的 `tcgen05.mma` 和新的 TMEM（Tensor Memory）存储累加器。它进一步将 SMEM 占用和寄存器压力大幅降低。在 B200 上 FA4 的吞吐量是 FA3 的约 2 倍。
+
+## 在推理中的位置
+FlashAttention 在推理栈里的角色不同于在训练中。
+
+**Prefill 阶段**：与训练前向几乎一样，需要算整个 prompt 的注意力矩阵。FA2 在这里节省显存 + 提升吞吐。如果 prompt 长度 8K+，FA2 通常吃掉 Prefill 总时间的 30-40%，不启用 FA2 几乎跑不动现代模型。
+
+**Decode 阶段**：attention 计算本身规模很小（每个新 token 只与历史 KV Cache 算一次 QK^T），FA2 的分块优势在这里不明显。但 **FA2 与 PagedAttention 的交互** 仍重要——vLLM 的 PagedAttention 把 KV Cache 分页存储，FA2 能感知到这种非连续布局，避免重复加载整块 KV。推理框架（vLLM、TGI、SGLang）默认启用 FA2，用户不需要额外配置。
+
+**训练阶段**：反向传播需要保存中间结果，标准 Attention 会保存完整的 $S$ 和 $P$ 矩阵，显存爆炸；FA2 通过重计算（recomputation）避免保存中间值，反向时重算一遍——显存降 5-10 倍。这与推理场景的需求点不同。
+
+**与 KV Cache 量化的交互**：当 KV Cache 启用 FP8 量化（如 `--kv-cache-dtype fp8`），FA2 内核需要支持 FP8 输入的版本。vLLM 默认会根据硬件和量化配置选择对应内核（FA2 FP8 路径需要 Hopper+，Ada 上的 FP8 KV Cache 可能回退到标准 Attention）。

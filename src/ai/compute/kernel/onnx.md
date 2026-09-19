@@ -18,7 +18,7 @@ ONNX 的静态计算图思想恰恰是它在传统 AI 中优势的来源，也�
 这不是 ONNX 的失败，只是场景不匹配。就像叉车不能在高速公路上跑——不是叉车不好，是场景错了。
 
 ## ONNX 的核心设计
-ONNX 使用 Protocol Buffers 序列化模型，包含三部分：
+ONNX 使用 Protocol Buffers 序列化模型，包含三部分。
 
 **计算图（Graph）**：用节点（Node）和边（Tensor）描述模型的前向传播路径。每个节点对应一个标准算子（Conv、MatMul、Softmax 等）。图是静态的——导出时形状和控制流已确定（dynamic axes 支持 batch 维度可变，但不支持变化的分支逻辑）。
 
@@ -71,7 +71,7 @@ ONNX 在 LLM 生态中的位置是"补充"而非"替代"。HF 的 safetensors + 
 ort-genai 的价值场景是"已经在用 ORT 部署传统模型的团队，希望用同一套基础设施部署 LLM"。如果你不需要这个统一性，HF + vLLM/llama.cpp 的生态更成熟。如果你需要在 Windows 生态中部署 LLM（DirectML 后端、ONNX Runtime 的 Windows ARM64 原生支持），ort-genai 是 DirectML 的原生路径。
 
 ## 模型优化管线
-ONNX 生态的优化工具链是它相比 HF 生态的独特优势——静态图格式使得离线优化成为可能：
+ONNX 生态的优化工具链是它相比 HF 生态的独特优势——静态图格式使得离线优化成为可能。
 
 **ONNX Simplifier（onnxsim）**：自动简化计算图——常量折叠、去除无用节点、合并连续运算。通常在导出后第一步运行，可将模型体积减小 10-30%。
 

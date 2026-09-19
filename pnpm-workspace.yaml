@@ -1,7 +1,7 @@
 allowBuilds:
   esbuild: false
-  playwright-chromium: set this to true or false
-  simple-git-hooks: set this to true or false
+  playwright-chromium: true
+  simple-git-hooks: true
 
 packages:
   - vitepress

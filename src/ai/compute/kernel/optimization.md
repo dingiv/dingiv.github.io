@@ -41,3 +41,25 @@ cutlass 是 NVIDIA 开源的模板库，用于编写高性能的矩阵乘法、�
 第三步是**实现优化**。使用 shared memory tiling、Tensor Core、指令级并行等技术提升 kernel 效率。这一步需要反复 benchmark，调整分块大小、展开循环、融合算子，直到接近理论性能峰值。
 
 最后是**集成测试**。将优化后的算子集成到模型中，验证端到端性能提升和数值正确性。有时算子层面优化了 50%，但模型层面仅提升 5%，因为瓶颈转移到其他算子。
+
+## 硬件层细节
+**Warp 与调度器**：CUDA 以 warp（32 个线程）为调度单位，每个 SM 有 4 个 warp scheduler。同一 scheduler 每周期只能发射一条指令到它负责的 8 个 warp 中——这意味着一个 SM 最多同时跑 32 个 warp 才能喂饱 4 个 scheduler。Ampere 每个 SM 最多 64 个 warp，Hopper 提升到 64 个 warp（但单 warp 调度能力因 wgma 提升）。Kernel 设计需要保证 occupancy（每个 SM 活跃 warp 数）足够高，否则 scheduler 会“闲”住。
+
+**寄存器压力与 occupancy 平衡**：每个线程占用的寄存器越多，同一个 SM 能容纳的 warp 数越少。例如每个线程 64 个寄存器时，Ampere SM 可容纳 64 个 warp；每个线程 128 个寄存器时只能容纳 32 个。Llama 70B 的 attention kernel 为了走 FlashAttention 路径，需要寄存器存累积的 softmax 分母，寄存器压力较高——这是为什么 FA2 在大 batch 下 occupancy 反而下降、加速比衰减的根源。优化手段是**双缓冲**（用两套缓冲区交替，让一组算的时候另一组加载）或**寄存器溢出到 SMEM**（强制但低效）。
+
+**Shared Memory 容量约束**：Ampere 每个 SM 有 164KB SMEM（但单 kernel 可用通常 96KB），Hopper 提升到 228KB。SMEM 是片上内存（带宽 ~20TB/s，远超 HBM 的 2TB/s），但总量有限——如果一个 kernel 用了 100KB SMEM，同一 SM 上只能跑 1 个 thread block，occupancy 直接腰斩。FlashAttention、Marlin、CUTLASS GEMM 都是 SMEM 重度使用者，参数调优（block size、stage 数量）要在性能和 occupancy 之间找平衡点。
+
+**Latency Hiding 与流水线**：GPU 通过在等待显存加载时调度其他 warp 来隐藏延迟。理想情况是每个 warp 都不在等待数据——这要求足够多的活跃 warp 数量，或者异步加载指令。Ampere 的 `cp.async` 和 Hopper 的 `TMA` 把异步加载从“软件模拟”变成“硬件支持”，让流水线设计更简单且更高效。Marlin 的 4 级流水线正是利用 `cp.async` 实现的。
+
+## 推理优化中的算子例子
+理解了通用优化原则后，看几个推理栈里的具体例子。
+
+**GEMM 通用**：矩阵乘法是 LLM 里最频繁的算子（每个 Transformer 层几十次）。FlashAttention 内部就有 3 次 QK^T、softmax、PV 矩阵乘。CUTLASS 提供了高度参数化的 GEMM 模板，Marlin、Machete 等专用内核都基于它定制。Llama-2-70B 的 prefill 时间中，约 60-70% 在 GEMM 上。
+
+**RMSNorm / LayerNorm**：LLaMA 用 RMSNorm（比 LayerNorm 少一个减均值操作），kernel 设计上要做按行 reduce 并广播。优化点是 warp-level reduce（warp shuffle 指令），避免跨 warp 同步。FlashAttention 的并行 softmax 也用 warp shuffle 做行最大值和归一化因子的聚合。
+
+**RoPE 位置编码**：旋转位置编码需要在 attention 之前对 Q、K 做原地修改。优化点是把它和 Q/K 的 reshape、transpose 融合到同一个 kernel 里，避免中间张量写回 HBM。vLLM 的 chunked prefill 实现里，RoPE 融合能省 1 次 HBM 读写。
+
+**SiLU / GeLU 激活**：逐元素算子，算术强度接近 0，本身不耗时，但与周围算子分离时会浪费一次 HBM 读写。融合到 GEMM 的 epilogue 阶段（GEMM 输出后立即激活）是现代推理框架的标准做法——cuBLASLt、CUTLASS、Marlin 都支持。
+
+**KV Cache 读写**：Decode 阶段每生成一个 token 都要读完整历史 KV Cache，是 Memory-Bound 的核心来源。PagedAttention 把 KV 分页存储到非连续显存块，配合 FA2 让分页加载与 attention 计算重叠。FP8 KV Cache 进一步减半读写量，代价是要在 attention kernel 入口做 FP8 → FP16 的转换。

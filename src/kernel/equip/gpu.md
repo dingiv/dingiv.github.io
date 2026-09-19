@@ -39,17 +39,35 @@ AI 场景对 GPU 的需求与游戏不同。本地运行 AI 模型（如 Stable 
 ## Nvidia 常见型号
 Nvidia 目前市场的主力是 Blackwell 系列和 Ada Lovelace 系列，Ampere 系列正在逐步退出。Hopper 系列是专注于企业级市场。
 
-| 架构      | 年代  | 核心突破            | 主要应用方向    |
-| --------- | ----- | ------------------- | --------------- |
-| Blackwell | 2025- | FP4 + 超大集群      | AI 训练/推理    |
-| Hopper    | 2022- | Transformer Engine  | 大模型训练      |
-| Ada       | 2022- | 光追 + DLSS 3       | 游戏 + 专业渲染 |
-| Ampere    | 2020- | TF32 + MIG          | AI + 数据中心   |
-| Turing    | 2018- | 实时光追            | 游戏光追时代    |
-| Volta     | 2017- | Tensor Core         | AI 加速器元年   |
-| Pascal    | 2016- | ——                  | ——              |
-| Maxwell   | 2014- | ——                  | ——              |
-| Kepler    | 2012- | CUDA 生态成熟的起点 | ——              |
+| 架构      | 年代  | 核心突破            | 消费级 Geforce        | 专业级 Quadro / RTX PRO | 企业级 Tesla / Data Center | Tensor Core |
+| --------- | ----- | ------------------- | --------------------- | ----------------------- | -------------------------- | ----------- |
+| Blackwell | 2025- | FP4 + 超大集群      | RTX 50 系             | RTX PRO 6000/5000 系列  | B100/B200/GB200/B300       | 第五代      |
+| Hopper    | 2022- | Transformer Engine  | ——                    | ——                      | H100/H200/H20              | 第四代      |
+| Ada       | 2022- | 光追 + DLSS 3       | RTX 40 系             | RTX 6000/5000/4000 Ada  | L40S/L40/L20/L4            | 第四代      |
+| Ampere    | 2020- | TF32 + MIG          | RTX 30 系             | A6000/A5000/A4000       | A100/A40/A10/A30           | 第三代      |
+| Turing    | 2018- | 实时光追            | RTX 20 系 / GTX 16 系 | Quadro RTX              | T4                         | 第二代      |
+| Volta     | 2017- | Tensor Core         | Titan V               | Quadro GV100            | V100                       | 第一代      |
+| Pascal    | 2016- | ——                  | GTX 10 系             | Quadro P 系列           | P100/P40/P4                | 无          |
+| Maxwell   | 2014- | ——                  | GTX 900 系            | Quadro M 系列           | M40/M60                    | 无          |
+| Kepler    | 2012- | CUDA 生态成熟的起点 | GTX 600/700 系        | Quadro K 系列           | K80/K40                    | 无          |
+
+各架构在消费级、专业级、企业级三条产品线的代表产品与数据格式支持如下。数据格式直接影响 AI 推理效率：越新的架构支持越低精度的格式（FP8/FP4），同样显存能装下更大的模型、推理速度也更快；而消费级 Geforce 卡的 FP64 性能被严重阉割（仅 1/64），基本不能用于传统 HPC 科学计算。
+
+各架构支持的数据格式如下（✓ 表示支持且有 Tensor Core 加速；标 DP4A 的为 CUDA 核心指令、无 Tensor Core；FP64 列为相对 FP32 的性能比例，游戏卡通常被严重阉割）：
+
+| 架构      | FP32 | FP64 | FP16 | BF16 | TF32 | INT8 | INT4 | FP8 | FP6 | FP4 | 备注                                 |
+| --------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | --- | --- | --- | ------------------------------------ |
+| Blackwell | ✓    | 1/64 | ✓    | ✓    | ✓    | ✓    | ✓    | ✓   | ✓   | ✓   | 第二代 Transformer Engine            |
+| Hopper    | ✓    | 1/2  | ✓    | ✓    | ✓    | ✓    | ——   | ✓   | ——  | ——  | DPX 动态编程指令、Transformer Engine |
+| Ada       | ✓    | 1/64 | ✓    | ✓    | ✓    | ✓    | ✓    | ✓   | ——  | ——  | ——                                   |
+| Ampere    | ✓    | 1/64 | ✓    | ✓    | ✓    | ✓    | ✓    | ——  | ——  | ——  | 稀疏加速                             |
+| Turing    | ✓    | 1/32 | ✓    | ——   | ——   | ✓    | ✓    | ——  | ——  | ——  | 首次实时光追                         |
+| Volta     | ✓    | 1/2  | ✓    | ——   | ——   | ——   | ——   | ——  | ——  | ——  | 适合 HPC                             |
+| Pascal    | ✓    | 1/2  | ✓    | ——   | ——   | ✓    | ——   | ——  | ——  | ——  | ——                                   |
+| Maxwell   | ✓    | 1/32 | ——   | ——   | ——   | ——   | ——   | ——  | ——  | ——  | ——                                   |
+| Kepler    | ✓    | 1/3  | ——   | ——   | ——   | ——   | ——   | ——  | ——  | ——  | ——                                   |
+
+本地跑 LLM 时数据格式尤其关键：同样是 24GB 显存，4090（Ada）能靠 FP8 把模型显存占用减半，而 3090（Ampere）只能用 FP16；50 系（Blackwell）更进一步支持 FP4，理论上能再减半。这也是同一代显存容量下新架构跑本地大模型更划算的核心原因。
 
 ### 消费级 Geforce
 Geforce RTX 型号专注于消费级市场。其中 RTX 50X0 系列属于 Blackwell，RTX 40X0 系列属于 Ada Lovelace 系列，30X0 属于 Ampere 系列。
@@ -64,8 +82,8 @@ Geforce RTX 型号专注于消费级市场。其中 RTX 50X0 系列属于 Blackw
 | 5060     | Blackwell | 8         | 448             | 20          |         |
 | 5050     | Blackwell | 8         | 320             | 13          |         |
 | 4090     | Lovelace  | 24        | 1008            | 83          | ok      |
-| 4080 S   | Lovelace  | 16        | 672             | 52          |         |
-| 4080     | Lovelace  | 16        | 640             | 48          |         |
+| 4080 S   | Lovelace  | 16        | 736             | 52          |         |
+| 4080     | Lovelace  | 16        | 718             | 48          |         |
 | 4070 TiS | Lovelace  | 16        | 672             | 44          | ok      |
 | 4070 Ti  | Lovelace  | 12        | 504             | 40          |         |
 | 4070 S   | Lovelace  | 12        | 504             | 35          |         |
@@ -107,10 +125,11 @@ Geforce RTX 型号专注于消费级市场。其中 RTX 50X0 系列属于 Blackw
 | ------- | -------- | --------- | --------------- |
 | 4090    | Lovelace | 48        | 1008            |
 | 4090D   | Lovelace | 48        | 907             |
-| 4080 Ti | Lovelace | 32        | 640             |
-| 4080    | Lovelace | 32        | 640             |
+| 4080 S  | Lovelace | 32        | 736             |
+| 4080    | Lovelace | 32        | 718             |
 | 3080    | Ampere   | 20        | 760             |
 | 3070 Ti | Ampere   | 16        | 608             |
+| 3070    | Ampere   | 16        | 448             |
 | 2080 Ti | Turing   | 22        | 632             |
 
 2080 Ti 有双卡 nvlink。
