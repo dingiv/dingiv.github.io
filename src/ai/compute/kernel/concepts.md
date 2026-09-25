@@ -42,6 +42,10 @@ order: 5
 | Ada Lovelace | 8.9 | FP8 Tensor Core | RTX 40 系、L40S |
 | Hopper | 9.0 | wgmma、TMA、FA3、Transformer Engine | H100、H200 |
 | Blackwell | 10.0+ | FP4 Tensor Core、tcgen05、TMEM | B100/B200、RTX 50 系 |
+| AMD RDNA3 | gfx1100 | BF16、INT8（无原生 INT4） | RX 7900 XTX、W7900 |
+| AMD RDNA4 | gfx1200 | 与 RDNA3 同源，W4A16 通过 vLLM kernel | RX 9070 系 |
+| AMD CDNA3 | gfx940 | FP8 / BF16 原生 | MI300X |
+| AMD CDNA4 | gfx950 | MXFP4 / MXFP6 原生（无 NVFP4） | MI355X、MI350X |
 
 被上层直接消费的硬件能力：
 - `cp.async` — Ampere 起的异步内存拷贝指令，Marlin 的流水线依赖它
@@ -113,6 +117,10 @@ order: 5
 | TensorRT-Edge-LLM CuTe DSL | NVIDIA | NVFP4 grouped | Blackwell SM120 | mma.sync.aligned.block_scale |
 | ExLlamaV2 q_gemm | turboderp | EXL2 | Ampere/Ada（小 batch 极快） | 私有手写 CUDA |
 | cuDNN / cuBLASLt | NVIDIA | FP8/BF16 | 全硬件 | 通用库 |
+| vLLM Native W4A16 | vLLM 社区 | W4A16 (AWQ/GPTQ) | AMD RDNA3 (gfx1100) | ROCm HIP / BF16 原生支持 |
+| HybridW4A16 | vLLM | W4A16 | AMD 跨平台 | Triton 大 batch + HIP skinny 小 batch |
+| AMD MXFP4 GEMM | AMD | MXFP4 | CDNA4 (MI355X) | 原生 OCP MXFP4 指令 |
+| NVFP4 → MXFP4 重量化 | AMD | NVFP4 checkpoint | CDNA4 (MI355X) | 在线反量化到 MXFP4 |
 
 内核层的几个关键映射（这是选型矩阵的底层依据）：
 - AWQ/GPTQ → Marlin 是 Ampere 时代 W4A16 的事实标准（[Marlin](./marlin)）

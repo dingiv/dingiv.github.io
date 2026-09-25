@@ -33,6 +33,8 @@ order: 30
 
 ## 内容结构
 + [消费级主板](./consumer)：插槽形态（PCIe/M.2/SATA）、芯片组原理、Intel/AMD 主板型号对照
++ [Core 装机](./core)：Intel 消费级 CPU 接口代际、LGA 1700/1851 选型、与至强/EPYC 的边界
 + [工作站主板](./workstation)：Threadripper 平台演进、TRX50 vs WRX90 选型
 + [服务器主板](./server)：EPYC 命名规则、SP3/SP5/SP6 平台、BMC 带外管理、NUMA 拓扑
++ [Xeon 装机](./xeon)：Intel 至强两条产品线（服务器 / 工作站）的代际选购与装机方案
 + [主板与内存的适配](./ram)：三级平台的内存约束、填充规则、ECC 故障处理

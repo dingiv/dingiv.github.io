@@ -3,7 +3,21 @@
 
 对于嵌入式开发，充分了解各种硬件的市场情况是压缩生产成本的必要环节。
 
-## 硬件组成
+## 硬件组装
+
+### 芯片组
+硬件组成的核心抓手是**芯片组**, 明确了芯片组的概念, 才能正确配置电脑硬件, 从而不出现基本错误;
+
+#### 芯片组的本质作用
+现代 CPU 本身只提供有限的 PCIe 通道（消费级一般 16-28 条），不够驱动多个 USB 口、SATA 盘、M.2 SSD、网卡、声卡。芯片组（PCH，Platform Controller Hub）作为辅助芯片，扩展出数十条额外的 PCIe / USB / SATA 通道，承担所有“外设”职责。CPU 与 PCH 之间通过 DMI（Intel）或 PCIe x4（AMD）互联。
+
+#### CPU 直连 vs 芯片组通道的区别
+不是所有 PCIe 插槽都直接连 CPU。消费级主板的典型划分：
+- **CPU 直连通道**：主显卡插槽（PCIe x16）、第一个 M.2 NVMe 插槽。这些走 CPU 自带通道，带宽有保证。
+- **芯片组通道**：其余 M.2、SATA、USB、PCIe x1 小插槽。这些从 PCH 走，速度受限于 DMI 总线（Intel 为 PCIe 4.0 x8 ≈ 16 GB/s，所有外设共享这个带宽）。
+- **举例**：Z790 主板有 4 个 M.2 插槽——第一个是 CPU 直连 PCIe 5.0 x4，后面三个走 PCH 的 PCIe 4.0 x4，共享 16 GB/s 总带宽。如果三个 M.2 同时满载，每个只能拿到约 5 GB/s（而不是 8 GB/s）。
+
+具体型号详表见 [消费级](./motherboard/consumer)、[Xeon 装机](./motherboard/xeon)、[EPYC 装机](./motherboard/epyc)。
 
 ### 主板（Motherboard / Mainboard）
 支持多 CPU 插槽、大量内存插槽、PCIe 通道,一般使用 SSI-EEB / EATX / Proprietary 规格；
