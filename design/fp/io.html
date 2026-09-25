@@ -8,12 +8,12 @@
     <meta name="generator" content="VitePress v2.0.0-alpha.18">
     <link rel="preload stylesheet" href="/assets/style._vIRwsEX.css" as="style">
     <link rel="preload stylesheet" href="/vp-icons.css" as="style">
-    <script src="/assets/site-data.15a9f116.js"></script>
+    <script src="/assets/site-data.71a5795e.js"></script>
     <script type="module" src="/assets/app.CzQd7weX.js"></script>
     <link rel="preload" href="/assets/inter-roman-latin.Cy4MYw_J.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="modulepreload" href="/assets/chunks/theme.B6DNnmuH.js">
     <link rel="modulepreload" href="/assets/chunks/framework.C_EfTa_6.js">
-    <link rel="modulepreload" href="/assets/design_fp_io.md.CtMx-Aef.lean.js">
+    <link rel="modulepreload" href="/assets/design_fp_io.md.B7b0kvz1.lean.js">
     <link rel="icon" href="/favicon.svg">
     <script id="check-dark-mode">(()=>{let e=localStorage.getItem(`vitepress-theme-appearance`)||`auto`,t=window.matchMedia(`(prefers-color-scheme: dark)`).matches;(!e||e===`auto`?t:e===`dark`)&&document.documentElement.classList.add(`dark`)})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle(`mac`,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
@@ -24,7 +24,7 @@
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">      const</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> body</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;"> await</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> res.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">body</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
 <span class="line"><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">      return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> JSON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">parse</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#c62739;--shiki-dark:#F97583;">await</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> body.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">json</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   })</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>在上述的例子中，在内存中有一个变量 id，它映射成为一个 User 对象，只要 id 发生了变化，那么 User 对象也会重新获取。只要将 id 做成响应式对象，并让 getUser 订阅 id 的变化，然后自己执行，便可以拿到新的 User 值。</p><p>另外，对于一个数据驱动的 IO 系统，依然需要考虑普通的 IO 请求，它有什么需求和操作，例如：</p><ul><li>生命周期管理，数据不是全部一起加载进来的，也不是一直驻留在内存中，使用懒加载技术减少服务器的压力；</li><li>幂等性和可撤销，一个接口相同的调用得到相同的结果；一般地，GET 是幂等的，PUT 和 DELETE 大概率是，POST 不是；同样地，在内存中地操作中，get，set，delete 一个变量的值往往是幂等的，而 add 和 update 往往不是；</li><li>回滚和事务，当一次请求多个接口时，如果需要保证多个接口同时完成，或者同时失败；</li><li>故障重试；</li><li>缓存、限流、防抖；</li></ul></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/design/fp/immutable" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>不可变</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/design/fp/state" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>状态管理</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></div><p>在上述的例子中，在内存中有一个变量 id，它映射成为一个 User 对象，只要 id 发生了变化，那么 User 对象也会重新获取。只要将 id 做成响应式对象，并让 getUser 订阅 id 的变化，然后自己执行，便可以拿到新的 User 值。</p><p>另外，对于一个数据驱动的 IO 系统，依然需要考虑普通的 IO 请求，它有什么需求和操作，例如：</p><ul><li>生命周期管理，数据不是全部一起加载进来的，也不是一直驻留在内存中，使用懒加载技术减少服务器的压力；</li><li>幂等性和可撤销，一个接口相同的调用得到相同的结果；一般地，GET 是幂等的，PUT 和 DELETE 大概率是，POST 不是；同样地，在内存中地操作中，get，set，delete 一个变量的值往往是幂等的，而 add 和 update 往往不是；</li><li>回滚和事务，当一次请求多个接口时，如果需要保证多个接口同时完成，或者同时失败；</li><li>故障重试；</li><li>缓存、限流、防抖；</li></ul><h2 id="io-与-方法分离" tabindex="-1">IO 与 方法分离 <a class="header-anchor" href="#io-与-方法分离" aria-label="Permalink to “IO 与 方法分离”">​</a></h2><p>在面向对象的范式中，存在有方法这种概念, 在近似的编程语言当中有。关联方法的概念。其本质是一个语法糖，帮你少传一个函数的参数。</p><p>但是，为了强调方法的纯粹性，<strong>一个面向对象的方法不应该尝试去修改除对象字段以外的数据</strong>, 同样的, 在函数式编程的语言当中, 结构体的关联函数同理。而I/O函数是一个典型的操作对象之外的数据。因此，<strong>一个对象的方法不应该尝试去调用 I/O 函数</strong>。</p><p>其本质原因是为了让一个对象的封装和抽象具有内敛性。</p><p>I/O函数它的典型的状态或最佳的理想状态，它应该是一个顶层的全局函数。<strong>它通常接受两个参数: 一个是读取的数据源，一个是数据存放的目的地或者容器</strong>, 将读取的结果是否成功作为返回值返回。</p></div></div></main><footer class="VPDocFooter" data-v-e9c23681 data-v-eed0b66b><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-eed0b66b><span class="visually-hidden" id="doc-footer-aria-label" data-v-eed0b66b>Pager</span><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link prev" href="/design/fp/immutable" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>上一篇</span><span class="title" data-v-eed0b66b>不可变</span><!--]--></a></div><div class="pager" data-v-eed0b66b><a class="VPLink link pager-link next" href="/design/fp/state" data-v-eed0b66b><!--[--><span class="desc" data-v-eed0b66b>下一篇</span><span class="title" data-v-eed0b66b>状态管理</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div></div>
     
 <nav id="sitemap" aria-hidden="true">
 <pre>/abstract - 目录
@@ -135,6 +135,7 @@
 /ai/compute/kernel/quant/matrix
 /ai/compute/kernel/quant_matrix - 量化选型
 /ai/compute/kernel/quantization - 量化算法
+/ai/compute/kernel/utils - 模型工具
 /ai/compute/stack - 计算栈
 /ai/cpp - C++
 /ai/neural - 神经网络
@@ -225,9 +226,9 @@
 /basic/os - 操作系统
 /basic/os/mm - 内存管理
 /basic/os/schd - 调度
-/client - 客户端
-/client/art - 美术设计</pre>
-<pre>/client/art/mime - 媒体文件
+/client - 客户端</pre>
+<pre>/client/art - 美术设计
+/client/art/mime - 媒体文件
 /client/art/render - 渲染
 /client/art/toolchain - 工具链
 /client/csharp - C#
@@ -425,9 +426,9 @@
 /design/spacetime - 面向时空
 /design/spacetime/domain - 主机域
 /design/spacetime/general - 通用域
-/design/spacetime/general/architecture - 架构演进
-/design/spacetime/general/container - 容器</pre>
-<pre>/design/spacetime/general/corruption - 腐化
+/design/spacetime/general/architecture - 架构演进</pre>
+<pre>/design/spacetime/general/container - 容器
+/design/spacetime/general/corruption - 腐化
 /design/spacetime/general/dependency - 依赖管理
 /design/spacetime/general/tradeoff - 权衡
 /design/spacetime/network - 网络域
@@ -491,6 +492,7 @@
 /kernel/equip/motherboard - 主板
 /kernel/equip/motherboard/bmc - BMC 详解
 /kernel/equip/motherboard/consumer - 消费级
+/kernel/equip/motherboard/core - Core 装机
 /kernel/equip/motherboard/epyc - EPYC 装机
 /kernel/equip/motherboard/ram - 内存适配
 /kernel/equip/motherboard/server - 服务器
@@ -624,10 +626,10 @@
 /server/db/nosql/milvus - Milvus
 /server/db/nosql/milvus/idx - 向量索引
 /server/db/nosql/milvus/storage - 分布式能力
-/server/db/nosql/milvus/usage - 使用实践
-/server/db/nosql/minio - MinIO
-/server/db/nosql/mongo - MongoDB</pre>
-<pre>/server/db/nosql/neo4j - Neo4j
+/server/db/nosql/milvus/usage - 使用实践</pre>
+<pre>/server/db/nosql/minio - MinIO
+/server/db/nosql/mongo - MongoDB
+/server/db/nosql/neo4j - Neo4j
 /server/db/nosql/redis - Redis
 /server/db/practice - 工程实践
 /server/db/practice/backup - 备份与恢复
