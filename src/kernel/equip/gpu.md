@@ -72,40 +72,40 @@ Nvidia 目前市场的主力是 Blackwell 系列和 Ada Lovelace 系列，Ampere
 ### 消费级 Geforce
 Geforce RTX 型号专注于消费级市场。其中 RTX 50X0 系列属于 Blackwell，RTX 40X0 系列属于 Ada Lovelace 系列，30X0 属于 Ampere 系列。
 
-| 型号     | 架构      | 显存 (GB) | 显存带宽 (GB/s) | FP32 TFLOPS | AI 适用 |
-| -------- | --------- | --------- | --------------- | ----------- | ------- |
-| 5090     | Blackwell | 32        | 1792            | 105         | ok      |
-| 5080     | Blackwell | 16        | 960             | 56          |         |
-| 5070 Ti  | Blackwell | 16        | 896             | 44          |         |
-| 5070     | Blackwell | 12        | 672             | 31          |         |
-| 5060 Ti  | Blackwell | 16/8      | 448             | 24          | ok      |
-| 5060     | Blackwell | 8         | 448             | 20          |         |
-| 5050     | Blackwell | 8         | 320             | 13          |         |
-| 4090     | Lovelace  | 24        | 1008            | 83          | ok      |
-| 4080 S   | Lovelace  | 16        | 736             | 52          |         |
-| 4080     | Lovelace  | 16        | 718             | 48          |         |
-| 4070 TiS | Lovelace  | 16        | 672             | 44          | ok      |
-| 4070 Ti  | Lovelace  | 12        | 504             | 40          |         |
-| 4070 S   | Lovelace  | 12        | 504             | 35          |         |
-| 4070     | Lovelace  | 12        | 504             | 29          |         |
-| 4060 Ti  | Lovelace  | 16/8      | 288             | 22          | ok      |
-| 4060     | Lovelace  | 8         | 272             | 15          |         |
-| 3090 Ti  | Ampere    | 24        | 1008            | 40          | ok      |
-| 3090     | Ampere    | 24        | 936             | 35.6        | ok      |
-| 3080 Ti  | Ampere    | 12        | 912             | 34          |         |
-| 3080     | Ampere    | 12/10     | 760             | 30          |         |
-| 3070 Ti  | Ampere    | 8         | 608             | 21.7        |         |
-| 3070     | Ampere    | 8         | 448             | 20.3        |         |
-| 3060 Ti  | Ampere    | 8         | 448             | 16.2        |         |
-| 3060     | Ampere    | 12/8      | 360/336         | 12.7        |         |
-| 3050     | Ampere    | 8         | 240             | 9.1         |         |
-| 2080 Ti  | Turing    | 11        | 632             | 13.4        |         |
-| 2080 S   | Turing    | 8         | 496             | 11.1        |         |
-| 2080     | Turing    | 8         | 448             | 10.6        |         |
-| 2070 S   | Turing    | 8         | 448             | 9.1         |         |
-| 2070     | Turing    | 8         | 448             | 7.5         |         |
-| 2060 S   | Turing    | 8         | 448             | 7.2         |         |
-| 2060     | Turing    | 6         | 336             | 6.5         |         |
+| 型号     | 架构      | 显存 (GB) | 显存带宽 (GB/s) | FP32 TFLOPS | 推荐指数 |
+| -------- | --------- | --------- | --------------- | ----------- | -------- |
+| 5090     | Blackwell | 32        | 1792            | 105         | 5        |
+| 5080     | Blackwell | 16        | 960             | 56          | -        |
+| 5070 Ti  | Blackwell | 16        | 896             | 44          | -        |
+| 5070     | Blackwell | 12        | 672             | 31          | -        |
+| 5060 Ti  | Blackwell | 16/8      | 448             | 24          | 4        |
+| 5060     | Blackwell | 8         | 448             | 20          | -        |
+| 5050     | Blackwell | 8         | 320             | 13          | -        |
+| 4090     | Lovelace  | 24        | 1008            | 83          | 3        |
+| 4080 S   | Lovelace  | 16        | 736             | 52          |          |
+| 4080     | Lovelace  | 16        | 718             | 48          |          |
+| 4070 TiS | Lovelace  | 16        | 672             | 44          | 4        |
+| 4070 Ti  | Lovelace  | 12        | 504             | 40          |          |
+| 4070 S   | Lovelace  | 12        | 504             | 35          |          |
+| 4070     | Lovelace  | 12        | 504             | 29          |          |
+| 4060 Ti  | Lovelace  | 16/8      | 288             | 22          | 3        |
+| 4060     | Lovelace  | 8         | 272             | 15          |          |
+| 3090 Ti  | Ampere    | 24        | 1008            | 40          | 5        |
+| 3090     | Ampere    | 24        | 936             | 35.6        | 5        |
+| 3080 Ti  | Ampere    | 12        | 912             | 34          |          |
+| 3080     | Ampere    | 12/10     | 760             | 30          |          |
+| 3070 Ti  | Ampere    | 8         | 608             | 21.7        |          |
+| 3070     | Ampere    | 8         | 448             | 20.3        |          |
+| 3060 Ti  | Ampere    | 8         | 448             | 16.2        |          |
+| 3060     | Ampere    | 12/8      | 360/336         | 12.7        |          |
+| 3050     | Ampere    | 8         | 240             | 9.1         |          |
+| 2080 Ti  | Turing    | 11        | 632             | 13.4        |          |
+| 2080 S   | Turing    | 8         | 496             | 11.1        |          |
+| 2080     | Turing    | 8         | 448             | 10.6        |          |
+| 2070 S   | Turing    | 8         | 448             | 9.1         |          |
+| 2070     | Turing    | 8         | 448             | 7.5         |          |
+| 2060 S   | Turing    | 8         | 448             | 7.2         |          |
+| 2060     | Turing    | 6         | 336             | 6.5         |          |
 
 玩本地 AI 部署，3090 是值得关注的一张卡，支持双卡组 nvlink，且二手价格 ok，可以考虑。详细的 AI 部署 GPU 选型见 [GPU 硬件](/ai/compute/deploy/hardware)。
 
@@ -121,79 +121,86 @@ Geforce RTX 型号专注于消费级市场。其中 RTX 50X0 系列属于 Blackw
 
 **魔改版**
 
-| 型号    | 架构     | 显存 (GB) | 显存带宽 (GB/s) |
-| ------- | -------- | --------- | --------------- |
-| 4090    | Lovelace | 48        | 1008            |
-| 4090D   | Lovelace | 48        | 907             |
-| 4080 S  | Lovelace | 32        | 736             |
-| 4080    | Lovelace | 32        | 718             |
-| 3080    | Ampere   | 20        | 760             |
-| 3070 Ti | Ampere   | 16        | 608             |
-| 3070    | Ampere   | 16        | 448             |
-| 2080 Ti | Turing   | 22        | 632             |
+| 型号    | 架构     | 显存 (GB) | 显存带宽 (GB/s) | 推荐指数 |
+| ------- | -------- | --------- | --------------- | -------- |
+| 4090    | Lovelace | 48        | 1008            | 5        |
+| 4090D   | Lovelace | 48        | 907             | 5        |
+| 4080 S  | Lovelace | 32        | 736             | 5        |
+| 4080    | Lovelace | 32        | 718             | 5        |
+| 3080    | Ampere   | 20        | 760             | 5        |
+| 3070 Ti | Ampere   | 16        | 608             | 4        |
+| 3070    | Ampere   | 16        | 448             | 4        |
+| 2080 Ti | Turing   | 22        | 632             | 4        |
 
 2080 Ti 有双卡 nvlink。
 
 ### 专业级 Quadro
+原名 Quadro, 后统一改名 Nvidia RTX，专注于图形工作站等领域，也可以用来搞 AI。
+
+| 型号            | 系列      | 显存 | FP32 TFLOPS | 推荐指数 |
+| --------------- | --------- | ---- | ----------- | -------- |
+| PRO 6000        | Blackwell | 96   | 125         | 5        |
+| PRO 6000D       | Blackwell | 84   | 125         | 5        |
+| PRO 5000        | Blackwell | 72   | 65          | 5        |
+| PRO 4000        | Blackwell | 24   | ~37-46      |          |
+| PRO 3000        | Blackwell | 12   | ~29         |          |
+| PRO 2000        | Blackwell | 16   | ~17         |          |
+| PRO 1000        | Blackwell | 8    | ~13-14      |          |
+| PRO 500         | Blackwell | 6    | ~9          |          |
+| 6000 Ada        | Lovelace  | 48   | 91          | 4        |
+| 5000 Ada        | Lovelace  | 32   | 65          | 3        |
+| 4000 Ada        | Lovelace  | 20   | 26.7        |          |
+| A6000           | Ampere    | 48   | 38.7        | 3        |
+| A5500           | Ampere    | 24   | ~22-34      |          |
+| A5000           | Ampere    | 24   | 27          |          |
+| A4500           | Ampere    | 20   | 23          |          |
+| A4000           | Ampere    | 16   | 19          |          |
+| A2000           | Ampere    | 12   | 8           |          |
+| A1000           | Ampere    | 8    | ~6.7        |          |
+| A400            | Ampere    | 4    | ~2.7        |          |
+| Quadro RTX 8000 | Turing    | 48   | 16          | 3        |
+| Quadro RTX 6000 | Turing    | 24   | 16          |          |
+| Quadro RTX 5000 | Turing    | 16   | 11          |          |
+| Quadro RTX 4000 | Turing    | 8    | 7           |          |
+
+A6000、A5500、A5000、A4500 支持 nvlink。完整的 NVLink 桥接兼容性参考和 PCIe 替代方案见 [GPU 硬件](/ai/compute/deploy/hardware)。
+
 <a href="https://www.nvidia.com/en-us/products/workstations/quadro/"><img src="./quadro.png" /></a>
 
 <a href="https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/"><img src="./quadro-pro.png" /></a>
 
-RTX 专业级，专注于图形工作站等领域，也可以用来训练 AI。
-
-| 型号     | 系列      | 显存 | FP32 TFLOPS |
-| -------- | --------- | ---- | ----------- |
-| PRO 6000 | Blackwell | 96   | 125         |
-| PRO 5000 | Blackwell | 48   | 65          |
-| PRO 4000 | Blackwell | 24   | ~37-46      |
-| PRO 3000 | Blackwell | 12   | ~29         |
-| PRO 2000 | Blackwell | 16   | ~17         |
-| PRO 1000 | Blackwell | 8    | ~13-14      |
-| PRO 500  | Blackwell | 6    | ~9          |
-| 6000 Ada | Lovelace  | 48   | 91          |
-| 5000 Ada | Lovelace  | 32   | 65          |
-| 4000 Ada | Lovelace  | 20   | 26.7        |
-| A6000    | Ampere    | 48   | 38.7        |
-| A5500    | Ampere    | 24   | ~22-34      |
-| A5000    | Ampere    | 24   | 27          |
-| A4500    | Ampere    | 20   | 23          |
-| A4000    | Ampere    | 16   | 19          |
-| A2000    | Ampere    | 12   | 8           |
-| A1000    | Ampere    | 8    | ~6.7        |
-| A400     | Ampere    | 4    | ~2.7        |
-
-A6000、A5500、A5000、A4500 支持 nvlink。完整的 NVLink 桥接兼容性参考和 PCIe 替代方案见 [GPU 硬件](/ai/compute/deploy/hardware)。
-
 ### 企业级 Tesla
 当前 Hopper 架构是市场中的主力。
 
-| 型号      | 系列      | 显存   | FP32 TFLOPS |
-| --------- | --------- | ------ | ----------- |
-| B300      | Blackwell | 288    | -           |
-| B200      | Blackwell | 192    | -           |
-| B100      | Blackwell | 192    | -           |
-| GB200 NVL | Blackwell | 192 GB | -           |
-| H200      | Hopper    | 141    | -           |
-| H100 NVL  | Hopper    | 94     | -           |
-| H100      | Hopper    | 80     | 51          |
-| H100 PCIe | Hopper    | 80     | -           |
-| H20       | Hopper    | 96     | -           |
-| L40S      | Lovelace  | 48     | 91          |
-| L40       | Lovelace  | 48     | 45          |
-| L20       | Lovelace  | 48     | -           |
-| L4        | Lovelace  | 24     | 30          |
-| L2        | Lovelace  | 24     | -           |
-| A100      | Ampere    | 40/80  | 19          |
-| A40       | Ampere    | 48     | -           |
-| A30       | Ampere    | 24     | 10          |
-| A10       | Ampere    | 24     | 31          |
-| T4        | Truing    | 16     | 31          |
-| V100S     | Volta     | 32     | -           |
-| GV100     | Volta     | 32     | -           |
-| V100      | Volta     | 16/32  | -           |
-| Titan V   | Volta     | 12     | -           |
+| 型号      | 系列      | 显存   | 带宽    | FP32 TFLOPS |
+| --------- | --------- | ------ | ------- | ----------- |
+| B300      | Blackwell | 288    |         | -           |
+| B200      | Blackwell | 192    |         | -           |
+| B100      | Blackwell | 192    |         | -           |
+| GB200 NVL | Blackwell | 192 GB |         | -           |
+| H200      | Hopper    | 141    |         | -           |
+| H100 NVL  | Hopper    | 94     |         | -           |
+| H100      | Hopper    | 80     |         | 51          |
+| H100 PCIe | Hopper    | 80     |         | -           |
+| H20       | Hopper    | 96     |         | -           |
+| L40S      | Lovelace  | 48     |         | 91          |
+| L40       | Lovelace  | 48     |         | 45          |
+| L20       | Lovelace  | 48     |         | -           |
+| L4        | Lovelace  | 24     |         | 30          |
+| L2        | Lovelace  | 24     |         | -           |
+| A100      | Ampere    | 40/80  |         | 19          |
+| A40       | Ampere    | 48     |         | 37          |
+| A30       | Ampere    | 24     |         | 10          |
+| A10       | Ampere    | 24     |         | 31          |
+| A16       | Ampere    | 16 * 4 | 200 * 4 | 4.5 * 4     |
+| A2        | Ampere    | 16     | 200     | 4.5         |
+| T4        | Truing    | 16     |         | 8           |
+| V100S     | Volta     | 32     |         | -           |
+| GV100     | Volta     | 32     |         | -           |
+| V100      | Volta     | 16/32  |         | -           |
+| Titan V   | Volta     | 12     |         | -           |
 
-**阉割版本**
+**阉割版本**, 中国特供
 
 | 型号 | 原版对应  | 系列      | 显存  | FP32 TFLOPS |
 | ---- | --------- | --------- | ----- | ----------- |
@@ -208,21 +215,20 @@ AMD 是 NVIDIA 的主要竞争对手，在消费级市场以性价比优势著�
 ### 消费级 Radeon
 Radeon RX 9000 系列基于 RDNA 4 架构，RX 7000 系列基于 RDNA 3 架构。AMD 的策略是在相似价位下提供比 NVIDIA 更多的显存和更强的传统渲染性能。
 
-| 型号        | 架构   | 显存 (GB) | 显存带宽 (GB/s) | FP32 TFLOPS | AI 适用 |
-| ----------- | ------ | --------- | --------------- | ----------- | ------- |
-| RX 9070 XTX | RDNA 4 | 20        | 960             | ~63.5       | ok      |
-| RX 9070 XT  | RDNA 4 | 16        | 640             | 48.7        |         |
-| RX 9070     | RDNA 4 | 16        | 640             | 36.0        |         |
-| RX 9060 XT  | RDNA 4 | 16/8      | 320             | 25.7        |         |
-| RX 9060     | RDNA 4 | 8         | 288             | 17.2        |         |
-| RX 9050     | RDNA 4 | 8         | 288             | 10.6        |         |
-| RX 7900 XTX | RDNA 3 | 24        | 960             | 61.4        | ok      |
-| RX 7900 XT  | RDNA 3 | 20        | 800             | 52.2        | ok      |
-| RX 7800 XT  | RDNA 3 | 16        | 624             | 37.3        | ok      |
-| RX 7700 XT  | RDNA 3 | 12        | 432             | 35.0        |         |
-| RX 7600 XT  | RDNA 3 | 16        | 288             | 22.6        |         |
-| RX 7600     | RDNA 3 | 8         | 288             | 18.4        |         |
-| RX 7500 XT  | RDNA 3 | 8         | 224             | 13.5        |         |
+| 型号        | 架构   | 显存 (GB) | 显存带宽 (GB/s) | FP32 TFLOPS | 推荐指数 |
+| ----------- | ------ | --------- | --------------- | ----------- | -------- |
+| RX 9070 XT  | RDNA 4 | 16        | 640             | 48.7        |          |
+| RX 9070     | RDNA 4 | 16        | 640             | 36.0        |          |
+| RX 9060 XT  | RDNA 4 | 16/8      | 320             | 25.7        |          |
+| RX 9060     | RDNA 4 | 8         | 288             | 17.2        |          |
+| RX 9050     | RDNA 4 | 8         | 288             | 10.6        |          |
+| RX 7900 XTX | RDNA 3 | 24        | 960             | 61.4        | 5        |
+| RX 7900 XT  | RDNA 3 | 20        | 800             | 52.2        | 4        |
+| RX 7800 XT  | RDNA 3 | 16        | 624             | 37.3        | 4        |
+| RX 7700 XT  | RDNA 3 | 12        | 432             | 35.0        |          |
+| RX 7600 XT  | RDNA 3 | 16        | 288             | 22.6        |          |
+| RX 7600     | RDNA 3 | 8         | 288             | 18.4        |          |
+| RX 7500 XT  | RDNA 3 | 8         | 224             | 13.5        |          |
 
 AMD 显卡的优势在于传统游戏性能和价格，但光追性能弱于 NVIDIA，AI 算力也明显不足。对于不追求光追和 AI 应用的纯游戏玩家，AMD 显卡是性价比之选。
 
@@ -241,26 +247,36 @@ AMD 显卡的优势在于传统游戏性能和价格，但光追性能弱于 NVI
 ### 专业级 Radeon Pro
 Radeon Pro 系列面向专业工作站市场，提供经过 ISV 认证的驱动和稳定性。
 
-| 型号        | 架构   | 显存 | 应用场景             |
-| ----------- | ------ | ---- | -------------------- |
-| W7900       | RDNA 3 | 48   | 8K 视频编辑、3D 渲染 |
-| W7800       | RDNA 3 | 32   | 中高端工作站         |
-| W7600/W7500 | RDNA 3 | 8    | 入门级工作站         |
+| 型号   | 架构   | 显存 | 带宽  | 推荐指数 |
+| ------ | ------ | ---- | ----- | -------- |
+| R9700  | RDNA 4 | 32   | 640   | 4        |
+| R9600  | RDNA 4 | 32   | 640   | 4        |
+| R9600D | RDNA 4 | 32   | 640   | 4        |
+| W7900  | RDNA 3 | 48   | 864   | 3        |
+| W7800  | RDNA 3 | 48   | 864   | 3        |
+| W7800  | RDNA 3 | 32   | 576   | 3        |
+| W7700  | RDNA 3 | 16   | 576   |          |
+| W7600  | RDNA 3 | 8    | 288   |          |
+| W7500  | RDNA 3 | 8    | 256   |          |
+| W7400  | RDNA 3 | 8    | 172.8 |          |
+| W6800  | RDNA 2 | 32   |       |          |
+| W6600  | RDNA 2 | 8    |       |          |
+| W6400  | RDNA 2 | 8    |       |          |
 
 ### 企业级 Instinct
 Instinct 系列专注于数据中心和高性能计算，主要竞争对手是 NVIDIA Tesla。AMD 的优势在于开放生态（支持 ROCm、OpenCL），价格相对较低，但软件生态不如 CUDA 成熟。
 
-| 型号   | 架构   | 显存 | 应用场景         |
-| ------ | ------ | ---- | ---------------- |
-| MI355X | CDNA 4 | 288  | 大模型训练       |
-| MI350X | CDNA 4 | 288  | 数据中心 AI 训练 |
-| MI350P | CDNA 4 | 144  | PCIe 形态        |
-| MI325X | CDNA 3 | 256  | HPC 和 AI        |
-| MI300X | CDNA 3 | 192  | HPC 和 AI        |
-| MI300A | CDNA 3 | 128  | APU 形态         |
-| MI250X | CDNA 2 | 128  | HPC 和 AI        |
-| MI250  | CDNA 2 | 128  | HPC 和 AI        |
-| MI210  | CDNA 2 | 64   | HPC 和 AI        |
+| 型号   | 架构   | 显存 | 推荐指数 |
+| ------ | ------ | ---- | -------- |
+| MI355X | CDNA 4 | 288  | -        |
+| MI350X | CDNA 4 | 288  | -        |
+| MI350P | CDNA 4 | 144  | -        |
+| MI325X | CDNA 3 | 256  | -        |
+| MI300X | CDNA 3 | 192  | -        |
+| MI300A | CDNA 3 | 128  | -        |
+| MI250X | CDNA 2 | 128  | -        |
+| MI250  | CDNA 2 | 128  | -        |
+| MI210  | CDNA 2 | 64   | 3        |
 
 ## 国产 GPU 厂商
 国产 GPU 厂商近年来发展迅速，主要分为三类：专注消费级图形的公司、专注 AI 算力的公司、以及专注军工/政府市场的公司。目前国产 GPU 在消费级市场仍处于追赶阶段，但在特定领域（如 AI 推理、工控显示）已经有所突破。
